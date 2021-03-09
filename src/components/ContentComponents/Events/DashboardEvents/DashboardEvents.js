@@ -78,24 +78,24 @@ const DashboardEvents = () => {
       })
   }, [])
 
-  React.useEffect(() => {
-    axios.get('/api/event-category')
-      .then(res => {
-        console.log(res)
-      })
-  })
+  // React.useEffect(() => {
+  //   axios.get('/api/event-category')
+  //     .then(res => {
+  //       console.log(res)
+  //     })
+  // })
 
-  const filter = (
-    <div>
-      <Button variant='contained' color='primary'>vì đã lỡ yêu em ròi, chằng cần muốn xa xôi</Button>
-    </div >
-  )
+  // const filter = (
+  //   <div>
+  //     <Button variant='contained' color='primary'>vì đã lỡ yêu em ròi, chằng cần muốn xa xôi</Button>
+  //   </div >
+  // )
 
   return (
     <Card>
       <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending events" subheader="These remaining events that waits to be confirm" />
 
-      <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Categories: " subheader={filter} />
+      {/* <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Categories: " subheader={filter} /> */}
 
       <CardContent>
         <div style={{ height: 400, width: '100%' }}>

@@ -11,7 +11,7 @@ import {
 
 import Logo from '../Logo/LogoIcon'
 import axios from '../../../api/axios';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -36,27 +36,28 @@ const Login = (props) => {
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
+  const history = useHistory()
 
-  React.useEffect(() => {
-    const token = getCookie('accessToken')
-    if(token !== '') {return (<Redirect from="/login" to="/home" exact/>)}
-  },[])
+  // React.useEffect(() => {
+  //   const token = getCookie('accessToken')
+  //   if (token !== '') { return (<Redirect from="/login" to="/home/dashboard" exact />) }
+  // }, [])
 
-  const getCookie = (cname) => {
-    let name = cname + '=';
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return '';
-  }
+  // const getCookie = (cname) => {
+  //   let name = cname + '=';
+  //   let decodedCookie = decodeURIComponent(document.cookie);
+  //   let ca = decodedCookie.split(';');
+  //   for (let i = 0; i < ca.length; i++) {
+  //     let c = ca[i];
+  //     while (c.charAt(0) === ' ') {
+  //       c = c.substring(1);
+  //     }
+  //     if (c.indexOf(name) === 0) {
+  //       return c.substring(name.length, c.length);
+  //     }
+  //   }
+  //   return '';
+  // }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -71,7 +72,7 @@ const Login = (props) => {
         console.log(props)
         if (res.data) {
           saveTokenAndEmailToCookies(res.data.accessToken, email)
-          props.history.push('/home')
+          history.push('/home/dashboard')
         }
       }).catch(error => {
         setErrorMessage(error.message)

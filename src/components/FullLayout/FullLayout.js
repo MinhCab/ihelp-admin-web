@@ -6,8 +6,6 @@ import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 import { SidebarWidth } from '../../assets/jss/Theme-variable.js'
 
-const Dashboard = React.lazy(() => import('../ContentComponents/Dashboard/Dashboard'))
-
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -40,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 const FullLayout = (props) => {
+  const { children } = props
   const classes = useStyles();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -55,13 +54,12 @@ const FullLayout = (props) => {
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
           <div className={classes.content}>
-            <Suspense fallback={<div>Loading...</div> }>
-              <Dashboard /> 
+            <Suspense fallback={<div>Loading...</div>}>
+              {children}
             </Suspense>
           </div>
         </div>
       </div>
-
     </div>
   );
 }

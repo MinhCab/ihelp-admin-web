@@ -2,12 +2,12 @@ import { HomeTwoTone, ExitToApp, ErrorTwoTone, AccountCircleTwoTone, BallotTwoTo
 
 const MenuItems = [
     {
-      href: 'dashboard',
+      href: '/home/dashboard',
       icon: HomeTwoTone,
-      title: 'Dashboard'
+      title: 'Dashboard'  
     },
     {
-      href: 'events',
+      href: '/home/events',
       icon: BallotTwoTone,
       title: 'Events'
     },
