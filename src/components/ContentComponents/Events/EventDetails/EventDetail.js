@@ -1,4 +1,4 @@
-import { Card, CardContent, CardMedia, Chip, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Button, Card, CardActions, CardContent, CardMedia, Chip, Grid, makeStyles, Typography } from '@material-ui/core';
 import moment from 'moment';
 import React from 'react'
 
@@ -34,7 +34,7 @@ const EventDetail = (props) => {
     const [status, setStatus] = React.useState({})
     const [onsite, setOnsite] = React.useState(false)
 
-    React.useEffect(() => { 
+    React.useEffect(() => {
         axios.get("/api/events/" + props.match.params.id)
             .then(res => {
                 setDetails(res.data)
@@ -48,9 +48,33 @@ const EventDetail = (props) => {
     }, [])
 
     let showOnsite = <Chip color='primary' label='Online' />
+    let approveBtn = <Button size="small" color="primary" variant='contained'>Approve</Button>
+    let rejectBtn = <Button size="small" color="secondary" variant='contained'>Reject</Button>
+    let showActionBtns = null
 
-    if(onsite === true) {
-        showOnsite = <Chip color='secondary' label='On site'/>
+    if (onsite === true) {
+        showOnsite = <Chip color='secondary' label='On site' />
+    }
+
+    if (status.name === 'Pending') {
+        showActionBtns = (
+            <CardActions>
+                {approveBtn}
+                {rejectBtn}   
+            </CardActions>
+        )
+    } else if(status.name === 'Approved') {
+        showActionBtns = (
+            <CardActions>
+                {rejectBtn}   
+            </CardActions>
+        )
+    } else if(status.name === 'Rejected') {
+        showActionBtns = (
+            <CardActions>
+                {approveBtn}   
+            </CardActions>
+        )
     }
 
     return (
@@ -119,7 +143,7 @@ const EventDetail = (props) => {
                             </Grid>
                         </Grid>
                         <Grid item container xs className={classes.Typography}>
-                        <Grid item xs>
+                            <Grid item xs>
                                 <Typography variant="body1" color="textPrimary" component="span">
                                     <strong>Type: </strong>
                                     {showOnsite}
@@ -134,6 +158,9 @@ const EventDetail = (props) => {
                     </Grid>
                 </Grid>
             </CardContent>
+            <hr/>
+            <br/>   
+            {showActionBtns}
         </Card>
     );
 }
