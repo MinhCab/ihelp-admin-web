@@ -12,24 +12,10 @@ import Dashboard from '../components/ContentComponents/Dashboard/Dashboard'
 import Events from '../components/ContentComponents/Events/DashboardEvents/DashboardEvents'
 import Services from '../components/ContentComponents/Services/DashboardServices'
 import Users from '../components/ContentComponents/Users/DashboardAdmins'
+import Logout from '../components/ContentComponents/Logout/Logout'
+import EventDetail from '../components/ContentComponents/Events/EventDetails/EventDetail';
 
 class App extends Component {
-
-  getCookie = (cname) => {
-    let name = cname + '=';
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return '';
-  }
 
   render() {
     return (
@@ -39,10 +25,12 @@ class App extends Component {
           <Switch>
             <Route path="/login" exact component={Login} />
             <FullLayout>
-              <Route path='/home/dashboard' component={Dashboard} />
-              <Route path='/home/events' component={Events} />
-              <Route path='/home/services' component={Services} />
-              <Route path='/home/users' component={Users} />
+              <Route exact path='/home/dashboard' render={() => <Dashboard/>} />
+              <Route exact path='/home/events' render={() => <Events />} />
+              <Route path='/home/events/:id' exact component={EventDetail} />
+              <Route exact path='/home/services' render={() => <Services />} />
+              <Route exact path='/home/users' render={() => <Users />} />
+              <Route exact path='/home/logout' component={Logout} />
             </FullLayout>
           </Switch>
         </BrowserRouter>

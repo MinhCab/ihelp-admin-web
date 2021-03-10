@@ -1,10 +1,11 @@
 import React from 'react';
-import { Box, Divider,  Drawer, Hidden, List,  makeStyles } from '@material-ui/core';
+import { Box, Button, Divider,  Drawer, Hidden, List,  makeStyles } from '@material-ui/core';
 
 import Navitems from './NavItems';
 import {SidebarWidth} from '../../../assets/jss/Theme-variable'
 import Menuitems from './MenuItems';
 import Profile from './Profile';
+import { ExitToApp } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     mobileSidebar: {
@@ -42,6 +43,7 @@ const Sidebar = (props) => {
                     ))}
                 </List>
             </Box>
+            <Button style={{margin: '10px'}} variant="contained" color="primary" startIcon={<ExitToApp/>}><strong>Logout</strong></Button>
 
             <Box flexGrow={1} />
 

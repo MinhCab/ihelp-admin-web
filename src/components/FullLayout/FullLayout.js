@@ -32,9 +32,9 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flex: '1 1 auto',
-    padding: 25,
+    padding: 30,
     height: '100%',
-    overflow: 'auto'
+    overflow: 'auto',
   }
 }));
 const FullLayout = (props) => {

@@ -1,4 +1,4 @@
-import { HomeTwoTone, ExitToApp, ErrorTwoTone, AccountCircleTwoTone, BallotTwoTone} from '@material-ui/icons';
+import { HomeTwoTone, AccountCircleTwoTone, BallotTwoTone} from '@material-ui/icons';
 
 const MenuItems = [
     {
@@ -12,26 +12,15 @@ const MenuItems = [
       title: 'Events'
     },
     {
-      href: 'services',
+      href: '/home/services',
       icon: BallotTwoTone,
       title: 'Services'
     },
     {
-      href: 'Users',
+      href: '/home/Users',
       icon: AccountCircleTwoTone,
       title: 'Users'
     },
-    {
-      href: 'chart',
-      icon: ErrorTwoTone,
-      title: 'Chart'
-    },
-    {
-      href: 'logout',
-      icon: ExitToApp,
-      title: 'Logout'
-    }
- 
  ];
 
  export default MenuItems;

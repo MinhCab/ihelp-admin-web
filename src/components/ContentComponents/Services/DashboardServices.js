@@ -24,7 +24,12 @@ const buttonTheme = createMuiTheme({
 })
 
 const columns = [
-  { field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 180 },
+  {
+    field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 180,
+    renderCell: (params) => {
+      return <p>{moment(params.value).format("MMM Do YYYY")}</p>
+    }
+  },
   { field: 'title', headerName: 'Title', width: 250 },
   {
     field: 'serviceType', headerName: 'Service Type', width: 150,

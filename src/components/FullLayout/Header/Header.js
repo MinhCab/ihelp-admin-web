@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // import { Link } from 'react-router-dom';
-import { AppBar, Badge, Box,  Hidden, IconButton, Toolbar, makeStyles } from '@material-ui/core';
+import { AppBar, Badge, Box, Hidden, IconButton, Toolbar, makeStyles } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsNoneIcon from '@material-ui/icons/Notifications';
 
@@ -13,16 +13,16 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
     },
-    logoText:{
-       minWidth:200, 
-       display:'flex'
+    logoText: {
+        minWidth: 200,
+        display: 'flex'
     },
     menuButton: {
-        marginLeft:theme.spacing(1),
-        marginRight:theme.spacing(1),
+        marginLeft: theme.spacing(1),
+        marginRight: theme.spacing(1),
     },
-    button:{
-        color:'white'
+    button: {
+        color: 'white'
     }
 }));
 
@@ -33,23 +33,16 @@ const Header = (props) => {
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget)
     }
-    
+
     const handleClose = () => {
         setAnchorEl(null);
     }
-    
+
     const open = Boolean(anchorEl);
-    
+
     return (
         <AppBar>
             <Toolbar>
-                {/* ------------ Logo ------------- */}
-                {/* <Link to="/" className={classes.Logo}> */}
-                    <LogoIcon />
-                    <Hidden mdDown><span className={classes.logoText}/></Hidden>
-                {/* </Link> */}
-                {/* ------------ End Logo ------------- */}
-                {/* ------------ Menu icon ------------- */}
                 <Hidden mdDown>
                     <IconButton edge="start" color="inherit" aria-label="menu" onClick={props.toggleSidebar}>
                         <MenuIcon />
@@ -61,10 +54,18 @@ const Header = (props) => {
                         <MenuIcon />
                     </IconButton>
                 </Hidden>
+                {/* ------------ Logo ------------- */}
+                {/* <Link to="/" className={classes.Logo}> */}
+                <LogoIcon />
+                <Hidden mdDown><span className={classes.logoText} /></Hidden>
+                {/* </Link> */}
+                {/* ------------ End Logo ------------- */}
+                {/* ------------ Menu icon ------------- */}
+
                 {/* ------------ End Menu icon ------------- */}
-                
+
                 <Box flexGrow={1} />
-            
+
                 <IconButton aria-label="show 11 new notifications" color="inherit" onClick={handleClick}>
                     <Badge variant="dot" color="secondary">
                         <NotificationsNoneIcon />

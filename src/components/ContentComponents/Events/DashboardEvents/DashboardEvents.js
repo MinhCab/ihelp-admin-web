@@ -2,12 +2,18 @@ import React from 'react';
 import { DataGrid } from '@material-ui/data-grid';
 import { Card, CardContent, CardHeader } from '@material-ui/core';
 import Button from '@material-ui/core/Button'
-
-import axios from '../../../../api/axios'
 import moment from 'moment';
 
+import axios from '../../../../api/axios'
+import { useHistory } from 'react-router-dom';
+
 const columns = [
-  { field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 230 },
+  {
+    field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 230,
+    renderCell: (params) => {
+      return <p>{moment(params.value).format("MMM Do YYYY")}</p>
+    }
+  },
   { field: 'title', headerName: 'Title', width: 250 },
   {
     field: 'category', headerName: 'Category', width: 150,
@@ -61,12 +67,12 @@ const columns = [
 //   { id: 7, create_date: '2015-01-01 08:22:13', title: 'Snow', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
 // ]
 
-const getRowsValue = (event) => { console.log(event.row.id) }
 
 const DashboardEvents = () => {
 
   const [events, setEvents] = React.useState([])
   // const [categories, setCategories] = React.useState([])
+  const history = useHistory()
 
   React.useEffect(() => {
     axios.get('/api/events?page=0')
@@ -77,6 +83,10 @@ const DashboardEvents = () => {
         console.log(error.message)
       })
   }, [])
+
+  const showEventDetails = (event) => {
+    history.push('/home/events/' + event.row.id)
+  }
 
   // React.useEffect(() => {
   //   axios.get('/api/event-category')
@@ -99,7 +109,7 @@ const DashboardEvents = () => {
 
       <CardContent>
         <div style={{ height: 400, width: '100%' }}>
-          <DataGrid rows={events} columns={columns} pageSize={5} onRowClick={(rows) => getRowsValue(rows)} />
+          <DataGrid rows={events} columns={columns} pageSize={5} onRowClick={(rows) => showEventDetails(rows)} />
         </div>
       </CardContent>
     </Card>
