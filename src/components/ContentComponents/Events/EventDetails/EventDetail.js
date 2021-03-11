@@ -48,8 +48,10 @@ const EventDetail = (props) => {
     }, [])
 
     let showOnsite = <Chip color='primary' label='Online' />
-    let approveBtn = <Button size="small" color="primary" variant='contained'>Approve</Button>
-    let rejectBtn = <Button size="small" color="secondary" variant='contained'>Reject</Button>
+    let approveBtn = <Button color="primary" variant='contained'>Approve</Button>
+    let rejectBtn = <Button color="secondary" variant='contained'>Reject</Button>
+    let finishBtn = <Button color="primary" variant='contained'>Finish this event</Button>
+    let disableBtn = <Button color="secondary" variant='contained'>Disable this event</Button>
     let showActionBtns = null
 
     if (onsite === true) {
@@ -58,22 +60,34 @@ const EventDetail = (props) => {
 
     if (status.name === 'Pending') {
         showActionBtns = (
-            <CardActions>
-                {approveBtn}
-                {rejectBtn}   
-            </CardActions>
+            <div>
+                <hr />
+                <br />
+                <CardActions>
+                    {approveBtn}
+                    {rejectBtn}
+                </CardActions>
+            </div>
         )
-    } else if(status.name === 'Approved') {
+    } else if (status.name === 'Approved') {
         showActionBtns = (
-            <CardActions>
-                {rejectBtn}   
-            </CardActions>
+            <div>
+                <hr />
+                <br />
+                <CardActions>
+                    {disableBtn}
+                </CardActions>
+            </div>
         )
-    } else if(status.name === 'Rejected') {
+    } else if (status.name === 'In progress') {
         showActionBtns = (
-            <CardActions>
-                {approveBtn}   
-            </CardActions>
+            <div>
+                <hr />
+                <br />
+                <CardActions>
+                    {finishBtn}
+                </CardActions>
+            </div>
         )
     }
 
@@ -158,8 +172,6 @@ const EventDetail = (props) => {
                     </Grid>
                 </Grid>
             </CardContent>
-            <hr/>
-            <br/>   
             {showActionBtns}
         </Card>
     );
