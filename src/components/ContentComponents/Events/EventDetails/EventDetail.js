@@ -1,8 +1,14 @@
-import { Button, Card, CardActions, CardContent, CardMedia, Chip, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Chip, Grid, IconButton, makeStyles, Paper, Popover, Typography } from '@material-ui/core';
+import { MoreVert } from '@material-ui/icons';
+import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
+import CancelIcon from '@material-ui/icons/Cancel';
 import moment from 'moment';
 import React from 'react'
 
 import axios from "../../../../api/axios"
+import { StoreContext } from '../../../../hoc/StoringData/Store'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -23,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
 
     chips: {
         margin: theme.spacing(0.5),
+    },
+
+    settings: {
+        width: '97%',
+        margin: 2
     }
 }))
 
@@ -33,6 +44,7 @@ const EventDetail = (props) => {
     const [category, setCategory] = React.useState({})
     const [status, setStatus] = React.useState({})
     const [onsite, setOnsite] = React.useState(false)
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
     React.useEffect(() => {
         axios.get("/api/events/" + props.match.params.id)
@@ -47,13 +59,28 @@ const EventDetail = (props) => {
             })
     }, [])
 
-    let showOnsite = <Chip color='primary' label='Online' />
-    let approveBtn = <Button color="primary" variant='contained'>Approve</Button>
-    let rejectBtn = <Button color="secondary" variant='contained'>Reject</Button>
-    let finishBtn = <Button color="primary" variant='contained'>Finish this event</Button>
-    let disableBtn = <Button color="secondary" variant='contained'>Disable this event</Button>
-    let showActionBtns = null
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
 
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const editHandler = () => {
+        const { eventDetails } = React.useContext(StoreContext) //cách lấy ra nhưng phải sử dụng reducer để thay đổi giá trị 
+        
+    }
+
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
+    let showOnsite = <Chip color='primary' label='Online' />
+    let approveBtn = <Button startIcon={<ThumbUpIcon />} color="primary" variant='contained'>Approve</Button>
+    let rejectBtn = <Button startIcon={<ThumbDownIcon />} color="secondary" variant='contained'>Reject</Button>
+    let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained'>Finish this event</Button>
+    let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained'>Disable this event</Button>
+    let showActionBtns = null
     if (onsite === true) {
         showOnsite = <Chip color='secondary' label='On site' />
     }
@@ -93,6 +120,33 @@ const EventDetail = (props) => {
 
     return (
         <Card className={classes.root}>
+            <CardHeader
+                title={
+                    <Typography className={classes.Typography} variant="h1" color="textPrimary" component="h1">
+                        {details.title}
+                    </Typography>
+                }
+                subheader={
+                    <Grid item container xs className={classes.Typography}>
+                        <Grid item xs>
+                            <Typography variant="body1" color="textSecondary" component="span">
+                                <strong>Created on: </strong> {moment(details.createdDate).format('MMMM Do YYYY')}
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="body2" color="textSecondary" component="span">
+                                <strong>by: </strong> {details.accountEmail}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                }
+                action={
+                    <IconButton onClick={handleClick}>
+                        <MoreVert aria-label="settings" />
+                    </IconButton>
+                }
+            />
+
             {/*Image will be updated after firebase injection */}
             <CardMedia
                 className={classes.media}
@@ -104,22 +158,6 @@ const EventDetail = (props) => {
             <CardContent>
                 <Grid container xs item spacing={2}>
                     <Grid item xs>
-                        <Typography className={classes.Typography} variant="h1" color="textPrimary" component="h1">
-                            {details.title}
-                        </Typography>
-                        <Grid item container xs className={classes.Typography}>
-                            <Grid item xs>
-                                <Typography variant="body1" color="textSecondary" component="span">
-                                    <strong>Created on: </strong> {moment(details.createdDate).format('MMMM Do YYYY')}
-                                </Typography>
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="body2" color="textSecondary" component="span">
-                                    <strong>by: </strong> {details.accountEmail}
-                                </Typography>
-                            </Grid>
-                        </Grid>
-
                         <Grid item container xs className={classes.Typography}>
                             <Grid item xs>
                                 <Typography variant="body1" color="textPrimary" component="span">
@@ -173,7 +211,27 @@ const EventDetail = (props) => {
                 </Grid>
             </CardContent>
             {showActionBtns}
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+            >
+                <Paper style={{maxWidth: 'auto', textAlign: 'center'}}>
+                    <Button className={classes.settings} color='primary' variant='outlined' onClick={editHandler}>Edit</Button>
+                    <Button className={classes.settings} color='secondary' variant='outlined'>Delete</Button>
+                </Paper>
+            </Popover>
         </Card>
+
     );
 }
 
