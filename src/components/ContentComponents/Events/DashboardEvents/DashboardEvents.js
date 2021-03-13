@@ -22,7 +22,7 @@ const columns = [
     }
   },
   {
-    field: 'authorAccount', headerName: 'Host email', width: 200,
+    field: 'authorAccount', headerName: 'Host email', width: 180,
     renderCell: (params) => {
       return <p>{params.value.email}</p>
     }
@@ -39,7 +39,22 @@ const columns = [
       return <p>{moment(params.value).format("MMM Do YYYY")}</p>
     }
   },
-  { field: 'spot', headerName: 'Slots', width: 100 },
+  { field: 'spot', headerName: 'Slots', width: 90 },
+  {
+    field: 'onsite', headerName: 'Type', width: 100,
+    renderCell: (params) => {
+      let showOnSite = params.value
+      if (showOnSite === true) {
+        return (<Button variant="contained" color='primary' size="small">
+          On site
+        </Button>)
+      } else {
+        return (<Button variant="contained" color='secondary' size="small">
+          Online
+      </Button>)
+      }
+    }
+  },
   {
     field: 'status', headerName: 'Status', width: 120,
     renderCell: (params) => {
@@ -85,28 +100,12 @@ const DashboardEvents = () => {
   }, [])
 
   const showEventDetails = (event) => {
-    history.push('/home/events/' + event.row.id)
+    history.push('/home/events/details/' + event.row.id)
   }
-
-  // React.useEffect(() => {
-  //   axios.get('/api/event-category')
-  //     .then(res => {
-  //       console.log(res)
-  //     })
-  // })
-
-  // const filter = (
-  //   <div>
-  //     <Button variant='contained' color='primary'>vì đã lỡ yêu em ròi, chằng cần muốn xa xôi</Button>
-  //   </div >
-  // )
 
   return (
     <Card>
       <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending events" subheader="These remaining events that waits to be confirm" />
-
-      {/* <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Categories: " subheader={filter} /> */}
-
       <CardContent>
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid rows={events} columns={columns} pageSize={5} onRowClick={(rows) => showEventDetails(rows)} />

@@ -27,7 +27,7 @@ const Sidebar = (props) => {
     const SidebarContent = (
         <Box height="100%" display="flex" flexDirection="column" >
 
-            <Profile/>
+            <Profile logoutClicked={props.clicked} />
 
             <Divider />
 
@@ -43,13 +43,19 @@ const Sidebar = (props) => {
                     ))}
                 </List>
             </Box>
-            <Button style={{margin: '10px'}} variant="contained" color="primary" startIcon={<ExitToApp/>}><strong>Logout</strong></Button>
-
+            <Button 
+                style={{margin: '10px'}} 
+                variant="contained" 
+                color="primary" 
+                startIcon={<ExitToApp/>}
+                onClick={props.clicked}
+            >
+                <strong>Logout</strong>
+            </Button>
             <Box flexGrow={1} />
-
         </Box>
     )
-    
+
     return (
         <React.Fragment>
            <Hidden lgUp>

@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, createMuiTheme, ThemeProvider } from '@m
 import moment from 'moment'
 import Button from '@material-ui/core/Button'
 
-import axios from '../../../api/axios'
+import axios from '../../../../api/axios'
+import { useHistory } from 'react-router';
 
 const buttonTheme = createMuiTheme({
   palette: {
@@ -81,13 +82,11 @@ const columns = [
 //   { id: 7, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
 // ]
 
-const getRowClicked = rows => {
-  return console.log(rows.row.id)
-}
-
 const DashboardServices = () => {
 
   const [services, setServices] = React.useState([])
+
+  const history = useHistory()
 
   React.useEffect(() => {
     axios.get('/api/services')
@@ -99,12 +98,16 @@ const DashboardServices = () => {
       })
   }, [])
 
+  const showServiceDetails = (event) => {
+    history.push('/home/services/' + event.row.id)
+  }
+
   return (
     <Card>
       <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending services" subheader="These remaining services that waits to be confirm" />
       <CardContent>
         <div style={{ height: 400, width: '100%' }}>
-          <DataGrid rows={services} columns={columns} pageSize={5} onRowClick={(rows) => getRowClicked(rows)} />
+          <DataGrid rows={services} columns={columns} pageSize={5} onRowClick={(rows) => showServiceDetails(rows)} />
         </div>
       </CardContent>
     </Card>

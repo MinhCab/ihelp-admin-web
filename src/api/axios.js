@@ -17,11 +17,12 @@ const getToken = () => {
 }
 
 const instance = axios.create({
-    baseURL: 'http://45.76.161.254:8082/ihelp',
-    auth: getToken
+    baseURL: 'https://45.76.161.254:8443/ihelp',
 })
 
-// axios.defaults.headers.common['Authorization'] = getToken;
-axios.defaults.headers.post['Content-Type'] = 'application/json'
+const ACCESS_TOKEN = getToken().trim()
+
+instance.defaults.headers.post['Content-Type'] = 'application/json'
+instance.defaults.headers.common['Authorization'] = `Bearer ${ACCESS_TOKEN}`
 
 export default instance

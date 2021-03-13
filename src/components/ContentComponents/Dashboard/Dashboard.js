@@ -3,7 +3,7 @@ import { Grid } from '@material-ui/core';
 
 import Events from '../Events/DashboardEvents/DashboardEvents';
 import Admins from '../Users/DashboardAdmins'
-import Services from '../Services/DashboardServices'
+import Services from '../Services/DashboardServices/DashboardServices'
 // import BlogCard from '../Components/DashboardComponents/BlogCards';
 
 // import us1 from '../assets/images/backgrounds/u1.jpg'

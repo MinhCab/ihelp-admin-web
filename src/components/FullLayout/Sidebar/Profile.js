@@ -38,7 +38,7 @@ const userProfile = {
 }; 
 
 
-const Profile = () => {
+const Profile = (props) => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
     // const [userProfile, setUserProfile] = useState(null);
@@ -79,6 +79,7 @@ const Profile = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    
     return (
         <Box className={classes.profileBg} color="white">
             <Box p={3}>
@@ -99,9 +100,8 @@ const Profile = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose} className={classes.pwidth}>Profile</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={props.logoutClicked}>Logout</MenuItem>
             </Menu>
         </Box>
     );

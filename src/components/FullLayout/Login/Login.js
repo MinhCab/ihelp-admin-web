@@ -43,21 +43,21 @@ const Login = (props) => {
   //   if (token !== '') { return (<Redirect from="/login" to="/home/dashboard" exact />) }
   // }, [])
 
-  // const getCookie = (cname) => {
-  //   let name = cname + '=';
-  //   let decodedCookie = decodeURIComponent(document.cookie);
-  //   let ca = decodedCookie.split(';');
-  //   for (let i = 0; i < ca.length; i++) {
-  //     let c = ca[i];
-  //     while (c.charAt(0) === ' ') {
-  //       c = c.substring(1);
-  //     }
-  //     if (c.indexOf(name) === 0) {
-  //       return c.substring(name.length, c.length);
-  //     }
-  //   }
-  //   return '';
-  // }
+  const getCookie = (cname) => {
+    let name = cname + '=';
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -73,9 +73,12 @@ const Login = (props) => {
         if (res.data) {
           saveTokenAndEmailToCookies(res.data.accessToken, email)
           history.push('/home/dashboard')
+          console.log('token: ' + getCookie('accessToken'))
         }
       }).catch(error => {
-        setErrorMessage(error.message)
+        if (error.message === 'Request failed with status code 400') {
+          setErrorMessage('Invalid username & password')
+        }
         return
       })
 
@@ -127,7 +130,7 @@ const Login = (props) => {
             <form noValidate autoComplete="off" onSubmit={handleSubmit}>
               <Box p={2}><TextField fullWidth id="username" onChange={handleInput} value={email} required label="Username" variant="outlined" /></Box>
               <Box p={2}><TextField fullWidth id="password" onChange={handleInputPass} value={password} required label="Password" variant="outlined" type="password" /></Box>
-              <Box p={2}><Button fullWidth size="large" disabled={!email || !password} type="submit" color="secondary" variant="contained" disableElevation >Login</Button></Box>
+              <Box p={2}><Button fullWidth size="large" disabled={!email || !password} type="submit" color="primary" variant="contained" disableElevation >Login</Button></Box>
             </form>
 
             <Box p={2}>

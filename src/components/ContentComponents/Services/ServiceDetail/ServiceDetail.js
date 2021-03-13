@@ -1,13 +1,13 @@
 import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, Chip, Grid, IconButton, makeStyles, Paper, Popover, Typography } from '@material-ui/core';
-import { MoreVert } from '@material-ui/icons';
+import moment from 'moment';
+import React from 'react'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import CancelIcon from '@material-ui/icons/Cancel';
-import moment from 'moment';
-import React from 'react'
 
 import axios from "../../../../api/axios"
+import { MoreVert } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,22 +36,22 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-const EventDetail = (props) => {
+
+
+const ServiceDetail = (props) => {
 
     const classes = useStyles();
     const [details, setDetails] = React.useState({})
-    const [category, setCategory] = React.useState({})
+    const [serviceType, setserviceType] = React.useState({})
     const [status, setStatus] = React.useState({})
-    const [onsite, setOnsite] = React.useState(false)
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     React.useEffect(() => {
-        axios.get("/api/events/" + props.match.params.id)
+        axios.get("/api/services/" + props.match.params.id)
             .then(res => {
                 setDetails(res.data)
-                setCategory(res.data.category)
+                setserviceType(res.data.serviceType)
                 setStatus(res.data.status)
-                setOnsite(res.data.onsite)
                 console.log(res.data)
             }).catch(error => {
                 console.log(error.message)
@@ -65,16 +65,6 @@ const EventDetail = (props) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-    const editHandler = () => {
-        // const { eventDetails } = React.useContext(StoreContext) //cách lấy ra nhưng phải sử dụng reducer để thay đổi giá trị
-        console.log('Edit event clicked')
-    }
-
-    const deleteHandler = () => {
-        console.log('Delete event clicked')
-        // axios.delete('')
-    }
 
     const getCookie = (cname) => {
         let name = cname + "=";
@@ -92,20 +82,15 @@ const EventDetail = (props) => {
         return "";
       }
 
-
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
     const username = getCookie('userEmail')
 
-    let showOnsite = <Chip color='primary' label='Online' />
     let approveBtn = <Button startIcon={<ThumbUpIcon />} color="primary" variant='contained'>Approve</Button>
     let rejectBtn = <Button startIcon={<ThumbDownIcon />} color="secondary" variant='contained'>Reject</Button>
-    let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained'>Finish this event</Button>
-    let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained'>Disable this event</Button>
+    let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained'>Finish this service</Button>
+    let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained'>Disable this service</Button>
     let showActionBtns = null
-    if (onsite === true) {
-        showOnsite = <Chip color='secondary' label='On site' />
-    }
 
     if (status.name === 'Pending' && username !== details.accountEmail) {
         showActionBtns = (
@@ -168,7 +153,6 @@ const EventDetail = (props) => {
                     </IconButton>
                 }
             />
-
             {/*Image will be updated after firebase injection */}
             <CardMedia
                 className={classes.media}
@@ -205,8 +189,8 @@ const EventDetail = (props) => {
                         <Grid item container xs className={classes.Typography}>
                             <Grid item xs>
                                 <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Category: </strong>
-                                    <Chip color='primary' label={category.name} />
+                                    <strong>Service Type: </strong>
+                                    <Chip color='primary' label={serviceType.name} />
                                 </Typography>
                             </Grid>
                             <Grid item >
@@ -218,9 +202,8 @@ const EventDetail = (props) => {
                         </Grid>
                         <Grid item container xs className={classes.Typography}>
                             <Grid item xs>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Type: </strong>
-                                    {showOnsite}
+                                <Typography variant="body1" color="primary" component="span">
+                                    <strong>Points for this service: {details.point}</strong>
                                 </Typography>
                             </Grid>
                             <Grid item >
@@ -240,7 +223,7 @@ const EventDetail = (props) => {
                 onClose={handleClose}
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'center',
+                    horizontal: 'center',   
                 }}
                 transformOrigin={{
                     vertical: 'top',
@@ -248,13 +231,12 @@ const EventDetail = (props) => {
                 }}
             >
                 <Paper style={{maxWidth: 'auto', textAlign: 'center'}}>
-                    <Button className={classes.settings} color='primary' variant='outlined' onClick={editHandler}>Edit</Button>
-                    <Button className={classes.settings} color='secondary' variant='outlined' onClick={deleteHandler}>Delete</Button>
+                    <Button className={classes.settings} color='primary' variant='outlined'>Edit</Button>
+                    <Button className={classes.settings} color='secondary' variant='outlined'>Delete</Button>
                 </Paper>
             </Popover>
         </Card>
-
     );
 }
 
-export default EventDetail
+export default ServiceDetail
