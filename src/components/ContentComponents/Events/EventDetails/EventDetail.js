@@ -234,6 +234,13 @@ const EventDetail = (props) => {
                                 </Typography>
                             </Grid>
                         </Grid>
+                        <Grid item container xs className={classes.Typography}>
+                            <Grid item xs>
+                                <Typography variant="body1" color="primary" component="span">
+                                    <strong>Points for this event: {details.point}</strong>
+                                </Typography>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
             </CardContent>

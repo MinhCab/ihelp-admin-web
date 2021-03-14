@@ -8,7 +8,7 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Form, TextArea } from 'semantic-ui-react'
 
 import axios from '../../../../api/axios'
-import ConfirmationDialog from '../../../FullLayout/ConfirmationDialog/ConfirmationDialog'
+import { EventConfirmationDialog } from '../../../FullLayout/ConfirmationDialog/ConfirmationDialog'
 import AlertSnackbar from '../../../FullLayout/AlertSnackbar/AlertSnackbar'
 import { useHistory } from 'react-router'
 
@@ -71,11 +71,11 @@ const CreateEvent = () => {
 
     const handleCloseAlert = (event, reason) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         setOpenAlert(false);
-      };
+    };
 
     const handleCancelConfirmation = () => {
         console.log('Cancel clicked')
@@ -202,9 +202,8 @@ const CreateEvent = () => {
     if (openConfirmation) {
         if (confirmInfo !== null) {
             showConfirmation = (
-                <ConfirmationDialog
+                <EventConfirmationDialog
                     details={confirmInfo}
-                    createOn='event'
                     cancel={handleCancelConfirmation}
                     proceed={handleProceedConfirmation}
                     isOpen={openConfirmation}
@@ -216,7 +215,7 @@ const CreateEvent = () => {
     }
 
     if (openAlert) {
-        showAlert = <AlertSnackbar 
+        showAlert = <AlertSnackbar
             isOpen={openAlert}
             alertInfo={alertInfo}
             close={handleCloseAlert}
