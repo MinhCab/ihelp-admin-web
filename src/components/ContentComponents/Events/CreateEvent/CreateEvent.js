@@ -1,6 +1,6 @@
-import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel, Snackbar } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel } from '@material-ui/core'
 import moment from 'moment'
-import React, { useEffect } from 'react'
+import React, { useEffect, useHistory } from 'react'
 import { enGB } from 'date-fns/locale'
 import { DateRangePicker, START_DATE, END_DATE } from 'react-nice-dates'
 import 'react-nice-dates/build/style.css'
@@ -8,8 +8,8 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Form, TextArea } from 'semantic-ui-react'
 
 import axios from '../../../../api/axios'
-import { Alert } from '@material-ui/lab'
-
+import ConfirmationDialog from '../../../FullLayout/ConfirmationDialog/ConfirmationDialog'
+import AlertSnackbar from '../../../FullLayout/AlertSnackbar/AlertSnackbar'
 
 const useStyles = makeStyles(theme => ({
     finalButton: {
@@ -23,13 +23,16 @@ const useStyles = makeStyles(theme => ({
 
 const CreateEvent = () => {
     const classes = useStyles()
-    const [openAlert, setOpenAlert] = React.useState(false)
+    const [openConfirmation, setOpenConfirmation] = React.useState(false)
+    const [confirmInfo, setConfirmInfo] = React.useState(null)
     const [categories, setCategories] = React.useState([])
+    const [openAlert, setOpenAlert] = React.useState(false)
+    const [alertInfo, setAlertInfo] = React.useState(null)
 
     const [title, setTitle] = React.useState('')
     const [startDate, setStartDate] = React.useState()
     const [endDate, setEndDate] = React.useState()
-    const [category, setCategory] = React.useState('')
+    const [category, setCategory] = React.useState({})
     const [quota, setQuota] = React.useState(1)
     const [point, setPoint] = React.useState(0)
     const [onSite, setOnSite] = React.useState(true)
@@ -40,7 +43,7 @@ const CreateEvent = () => {
         setTitle(event.target.value)
     }
 
-    const handleCategoryInput = (event) => {
+    const handleCategoryInput = (event, name) => {
         setCategory(event.target.value)
     }
 
@@ -66,19 +69,27 @@ const CreateEvent = () => {
 
     const handleCloseAlert = (event, reason) => {
         if (reason === 'clickaway') {
-            return;
+          return;
         }
+    
         setOpenAlert(false);
-    };
+      };
 
-    const handleCreateEvent = () => {
+    const handleCancelConfirmation = () => {
+        console.log('Cancel clicked')
+        setOpenConfirmation(false)
+    }
+
+    const handleProceedConfirmation = () => {
+        console.log('Procced clicked')
+
         let realLocation = location
 
         if (onSite === false) {
             realLocation = 'Online'
         }
 
-        event = {
+        const event = {
             authorEmail: author,
             categoryId: category,
             description: description,
@@ -96,22 +107,42 @@ const CreateEvent = () => {
 
         axios.post('/api/events', event)
             .then(res => {
-                console.log(res)
-                showAlert = (
-                    <Alert onClose={handleCloseAlert} severity="success">
-                        {res.data}
-                    </Alert>
-                )
+                console.log(res.data)
+                setAlertInfo({
+                    type: 'success',
+                    message: res.data
+                })
                 setOpenAlert(true)
             }).catch(err => {
                 console.log(err)
-                showAlert = (
-                    <Alert onClose={handleCloseAlert} severity="error">
-                        {err.message}
-                    </Alert>
-                )
+                setAlertInfo({
+                    type: 'error',
+                    message: err.message
+                })
                 setOpenAlert(true)
             })
+        setOpenConfirmation(false)
+    }
+
+    const handleCreateEventButton = () => {
+        let realLocation = location
+
+        if (onSite === false) {
+            realLocation = 'Online'
+        }
+
+        setConfirmInfo({
+            title: title.toUpperCase(),
+            startDate: startDate.toString(),
+            endDate: endDate.toString(),
+            category: categories.find(res => res.id === category).name,
+            onsite: onSite,
+            quota: quota,
+            point: point,
+            description: description,
+            location: realLocation
+        })
+        setOpenConfirmation(true)
     }
 
     const getCookie = (cname) => {
@@ -137,13 +168,18 @@ const CreateEvent = () => {
                 setCategories(res.data)
             }).catch(err => {
                 console.log(err.message)
+                openAlert(true)
+                setAlertInfo({
+                    type: 'error',
+                    message: err.message
+                })
             })
     }, [])
 
     const author = getCookie('userEmail')
     const createdDate = new Date()
-    let event = null
     let showType = 'On site'
+    let showConfirmation = null
     let showAlert = null
     let showLocationField = (
         <Grid item>
@@ -160,6 +196,30 @@ const CreateEvent = () => {
         showLocationField = null
     }
 
+    if (openConfirmation) {
+        if (confirmInfo !== null) {
+            showConfirmation = (
+                <ConfirmationDialog
+                    details={confirmInfo}
+                    createOn='event'
+                    cancel={handleCancelConfirmation}
+                    proceed={handleProceedConfirmation}
+                    isOpen={openConfirmation}
+                />
+            )
+        } else {
+            console.log('Event is null')
+        }
+    }
+
+    if (openAlert) {
+        showAlert = <AlertSnackbar 
+            isOpen={openAlert}
+            alertInfo={alertInfo}
+            close={handleCloseAlert}
+        />
+    }
+
     return (
         <React.Fragment>
             <Card>
@@ -172,7 +232,7 @@ const CreateEvent = () => {
                                 </Typography>
                             </Grid>
                             <Grid item>
-                                <Button className={classes.finalButton} color='primary' variant='contained' onClick={handleCreateEvent}>Create</Button>
+                                <Button className={classes.finalButton} color='primary' variant='contained' onClick={handleCreateEventButton}>Create</Button>
                                 <Button className={classes.finalButton} color='secondary' variant='contained'>Discard</Button>
                             </Grid>
                         </Grid>
@@ -235,8 +295,8 @@ const CreateEvent = () => {
                             <Select
                                 id="txtCategory"
                                 variant='outlined'
-                                value={category}
                                 select='true'
+                                value={category}
                                 onChange={(event) => handleCategoryInput(event)}
                             >
                                 {categories.map(cate => {
@@ -296,10 +356,9 @@ const CreateEvent = () => {
                         </Grid>
                     </Grid>
                 </CardContent>
-            </Card >
-            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
-                {showAlert}
-            </Snackbar>
+            </Card>
+            {showConfirmation}
+            {showAlert}
         </React.Fragment>
     )
 }
