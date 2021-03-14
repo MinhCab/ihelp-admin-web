@@ -73,7 +73,12 @@ const EventDetail = (props) => {
 
     const deleteHandler = () => {
         console.log('Delete event clicked')
-        // axios.delete('')
+        axios.delete('/api/events/' + props.match.params.id)
+            .then(res => {
+                console.log(res)
+            }).catch(err => {
+                console.log(err.message)
+            })
     }
 
     const getCookie = (cname) => {

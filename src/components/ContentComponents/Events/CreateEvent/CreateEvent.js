@@ -1,6 +1,6 @@
 import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel } from '@material-ui/core'
 import moment from 'moment'
-import React, { useEffect, useHistory } from 'react'
+import React, { useEffect } from 'react'
 import { enGB } from 'date-fns/locale'
 import { DateRangePicker, START_DATE, END_DATE } from 'react-nice-dates'
 import 'react-nice-dates/build/style.css'
@@ -10,6 +10,7 @@ import { Form, TextArea } from 'semantic-ui-react'
 import axios from '../../../../api/axios'
 import ConfirmationDialog from '../../../FullLayout/ConfirmationDialog/ConfirmationDialog'
 import AlertSnackbar from '../../../FullLayout/AlertSnackbar/AlertSnackbar'
+import { useHistory } from 'react-router'
 
 const useStyles = makeStyles(theme => ({
     finalButton: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 const CreateEvent = () => {
     const classes = useStyles()
+    const history = useHistory()
     const [openConfirmation, setOpenConfirmation] = React.useState(false)
     const [confirmInfo, setConfirmInfo] = React.useState(null)
     const [categories, setCategories] = React.useState([])
@@ -113,6 +115,7 @@ const CreateEvent = () => {
                     message: res.data
                 })
                 setOpenAlert(true)
+                history.push('/home/events')
             }).catch(err => {
                 console.log(err)
                 setAlertInfo({

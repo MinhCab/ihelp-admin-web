@@ -1,16 +1,16 @@
 import axios from 'axios'
-import file from '../assets/cert/reactCert.crt'
+// import file from '../assets/cert/reactCert.crt'
 
-const fs = require('fs')
-const https = require('https')
-let caCrt = '';
-try {
-  caCrt = fs.readFileSync(file)
-} catch (err) {
-  console.log('Make sure that the CA cert file is named ca.crt', err);
-}
+// const fs = require('fs')
+// const https = require('https')
+// let caCrt = '';
+// try {
+//   caCrt = fs.readFileSync(file)
+// } catch (err) {
+//   console.log('Make sure that the CA cert file is named ca.crt', err);
+// }
 
-const httpsAgentCert = new https.Agent({ cert: caCrt, keepAlive: false });
+// const httpsAgentCert = new https.Agent({ cert: caCrt, keepAlive: false });
 const getToken = () => {
   let name = 'accessToken=';
   let decodedCookie = decodeURIComponent(document.cookie);
@@ -29,7 +29,7 @@ const getToken = () => {
 
 const instance = axios.create({
   baseURL: 'https://45.76.161.254:8443/ihelp',
-  httpsAgent: httpsAgentCert
+  // httpsAgent: httpsAgentCert
 })
 
 const ACCESS_TOKEN = getToken().trim()
