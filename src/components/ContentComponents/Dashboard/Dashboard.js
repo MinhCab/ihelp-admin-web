@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid } from '@material-ui/core';
 
 import Events from '../Events/DashboardEvents/DashboardEvents';
-import Admins from '../Users/DashboardAdmins'
+import Admins from '../Users/DashboardAdmins/DashboardAdmins'
 import Services from '../Services/DashboardServices/DashboardServices'
 // import BlogCard from '../Components/DashboardComponents/BlogCards';
 

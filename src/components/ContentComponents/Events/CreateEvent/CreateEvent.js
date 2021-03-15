@@ -148,6 +148,10 @@ const CreateEvent = () => {
         setOpenConfirmation(true)
     }
 
+    const handleDiscardEventButton = () => {
+        
+    }
+
     const getCookie = (cname) => {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
@@ -190,7 +194,6 @@ const CreateEvent = () => {
                 <strong>Location: </strong>
                 <Input id='txtLocation' value={location} onChange={(event) => handleLocationInput(event)} />
             </Typography>
-
         </Grid>
     )
 
@@ -235,7 +238,7 @@ const CreateEvent = () => {
                             </Grid>
                             <Grid item>
                                 <Button className={classes.finalButton} color='primary' variant='contained' onClick={handleCreateEventButton}>Create</Button>
-                                <Button className={classes.finalButton} color='secondary' variant='contained'>Discard</Button>
+                                <Button className={classes.finalButton} color='secondary' variant='contained' onClick={handleDiscardEventButton}>Discard</Button>
                             </Grid>
                         </Grid>
                     }

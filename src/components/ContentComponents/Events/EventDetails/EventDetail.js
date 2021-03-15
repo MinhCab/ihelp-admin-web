@@ -58,6 +58,22 @@ const EventDetail = (props) => {
             })
     }, [])
 
+    const approveEventHandler = () => {
+        console.log('Approve event clicked')
+    }
+
+    const rejectEventHandler = () => {
+        console.log('Reject event clicked')
+    }
+
+    const disableEventHandler = () => {
+        console.log('Disable event clicked')
+    }
+
+    const finishEventHandler = () => {
+        console.log('Finish event clicked')
+    }
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -85,17 +101,17 @@ const EventDetail = (props) => {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
         let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-          let c = ca[i];
-          while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-          }
-          if (c.indexOf(name) === 0) {
-            return c.substring(name.length, c.length);
-          }
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
         }
         return "";
-      }
+    }
 
 
     const open = Boolean(anchorEl);
@@ -103,26 +119,33 @@ const EventDetail = (props) => {
     const username = getCookie('userEmail')
 
     let showOnsite = <Chip color='primary' label='Online' />
-    let approveBtn = <Button startIcon={<ThumbUpIcon />} color="primary" variant='contained'>Approve</Button>
-    let rejectBtn = <Button startIcon={<ThumbDownIcon />} color="secondary" variant='contained'>Reject</Button>
-    let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained'>Finish this event</Button>
-    let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained'>Disable this event</Button>
+    let approveBtn = <Button startIcon={<ThumbUpIcon />} color="primary" variant='contained' onClick={approveEventHandler}>Approve</Button>
+    let rejectBtn = <Button startIcon={<ThumbDownIcon />} color="secondary" variant='contained' onClick={rejectEventHandler}>Reject</Button>
+    let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained' onClick={finishEventHandler}>Finish this event</Button>
+    let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained' onClick={disableEventHandler}>Disable this event</Button>
     let showActionBtns = null
+    let deleteBtn = null
     if (onsite === true) {
         showOnsite = <Chip color='secondary' label='On site' />
     }
 
-    if (status.name === 'Pending' && username !== details.accountEmail) {
-        showActionBtns = (
-            <div>
-                <hr />
-                <br />
-                <CardActions>
-                    {approveBtn}
-                    {rejectBtn}
-                </CardActions>
-            </div>
-        )
+    if (status.name === 'Pending') {
+
+        deleteBtn = <Button className={classes.settings} color='secondary' variant='outlined' onClick={deleteHandler}>Delete</Button>
+
+        if (username !== details.accountEmail) {
+            showActionBtns = (
+                <div>
+                    <hr />
+                    <br />
+                    <CardActions>
+                        {approveBtn}
+                        {rejectBtn}
+                    </CardActions>
+                </div>
+            )
+        }
+
     } else if (status.name === 'Approved') {
         showActionBtns = (
             <div>
@@ -259,9 +282,9 @@ const EventDetail = (props) => {
                     horizontal: 'left',
                 }}
             >
-                <Paper style={{maxWidth: 'auto', textAlign: 'center'}}>
+                <Paper style={{ maxWidth: 'auto', textAlign: 'center' }}>
                     <Button className={classes.settings} color='primary' variant='outlined' onClick={editHandler}>Edit</Button>
-                    <Button className={classes.settings} color='secondary' variant='outlined' onClick={deleteHandler}>Delete</Button>
+                    {deleteBtn}
                 </Paper>
             </Popover>
         </Card>

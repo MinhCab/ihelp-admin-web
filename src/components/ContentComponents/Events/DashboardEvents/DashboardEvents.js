@@ -85,30 +85,46 @@ const columns = [
 
 const DashboardEvents = () => {
 
-  const [events, setEvents] = React.useState([])
-  // const [categories, setCategories] = React.useState([])
   const history = useHistory()
-
-  React.useEffect(() => {
-    axios.get('/api/events?page=0')
-      .then(res => {
-        setEvents(res.data.events)
-        console.log(res.data)
-      }).catch(error => {
-        console.log(error.message)
-      })
-  }, [])
+  const [events, setEvents] = React.useState([])
+  const [page, setPage] = React.useState(0)
+  const [totalItems, setTotalItems] = React.useState(0)
 
   const showEventDetails = (event) => {
     history.push('/home/events/details/' + event.row.id)
   }
+
+  const pagingHandler = (params) => {
+    setPage(params.page)
+}
+
+  React.useEffect(() => {
+    axios.get('/api/events/status/2?page=' + page)
+      .then(res => {
+        setEvents(res.data.events)
+        setTotalItems(res.data.totalItems)
+        console.log(res.data)
+      }).catch(error => {
+        console.log(error.message)
+      })
+  }, [page, totalItems])
+  
 
   return (
     <Card>
       <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending events" subheader="These remaining events that waits to be confirm" />
       <CardContent>
         <div style={{ height: 400, width: '100%' }}>
-          <DataGrid rows={events} columns={columns} pageSize={5} onRowClick={(rows) => showEventDetails(rows)} />
+          <DataGrid 
+            rows={events} 
+            columns={columns} 
+            pageSize={5} 
+            onRowClick={(rows) => showEventDetails(rows)} 
+            pagination
+            paginationMode='server'
+            onPageChange={pagingHandler}
+            rowCount={totalItems}
+          />
         </div>
       </CardContent>
     </Card>

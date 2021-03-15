@@ -10,7 +10,7 @@ import FullLayout from '../components/FullLayout/FullLayout'
 import Dashboard from '../components/ContentComponents/Dashboard/Dashboard'
 import Events from '../components/ContentComponents/Events/Events'
 import Services from '../components/ContentComponents/Services/DashboardServices/DashboardServices'
-import Users from '../components/ContentComponents/Users/DashboardAdmins'
+import Users from '../components/ContentComponents/Users/DashboardAdmins/DashboardAdmins'
 import EventDetail from '../components/ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../components/ContentComponents/Services/ServiceDetail/ServiceDetail';
 import StoreProvider from '../hoc/StoringData/Store'

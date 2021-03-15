@@ -89,7 +89,7 @@ const DashboardServices = () => {
   const history = useHistory()
 
   React.useEffect(() => {
-    axios.get('/api/services')
+    axios.get('/api/services/status/2')
       .then(res => {
         console.log(res)
         setServices(res.data)
