@@ -8,8 +8,8 @@ import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Form, TextArea } from 'semantic-ui-react'
 
 import axios from '../../../../api/axios'
-import { EventConfirmationDialog } from '../../../FullLayout/ConfirmationDialog/ConfirmationDialog'
-import AlertSnackbar from '../../../FullLayout/AlertSnackbar/AlertSnackbar'
+import { EventConfirmationDialog } from '../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog'
+import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import { useHistory } from 'react-router'
 
 const useStyles = makeStyles(theme => ({

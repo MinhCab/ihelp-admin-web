@@ -44,11 +44,11 @@ const columns = [
         renderCell: (params) => {
             let showOnSite = params.value
             if (showOnSite === true) {
-                return (<Button variant="contained" color='primary' size="small">
+                return (<Button variant="outlined" color='primary' size="small">
                     On site
                 </Button>)
             } else {
-                return (<Button variant="contained" color='secondary' size="small">
+                return (<Button variant="outlined" color='secondary' size="small">
                     Online
                 </Button>)
             }
@@ -57,10 +57,10 @@ const columns = [
     {
         field: 'status', headerName: 'Status', width: 120,
         renderCell: (params) => {
-            let color = 'secondary';
+            let color = 'primary';
             let type = params.value;
-            if (type.id === 1) {
-                color = 'primary'
+            if (type.id === 2) {
+                color = 'secondary'
             }
             return (
                 <Button variant="contained" color={color} size="small">

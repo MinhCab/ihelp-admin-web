@@ -45,11 +45,11 @@ const columns = [
     renderCell: (params) => {
       let showOnSite = params.value
       if (showOnSite === true) {
-        return (<Button variant="contained" color='primary' size="small">
+        return (<Button variant="outlined" color='primary' size="small">
           On site
         </Button>)
       } else {
-        return (<Button variant="contained" color='secondary' size="small">
+        return (<Button variant="outlined" color='secondary' size="small">
           Online
       </Button>)
       }

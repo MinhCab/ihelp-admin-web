@@ -9,7 +9,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 
-import Logo from '../Logo/LogoIcon'
+import Logo from '../../FullLayout/Logo/LogoIcon'
 import axios from '../../../api/axios';
 import { useHistory } from 'react-router-dom';
 const useStyles = makeStyles((theme) => ({

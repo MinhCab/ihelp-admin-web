@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import { theme } from '../assets/jss/Theme-variable'
 import GlobalStyles from '../assets/jss/GlobalStyles'
 import { ThemeProvider } from '@material-ui/core';
-import Login from '../components/FullLayout/Login/Login'
+import Login from '../components/ContentComponents/Login/Login'
 import FullLayout from '../components/FullLayout/FullLayout'
 import Dashboard from '../components/ContentComponents/Dashboard/Dashboard'
 import Events from '../components/ContentComponents/Events/Events'
