@@ -11,6 +11,7 @@ import axios from '../../../../api/axios'
 import { EventConfirmationDialog } from '../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog'
 import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import { useHistory } from 'react-router'
+import AlertDialog from '../../../FullLayout/UI/AlertDialog/AlertDialog'
 
 const useStyles = makeStyles(theme => ({
     finalButton: {
@@ -30,6 +31,7 @@ const CreateEvent = () => {
     const [categories, setCategories] = React.useState([])
     const [openAlert, setOpenAlert] = React.useState(false)
     const [alertInfo, setAlertInfo] = React.useState(null)
+    const [openDiscard, setOpenDiscard] = React.useState(false)
 
     const [title, setTitle] = React.useState('')
     const [startDate, setStartDate] = React.useState()
@@ -149,7 +151,15 @@ const CreateEvent = () => {
     }
 
     const handleDiscardEventButton = () => {
-        
+        setOpenDiscard(true)
+    }
+
+    const handleCancelDiscard = () => {
+        setOpenDiscard(false)
+    }
+
+    const handleProceedDiscard = () => {
+        history.goBack()
     }
 
     const getCookie = (cname) => {
@@ -188,6 +198,7 @@ const CreateEvent = () => {
     let showType = 'On site'
     let showConfirmation = null
     let showAlert = null
+    let showDiscard = null
     let showLocationField = (
         <Grid item>
             <Typography variant='body1' color='textPrimary' component='span'>
@@ -222,6 +233,14 @@ const CreateEvent = () => {
             isOpen={openAlert}
             alertInfo={alertInfo}
             close={handleCloseAlert}
+        />
+    }
+
+    if (openDiscard) {
+        showDiscard = <AlertDialog 
+            isOpen={openDiscard}
+            closing={handleCancelDiscard}
+            proceed={handleProceedDiscard}
         />
     }
 
@@ -364,6 +383,7 @@ const CreateEvent = () => {
             </Card>
             {showConfirmation}
             {showAlert}
+            {showDiscard}
         </React.Fragment>
     )
 }
