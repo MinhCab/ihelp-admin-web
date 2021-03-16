@@ -91,6 +91,7 @@ const EventDetail = (props) => {
         console.log('Delete event clicked')
         axios.delete('/api/events/' + props.match.params.id)
             .then(res => {
+                // history.push('/home/events')
                 console.log(res)
             }).catch(err => {
                 console.log(err.message)

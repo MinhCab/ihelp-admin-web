@@ -12,6 +12,7 @@ import {
 import Logo from '../../FullLayout/Logo/LogoIcon'
 import axios from '../../../api/axios';
 import { useHistory } from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -81,8 +82,6 @@ const Login = (props) => {
         }
         return
       })
-
-
   }
 
   const saveTokenAndEmailToCookies = (token, userEmail) => {

@@ -19,8 +19,6 @@ const EventConfirmationDialog = (props) => {
         )
     }
 
-
-
     return (
         <Dialog
             open={props.isOpen}
