@@ -7,13 +7,7 @@ import GlobalStyles from '../assets/jss/GlobalStyles'
 import { ThemeProvider } from '@material-ui/core';
 import Login from '../components/ContentComponents/Login/Login'
 import FullLayout from '../components/FullLayout/FullLayout'
-import Dashboard from '../components/ContentComponents/Dashboard/Dashboard'
-import Events from '../components/ContentComponents/Events/Events'
-import Services from '../components/ContentComponents/Services/DashboardServices/DashboardServices'
-import Users from '../components/ContentComponents/Users/DashboardAdmins/DashboardAdmins'
-import EventDetail from '../components/ContentComponents/Events/EventDetails/EventDetail';
-import ServiceDetail from '../components/ContentComponents/Services/ServiceDetail/ServiceDetail';
-import CreateEvent from '../components/ContentComponents/Events/CreateEvent/CreateEvent';
+import PrivateRoute from '../routes/PrivateRoute/PrivateRoute';
 
 class App extends Component {
 
@@ -24,15 +18,18 @@ class App extends Component {
         <BrowserRouter>
           <Switch>
             <Route path="/login" exact component={Login} />
-              <FullLayout>
-                <Route exact path='/home/dashboard' render={() => <Dashboard />}/>
+            <PrivateRoute path="/home" component={() => (
+              <FullLayout />
+            )}/>
+              {/* <FullLayout/> */}
+                {/* <Route exact path='/home/dashboard' component={Dashboard}/>
                 <Route exact path='/home/events' render={() => <Events />} />
                 <Route exact path='/home/events/create' render={() => <CreateEvent />} />
                 <Route exact path='/home/events/details/:id' component={EventDetail} />
                 <Route exact path='/home/services' render={() => <Services />} />
                 <Route exact path='/home/services/:id' component={ServiceDetail} />
-                <Route exact path='/home/users' render={() => <Users />} />
-              </FullLayout>
+                <Route exact path='/home/users' render={() => <Users />} /> */}
+              {/* </FullLayout> */}
           </Switch>
         </BrowserRouter>
       </ThemeProvider>

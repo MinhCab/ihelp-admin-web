@@ -52,13 +52,13 @@ const CreateEvent = () => {
     const [onSite, setOnSite] = React.useState(true)
     const [location, setLocation] = React.useState('')
     const [description, setDescription] = React.useState('')
-    const [imageURL, setImageURL] = React.useState(null)
+    // const [imageURL, setImageURL] = React.useState(null)
 
     const handleTitleInput = (event) => {
         setTitle(event.target.value)
     }
 
-    const handleCategoryInput = (event, name) => {
+    const handleCategoryInput = (event) => {
         setCategory(event.target.value)
     }
 
@@ -90,71 +90,70 @@ const CreateEvent = () => {
     const handleProceedConfirmation = () => {
         console.log('Procced clicked')
 
-        const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
+        // const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
 
-        uploadImageTask.on(
-            "state_changed",
-            snapshot => {},
-            error => {
-                console.log(error)
-            },
-            () => {
-                storage
-                    .ref("images/events")
-                    .child(image.name)
-                    .getDownloadURL()
-                    .then(url => {
-                        setImageURL(url)
-                        console.log('image url: ' + imageURL)
-                    })
-            }
-        )
+        // uploadImageTask.on(
+        //     "state_changed",
+        //     snapshot => {},
+        //     error => {
+        //         console.log(error)
+        //     },
+        //     () => {
+        //         storage
+        //             .ref("images/events")
+        //             .child(image.name)
+        //             .getDownloadURL()
+        //             .then(url => {
+        //                 setImageURL(url)
+        //                 console.log('image url: ' + imageURL)
+        //             })
+        //     }
+        // )
 
-        // let realLocation = location
+        let realLocation = location
 
-        // if (onSite === false) {
-        //     realLocation = 'Online'
-        // }
+        if (onSite === false) {
+            realLocation = 'Online'
+        }
 
-        // const event = {
-        //     authorEmail: author,
-        //     categoryId: category,
-        //     description: description,
-        //     endDate: endDate.getUTCMilliseconds(),
-        //     id: "",
-        //     images: [],
-        //     location: realLocation,
-        //     onsite: onSite,
-        //     point: point,
-        //     quota: quota,
-        //     startDate: startDate.getUTCMilliseconds(),
-        //     statusId: 2,
-        //     title: title
-        //     image: imageURL
-        // }
+        const event = {
+            authorEmail: author,
+            categoryId: category,
+            description: description,
+            endDate: endDate.getUTCMilliseconds(),
+            id: "",
+            images: [],
+            location: realLocation,
+            onsite: onSite,
+            point: point,
+            quota: quota,
+            startDate: startDate.getUTCMilliseconds(),
+            statusId: 2,
+            title: title
+        }
 
-        // axios.post('/api/events', event)
-        //     .then(res => {
-        //         console.log(res.data)
-        //         setOpenAlert(true)
-        //         // const alertInfo ={
-        //         //     type: 'success',
-        //         //     message: res.data,
-        //         //     isOpen: openAlert
-        //         // }
-        //         // setAlert.receiveMessage(alertInfo)
-        //         history.push('/home/events')
-        //     }).catch(err => {
-        //         console.log(err)
-        //         setOpenAlert(true)
-        //         // const alertInfo = {
-        //         //     type: 'error',
-        //         //     message: err.message,
-        //         //     isOpen: openAlert
-        //         // }
-        //         // setAlert.receiveMessage(alertInfo)
-        //     })
-        // setOpenConfirmation(false)
+        axios.post('/api/events', event)
+            .then(res => {
+                console.log(res.data)
+                // setOpenAlert(true)
+                // const alertInfo ={
+                //     type: 'success',
+                //     message: res.data,
+                //     isOpen: openAlert
+                // }
+                // setAlert.receiveMessage(alertInfo)
+                history.push('/home/events')
+            }).catch(err => {
+                console.log(err)
+                // setOpenAlert(true)
+                // const alertInfo = {
+                //     type: 'error',
+                //     message: err.message,
+                //     isOpen: openAlert
+                // }
+                // setAlert.receiveMessage(alertInfo)
+            })
+        setOpenConfirmation(false)
     }
 
     const handleCreateEventButton = () => {

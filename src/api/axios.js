@@ -33,8 +33,9 @@ const instance = axios.create({
 })
 
 const ACCESS_TOKEN = getToken().trim()
+console.log('from axios: ' + ACCESS_TOKEN)
 
 instance.defaults.headers.post['Content-Type'] = 'application/json'
 instance.defaults.headers.common['Authorization'] = `Bearer ${ACCESS_TOKEN}`
 
-export default instance
+export default instance   

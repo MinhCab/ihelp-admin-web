@@ -27,7 +27,7 @@ const Sidebar = (props) => {
     const SidebarContent = (
         <Box height="100%" display="flex" flexDirection="column" >
 
-            <Profile logoutClicked={props.clicked} />
+            <Profile userProfile={props.userProfile} logoutClicked={props.clicked} />
 
             <Divider />
 

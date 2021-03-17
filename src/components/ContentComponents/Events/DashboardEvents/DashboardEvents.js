@@ -107,6 +107,9 @@ const DashboardEvents = () => {
       }).catch(error => {
         console.log(error.message)
       })
+      return {
+        
+      }
   }, [page, totalItems])
   
 
