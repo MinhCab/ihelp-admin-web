@@ -39,7 +39,7 @@ const Login = () => {
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
   const history = useHistory()
-  const {setAccessToken} = useAuth()
+  const { setAccessToken  } = useAuth()
 
   // React.useEffect(() => {
   //   const token = getCookie('accessToken')

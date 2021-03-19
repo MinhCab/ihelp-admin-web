@@ -29,9 +29,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Profile = (props) => {
-    const classes = useStyles();
-    const userProfile = props.userProfile
-    const [anchorEl, setAnchorEl] = useState(null);
+    const classes = useStyles()
+    const [anchorEl, setAnchorEl] = useState(null)
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -41,13 +40,14 @@ const Profile = (props) => {
         setAnchorEl(null);
     };
 
+
     return (
         <Box className={classes.profileBg} color="white">
             <Box p={3}>
                 <Avatar className={classes.piclarge} src={uimage} />
             </Box>
             <Typography variant="h6" className={classes.profileTextBg} onClick={handleClick}>
-                {userProfile}
+                {props.fullname}
                 <Box flexGrow={1} />
                 <ExpandMoreIcon fontSize="small" />
             </Typography>

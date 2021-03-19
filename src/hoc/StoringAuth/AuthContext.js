@@ -25,7 +25,8 @@ function getCookie(cname) {
 function useAuthProvider() {
     const [user, setUser] = useState(null)
     const [accessToken, setAccessToken] = useState(getCookie('accessToken'))
-    console.log('From authContext: ' + accessToken)
+    console.log('From authContext - token: ' + accessToken)
+    console.log('From authContext - user: ' + user)
     
     return {user, setUser, accessToken, setAccessToken}
 }
@@ -33,7 +34,7 @@ function useAuthProvider() {
 function AuthProvider(props) {
     const {children} = props
 
-    const auth =  useAuthProvider()
+    const auth = useAuthProvider()
 
     return (
         <AuthContext.Provider value={auth}>

@@ -6,10 +6,10 @@ import { DateRangePicker, START_DATE, END_DATE } from 'react-nice-dates'
 import 'react-nice-dates/build/style.css'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Form, TextArea } from 'semantic-ui-react'
+import { useHistory } from 'react-router'
 
 import axios from '../../../../api/axios'
 import { EventConfirmationDialog } from '../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog'
-import { useHistory } from 'react-router'
 import AlertDialog from '../../../FullLayout/UI/AlertDialog/AlertDialog'
 import { storage } from '../../../../api/config/firebase/FirebaseStorage/firebase-storage'
 import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'

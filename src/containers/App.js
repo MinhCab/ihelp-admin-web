@@ -23,15 +23,6 @@ class App extends Component {
               <PrivateRoute path="/home" component={() => (
                 <FullLayout />
               )} />
-              {/* <FullLayout/> */}
-              {/* <Route exact path='/home/dashboard' component={Dashboard}/>
-                <Route exact path='/home/events' render={() => <Events />} />
-                <Route exact path='/home/events/create' render={() => <CreateEvent />} />
-                <Route exact path='/home/events/details/:id' component={EventDetail} />
-                <Route exact path='/home/services' render={() => <Services />} />
-                <Route exact path='/home/services/:id' component={ServiceDetail} />
-                <Route exact path='/home/users' render={() => <Users />} /> */}
-              {/* </FullLayout> */}
             </Switch>
           </BrowserRouter>
         </AuthProvider>

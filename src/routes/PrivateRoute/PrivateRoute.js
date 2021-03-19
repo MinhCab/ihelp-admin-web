@@ -8,8 +8,6 @@ function PrivateRoute({ component: Component, ...rest }) {
     console.log('from private route: ' + accessToken)
     let isAuth = accessToken ? true : false
 
-    isAuth ? console.log('from true private route: ' + accessToken) : console.log('from false private route: ' + accessToken)
-
     return (
         <Route 
             {...rest}

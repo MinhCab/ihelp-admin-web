@@ -5,8 +5,7 @@ import { makeStyles } from '@material-ui/core';
 import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 import { SidebarWidth } from '../../assets/jss/Theme-variable.js'
-import { Switch, useHistory, useRouteMatch } from 'react-router-dom';
-import axios from '../../api/axios'
+import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import PrivateRoute from '../../routes/PrivateRoute/PrivateRoute';
 
 import Dashboard from '../ContentComponents/Dashboard/Dashboard'
@@ -17,6 +16,7 @@ import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
 import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
+import axios from '../../api/axios'
 
 
 // import { useAlert } from '../../hoc/StoringAlertMessage/StoreAlertMessage'
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const FullLayout = (props) => {
+const FullLayout = () => {
   const { url } = useRouteMatch()
   // const setAlert = useAlert()
   const history = useHistory()
@@ -65,18 +65,16 @@ const FullLayout = (props) => {
   const {setUser, setAccessToken} = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [userProfile, setUserProfile] = useState(null)
+  const [userFullname, setUserFullname] = useState(null)
   // const [openAlert, setOpenAlert] = useState(false)
 
   React.useEffect(() => {
-    const userEmail = getCookie('userEmail')
-    axios.get('/accounts/' + userEmail, {
-    }).then(res => {
-      setUserProfile(res.data.fullname)
-      console.log(res)
-    }).catch(err => {
-      console.log(err.message)
-    })
+    axios.get('/accounts/' + getCookie('userEmail').trim())
+      .then(res => {
+        setUserFullname(res.data.fullname)
+      }).catch(err => {
+        console.log('Error from get account info - FullLayout.js: ' + err.message)
+      })
   }, [])
 
   const logoutHandler = () => {
@@ -94,13 +92,6 @@ const FullLayout = (props) => {
   //   }
   //   setOpenAlert(false);
   // };
-
-  React.useEffect(() => {
-    const token = getCookie('accessToken')
-    if (token === ' ' || token === null) {
-      history.replace('/login')
-    }
-  }, [])
 
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -122,7 +113,7 @@ const FullLayout = (props) => {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=localhost:3000/login";
   }
 
   // // let showAlert = null
@@ -135,7 +126,7 @@ const FullLayout = (props) => {
   //           close={handleCloseAlert}
   //       />
   //   }
-  console.log(url)
+
   return (
 
     <div className={classes.root}>
@@ -145,7 +136,7 @@ const FullLayout = (props) => {
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
         clicked={logoutHandler}
-        userProfile={userProfile}
+        fullname={userFullname}
       />
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
@@ -158,6 +149,7 @@ const FullLayout = (props) => {
               <PrivateRoute exact path={`${url}/services`} component={Services} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
               <PrivateRoute exact path={`${url}/users`} component={Users} />
+              <Redirect from='/' to={`${url}/dashboard`} />
             </Switch>
           </div>
         </div>

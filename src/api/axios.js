@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 // import file from '../assets/cert/reactCert.crt'
 
 // const fs = require('fs')
@@ -11,6 +12,7 @@ import axios from 'axios'
 // }
 
 // const httpsAgentCert = new https.Agent({ cert: caCrt, keepAlive: false });
+
 const getToken = () => {
   let name = 'accessToken=';
   let decodedCookie = decodeURIComponent(document.cookie);
@@ -32,10 +34,22 @@ const instance = axios.create({
   // httpsAgent: httpsAgentCert
 })
 
-const ACCESS_TOKEN = getToken().trim()
-console.log('from axios: ' + ACCESS_TOKEN)
-
 instance.defaults.headers.post['Content-Type'] = 'application/json'
-instance.defaults.headers.common['Authorization'] = `Bearer ${ACCESS_TOKEN}`
 
-export default instance   
+instance.interceptors.request.use(
+  (req) => {
+    const ACCESS_TOKEN = getToken().trim()
+    if(ACCESS_TOKEN) {
+      req.headers['Authorization'] = 'Bearer ' + ACCESS_TOKEN
+    }
+    return req
+  },
+  (error) => {
+    return Promise.reject(error)
+  },
+  { synchronous: true}
+)
+
+console.log('from axios instance: ' + getToken())
+
+export default instance
