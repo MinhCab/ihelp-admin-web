@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 // import { Outlet } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
@@ -16,6 +16,7 @@ import Users from '../ContentComponents/Users/DashboardAdmins/DashboardAdmins'
 import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
 import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
+import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 
 
 // import { useAlert } from '../../hoc/StoringAlertMessage/StoreAlertMessage'
@@ -57,11 +58,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FullLayout = (props) => {
-  const { children } = props
   const { url } = useRouteMatch()
   // const setAlert = useAlert()
   const history = useHistory()
   const classes = useStyles();
+  const {setUser, setAccessToken} = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(null)
@@ -79,7 +80,10 @@ const FullLayout = (props) => {
   }, [])
 
   const logoutHandler = () => {
-    document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+    setCookie('accessToken', '', 0)
+    setCookie('userEmail', '', 0)
+    setUser(null)
+    setAccessToken(null)
     console.log('logout token: ' + getCookie('accessToken'))
     history.replace('/login')
   }
@@ -114,6 +118,13 @@ const FullLayout = (props) => {
     return "";
   }
 
+  function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+
   // // let showAlert = null
   // const alert = setAlert.message
   // setOpenAlert(alert.isOpen)
@@ -124,7 +135,7 @@ const FullLayout = (props) => {
   //           close={handleCloseAlert}
   //       />
   //   }
-console.log(url)
+  console.log(url)
   return (
 
     <div className={classes.root}>
@@ -139,18 +150,15 @@ console.log(url)
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
           <div className={classes.content}>
-            {/* <Suspense fallback={<div>Loading...</div>}>
-                {children}
-              </Suspense> */}
             <Switch>
-              <PrivateRoute exact path={`${url}/dashboard`} component={() => <Dashboard />} />
-              <PrivateRoute exact path={`${url}/events`} component={() => <Events />} />
-              <PrivateRoute exact path={`${url}/events/create`} component={() => <CreateEvent />} />
-              <PrivateRoute exact path={`${url}/events/details/:id`} component={() => <EventDetail />} />
-              <PrivateRoute exact path={`${url}/services`} component={() => <Services />} />
-              <PrivateRoute exact path={`${url}/services/:id`} component={() => <ServiceDetail />} />
-              <PrivateRoute exact path={`${url}/users`} component={() => <Users />} />
-            </Switch> 
+              <PrivateRoute exact path={`${url}/dashboard`} component={Dashboard} />
+              <PrivateRoute exact path={`${url}/events`} component={Events} />
+              <PrivateRoute exact path={`${url}/events/create`} component={CreateEvent} />
+              <PrivateRoute exact path={`${url}/events/details/:id`} component={EventDetail} />
+              <PrivateRoute exact path={`${url}/services`} component={Services} />
+              <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
+              <PrivateRoute exact path={`${url}/users`} component={Users} />
+            </Switch>
           </div>
         </div>
       </div>

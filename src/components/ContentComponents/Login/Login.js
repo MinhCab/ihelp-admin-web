@@ -12,6 +12,7 @@ import {
 import Logo from '../../FullLayout/Logo/LogoIcon'
 import axios from '../../../api/axios';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,12 +33,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Login = (props) => {
+const Login = () => {
   const classes = useStyles();
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
   const history = useHistory()
+  const {setAccessToken} = useAuth()
 
   // React.useEffect(() => {
   //   const token = getCookie('accessToken')
@@ -70,9 +72,9 @@ const Login = (props) => {
 
     axios.post('/login', loginInfo)
       .then(res => {
-        console.log(props)
         if (res.data) {
           saveTokenAndEmailToCookies(res.data.accessToken, email)
+          setAccessToken(getCookie('accessToken'))
           history.push('/home/dashboard')
           console.log('token: ' + getCookie('accessToken'))
         }

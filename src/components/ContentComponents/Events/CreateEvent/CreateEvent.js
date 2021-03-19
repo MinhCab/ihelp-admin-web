@@ -11,7 +11,7 @@ import axios from '../../../../api/axios'
 import { EventConfirmationDialog } from '../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog'
 import { useHistory } from 'react-router'
 import AlertDialog from '../../../FullLayout/UI/AlertDialog/AlertDialog'
-import { storage } from '../../../../api/config/firebase/firebase'
+import { storage } from '../../../../api/config/firebase/FirebaseStorage/firebase-storage'
 import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'
 
 const useStyles = makeStyles(theme => ({
@@ -34,11 +34,9 @@ const useStyles = makeStyles(theme => ({
 const CreateEvent = () => {
     const classes = useStyles()
     const history = useHistory()
-    // const setAlert = useAlert()
     const [openConfirmation, setOpenConfirmation] = React.useState(false)
     const [confirmInfo, setConfirmInfo] = React.useState(null)
     const [categories, setCategories] = React.useState([])
-    // const [openAlert, setOpenAlert] = React.useState(false)
     const [openDiscard, setOpenDiscard] = React.useState(false)
     const [image, setImage] = React.useState(null)
     const [openPhotoUpload, setOpenPhotoUpload] = React.useState(false)
@@ -52,7 +50,6 @@ const CreateEvent = () => {
     const [onSite, setOnSite] = React.useState(true)
     const [location, setLocation] = React.useState('')
     const [description, setDescription] = React.useState('')
-    // const [imageURL, setImageURL] = React.useState(null)
 
     const handleTitleInput = (event) => {
         setTitle(event.target.value)
@@ -87,28 +84,10 @@ const CreateEvent = () => {
         setOpenConfirmation(false)
     }
 
-    const handleProceedConfirmation = () => {
+    const handleProceedConfirmation = async () => {
         console.log('Procced clicked')
 
-        // const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
-
-        // uploadImageTask.on(
-        //     "state_changed",
-        //     snapshot => {},
-        //     error => {
-        //         console.log(error)
-        //     },
-        //     () => {
-        //         storage
-        //             .ref("images/events")
-        //             .child(image.name)
-        //             .getDownloadURL()
-        //             .then(url => {
-        //                 setImageURL(url)
-        //                 console.log('image url: ' + imageURL)
-        //             })
-        //     }
-        // )
+        const imageURL = await uploadImageToFirebase()
 
         let realLocation = location
 
@@ -120,38 +99,29 @@ const CreateEvent = () => {
             authorEmail: author,
             categoryId: category,
             description: description,
-            endDate: endDate.getUTCMilliseconds(),
+            endDate: new Date().getMilliseconds(endDate),
             id: "",
-            images: [],
             location: realLocation,
             onsite: onSite,
             point: point,
             quota: quota,
-            startDate: startDate.getUTCMilliseconds(),
+            startDate: new Date().getMilliseconds(startDate),
             statusId: 2,
-            title: title
+            title: title,
+            image: {
+                type: 'jpg',
+                url: imageURL
+            }
         }
+
+        console.log(event)
 
         axios.post('/api/events', event)
             .then(res => {
                 console.log(res.data)
-                // setOpenAlert(true)
-                // const alertInfo ={
-                //     type: 'success',
-                //     message: res.data,
-                //     isOpen: openAlert
-                // }
-                // setAlert.receiveMessage(alertInfo)
                 history.push('/home/events')
             }).catch(err => {
                 console.log(err)
-                // setOpenAlert(true)
-                // const alertInfo = {
-                //     type: 'error',
-                //     message: err.message,
-                //     isOpen: openAlert
-                // }
-                // setAlert.receiveMessage(alertInfo)
             })
         setOpenConfirmation(false)
     }
@@ -202,6 +172,31 @@ const CreateEvent = () => {
         setOpenPhotoUpload(false)
     }
 
+    const uploadImageToFirebase = async () => {
+        return new Promise((resolve, reject) => {
+            const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
+            uploadImageTask.on(
+                "state_changed",
+                snapshot => { },
+                error => {
+                    console.log(error)
+                    reject('upload image to firebase - reject: ' + error)
+                },
+                () => {
+                    storage
+                        .ref("images/events/")
+                        .child(image.name)
+                        .getDownloadURL()
+                        .then(url => {
+                            console.log('upload image to firebase - resolve: ' + url)
+                            resolve(url)
+                        })
+                }
+            )
+        })
+
+    }
+
     const getCookie = (cname) => {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
@@ -239,7 +234,6 @@ const CreateEvent = () => {
     const createdDate = new Date()
     let showType = 'On site'
     let showConfirmation = null
-    // let showAlert = null
     let showDiscard = null
     let showImageName = null
     let showImageUploadDialog = null
@@ -290,7 +284,7 @@ const CreateEvent = () => {
 
     if (openPhotoUpload) {
         showImageUploadDialog = (
-            <PhotoUploadDialog 
+            <PhotoUploadDialog
                 isOpen={openPhotoUpload}
                 cancel={handleClosePhotoUploadDialog}
                 confirm={handleUploadImage}

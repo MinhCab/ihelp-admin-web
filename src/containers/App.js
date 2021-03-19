@@ -8,6 +8,7 @@ import { ThemeProvider } from '@material-ui/core';
 import Login from '../components/ContentComponents/Login/Login'
 import FullLayout from '../components/FullLayout/FullLayout'
 import PrivateRoute from '../routes/PrivateRoute/PrivateRoute';
+import AuthProvider from '../hoc/StoringAuth/AuthContext';
 
 class App extends Component {
 
@@ -15,14 +16,15 @@ class App extends Component {
     return (
       <ThemeProvider theme={theme} >
         <GlobalStyles />
-        <BrowserRouter>
-          <Switch>
-            <Route path="/login" exact component={Login} />
-            <PrivateRoute path="/home" component={() => (
-              <FullLayout />
-            )}/>
+        <AuthProvider>
+          <BrowserRouter>
+            <Switch>
+              <Route path="/login" exact component={Login} />
+              <PrivateRoute path="/home" component={() => (
+                <FullLayout />
+              )} />
               {/* <FullLayout/> */}
-                {/* <Route exact path='/home/dashboard' component={Dashboard}/>
+              {/* <Route exact path='/home/dashboard' component={Dashboard}/>
                 <Route exact path='/home/events' render={() => <Events />} />
                 <Route exact path='/home/events/create' render={() => <CreateEvent />} />
                 <Route exact path='/home/events/details/:id' component={EventDetail} />
@@ -30,8 +32,9 @@ class App extends Component {
                 <Route exact path='/home/services/:id' component={ServiceDetail} />
                 <Route exact path='/home/users' render={() => <Users />} /> */}
               {/* </FullLayout> */}
-          </Switch>
-        </BrowserRouter>
+            </Switch>
+          </BrowserRouter>
+        </AuthProvider>
       </ThemeProvider>
     );
   }

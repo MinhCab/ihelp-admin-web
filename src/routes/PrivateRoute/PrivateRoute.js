@@ -1,9 +1,14 @@
 import React from 'react'
 import { Route, Redirect, useLocation } from 'react-router-dom'
+import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 
 function PrivateRoute({ component: Component, ...rest }) {
+    const {accessToken} = useAuth()
     const location = useLocation()
-    const isAuth = true; //phải tạo thêm context useAuth
+    console.log('from private route: ' + accessToken)
+    let isAuth = accessToken ? true : false
+
+    isAuth ? console.log('from true private route: ' + accessToken) : console.log('from false private route: ' + accessToken)
 
     return (
         <Route 
