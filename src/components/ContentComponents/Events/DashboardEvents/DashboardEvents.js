@@ -107,6 +107,9 @@ const DashboardEvents = () => {
       }).catch(error => {
         console.log(error.message)
       })
+      return {
+        
+      }
   }, [page, totalItems])
   
 
@@ -114,11 +117,11 @@ const DashboardEvents = () => {
     <Card>
       <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending events" subheader="These remaining events that waits to be confirm" />
       <CardContent>
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ height: 650, width: '100%' }}>
           <DataGrid 
             rows={events} 
             columns={columns} 
-            pageSize={5} 
+            pageSize={10} 
             onRowClick={(rows) => showEventDetails(rows)} 
             pagination
             paginationMode='server'

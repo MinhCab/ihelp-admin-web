@@ -4,8 +4,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import uimage from '../../../assets/images/avatar/IMG_2478-2.jpg';
 import bgprofile from '../../../assets/images/avatar/user-info.png';
-import axios from '../../../api/axios'
-
 
 const useStyles = makeStyles((theme) => ({
     piclarge: {
@@ -31,36 +29,8 @@ const useStyles = makeStyles((theme) => ({
 
 
 const Profile = (props) => {
-    const classes = useStyles();
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [userProfile, setUserProfile] = useState({});
-
-    React.useEffect(() => {
-        const userEmail = getCookie('userEmail')
-        axios.get('/accounts/' + userEmail, {
-        }).then(res => {
-            setUserProfile(res.data)
-            console.log(res)
-        }).catch(err => {
-            console.log(err.message)
-        })
-    }, [])
-
-    const getCookie = (cname) => {
-        let name = cname + '=';
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) === 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return '';
-    }
+    const classes = useStyles()
+    const [anchorEl, setAnchorEl] = useState(null)
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -70,13 +40,14 @@ const Profile = (props) => {
         setAnchorEl(null);
     };
 
+
     return (
         <Box className={classes.profileBg} color="white">
             <Box p={3}>
                 <Avatar className={classes.piclarge} src={uimage} />
             </Box>
             <Typography variant="h6" className={classes.profileTextBg} onClick={handleClick}>
-                {userProfile.fullname}
+                {props.fullname}
                 <Box flexGrow={1} />
                 <ExpandMoreIcon fontSize="small" />
             </Typography>

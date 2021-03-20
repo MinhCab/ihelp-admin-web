@@ -9,7 +9,7 @@ const AlertDialog = (props) => {
         >
             <DialogTitle>Your inputted information will be lost, do you still want to proceed?</DialogTitle>
             <DialogActions>
-                <Button onClick={props.closing} variant='outlined' color="primary" autoFocus>
+                <Button onClick={props.closing} variant='outlined' color="inherit" autoFocus>
                     Cancel
                 </Button>
                 <Button onClick={props.proceed} color="secondary">

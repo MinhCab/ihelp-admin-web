@@ -6,12 +6,13 @@ import { DateRangePicker, START_DATE, END_DATE } from 'react-nice-dates'
 import 'react-nice-dates/build/style.css'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Form, TextArea } from 'semantic-ui-react'
+import { useHistory } from 'react-router'
 
 import axios from '../../../../api/axios'
 import { EventConfirmationDialog } from '../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog'
-import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
-import { useHistory } from 'react-router'
 import AlertDialog from '../../../FullLayout/UI/AlertDialog/AlertDialog'
+import { storage } from '../../../../api/config/firebase/FirebaseStorage/firebase-storage'
+import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'
 
 const useStyles = makeStyles(theme => ({
     finalButton: {
@@ -20,7 +21,14 @@ const useStyles = makeStyles(theme => ({
 
     titleField: {
         fontSize: 60
-    }
+    },
+
+    descriptionField: {
+        width: '100%',
+        height: '400px',
+        padding: theme.spacing(0.5),
+        fontSize: 25
+    },
 }))
 
 const CreateEvent = () => {
@@ -29,9 +37,9 @@ const CreateEvent = () => {
     const [openConfirmation, setOpenConfirmation] = React.useState(false)
     const [confirmInfo, setConfirmInfo] = React.useState(null)
     const [categories, setCategories] = React.useState([])
-    const [openAlert, setOpenAlert] = React.useState(false)
-    const [alertInfo, setAlertInfo] = React.useState(null)
     const [openDiscard, setOpenDiscard] = React.useState(false)
+    const [image, setImage] = React.useState(null)
+    const [openPhotoUpload, setOpenPhotoUpload] = React.useState(false)
 
     const [title, setTitle] = React.useState('')
     const [startDate, setStartDate] = React.useState()
@@ -47,7 +55,7 @@ const CreateEvent = () => {
         setTitle(event.target.value)
     }
 
-    const handleCategoryInput = (event, name) => {
+    const handleCategoryInput = (event) => {
         setCategory(event.target.value)
     }
 
@@ -71,21 +79,15 @@ const CreateEvent = () => {
         setDescription(event.target.value)
     }
 
-    const handleCloseAlert = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setOpenAlert(false);
-    };
-
     const handleCancelConfirmation = () => {
         console.log('Cancel clicked')
         setOpenConfirmation(false)
     }
 
-    const handleProceedConfirmation = () => {
+    const handleProceedConfirmation = async () => {
         console.log('Procced clicked')
+
+        const imageURL = await uploadImageToFirebase()
 
         let realLocation = location
 
@@ -97,34 +99,33 @@ const CreateEvent = () => {
             authorEmail: author,
             categoryId: category,
             description: description,
+<<<<<<< HEAD
             endDate: new Date().setUTCMilliseconds(endDate),
+=======
+            endDate: new Date().getMilliseconds(endDate),
+>>>>>>> f1d14b127ad34e2cdd810d24e48d3c4c46151296
             id: "",
-            images: [],
             location: realLocation,
             onsite: onSite,
             point: point,
             quota: quota,
-            startDate: new Date(startDate).setUTCMilliseconds(),
+            startDate: new Date().getMilliseconds(startDate),
             statusId: 2,
-            title: title
+            title: title,
+            image: {
+                type: 'jpg',
+                url: imageURL
+            }
         }
+
+        console.log(event)
 
         axios.post('/api/events', event)
             .then(res => {
                 console.log(res.data)
-                setAlertInfo({
-                    type: 'success',
-                    message: res.data
-                })
-                setOpenAlert(true)
                 history.push('/home/events')
             }).catch(err => {
                 console.log(err)
-                setAlertInfo({
-                    type: 'error',
-                    message: err.message
-                })
-                setOpenAlert(true)
             })
         setOpenConfirmation(false)
     }
@@ -145,7 +146,7 @@ const CreateEvent = () => {
             quota: quota,
             point: point,
             description: description,
-            location: realLocation
+            location: realLocation,
         })
         setOpenConfirmation(true)
     }
@@ -160,6 +161,44 @@ const CreateEvent = () => {
 
     const handleProceedDiscard = () => {
         history.goBack()
+    }
+
+    const handleOpenPhotoUploadDialog = () => {
+        setOpenPhotoUpload(true)
+    }
+
+    const handleClosePhotoUploadDialog = () => {
+        setOpenPhotoUpload(false)
+    }
+
+    const handleUploadImage = (file) => {
+        setImage(file)
+        setOpenPhotoUpload(false)
+    }
+
+    const uploadImageToFirebase = async () => {
+        return new Promise((resolve, reject) => {
+            const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
+            uploadImageTask.on(
+                "state_changed",
+                snapshot => { },
+                error => {
+                    console.log(error)
+                    reject('upload image to firebase - reject: ' + error)
+                },
+                () => {
+                    storage
+                        .ref("images/events/")
+                        .child(image.name)
+                        .getDownloadURL()
+                        .then(url => {
+                            console.log('upload image to firebase - resolve: ' + url)
+                            resolve(url)
+                        })
+                }
+            )
+        })
+
     }
 
     const getCookie = (cname) => {
@@ -185,11 +224,13 @@ const CreateEvent = () => {
                 setCategories(res.data)
             }).catch(err => {
                 console.log(err.message)
-                openAlert(true)
-                setAlertInfo({
-                    type: 'error',
-                    message: err.message
-                })
+                // openAlert(true)
+                // const alertInfo = {
+                //     type: 'error',
+                //     message: err.message,
+                //     isOpen: openAlert
+                // }
+                // setAlert.receiveMessage(alertInfo)
             })
     }, [])
 
@@ -197,13 +238,14 @@ const CreateEvent = () => {
     const createdDate = new Date()
     let showType = 'On site'
     let showConfirmation = null
-    let showAlert = null
     let showDiscard = null
+    let showImageName = null
+    let showImageUploadDialog = null
     let showLocationField = (
         <Grid item>
             <Typography variant='body1' color='textPrimary' component='span'>
                 <strong>Location: </strong>
-                <Input id='txtLocation' value={location} onChange={(event) => handleLocationInput(event)} />
+                <Input required id='txtLocation' value={location} onChange={(event) => handleLocationInput(event)} />
             </Typography>
         </Grid>
     )
@@ -228,20 +270,31 @@ const CreateEvent = () => {
         }
     }
 
-    if (openAlert) {
-        showAlert = <AlertSnackbar
-            isOpen={openAlert}
-            alertInfo={alertInfo}
-            close={handleCloseAlert}
-        />
-    }
-
     if (openDiscard) {
-        showDiscard = <AlertDialog 
+        showDiscard = <AlertDialog
             isOpen={openDiscard}
             closing={handleCancelDiscard}
             proceed={handleProceedDiscard}
         />
+    }
+
+    if (image !== null) {
+        showImageName = (
+            <Typography variant='body1' color='textPrimary' component='span'>
+                <strong>Uploaded photo: </strong> {image.name}
+            </Typography>
+        )
+    }
+
+    if (openPhotoUpload) {
+        showImageUploadDialog = (
+            <PhotoUploadDialog
+                isOpen={openPhotoUpload}
+                cancel={handleClosePhotoUploadDialog}
+                confirm={handleUploadImage}
+                image={image}
+            />
+        )
     }
 
     return (
@@ -252,7 +305,7 @@ const CreateEvent = () => {
                         <Grid container item xs spacing={2} style={{ paddingBottom: 10 }}>
                             <Grid item xs>
                                 <Typography variant="h1" color="textPrimary" component="h2">
-                                    <Input className={classes.titleField} placeholder='Title' id='txtEventTitle' value={title} onChange={(event) => handleTitleInput(event)} />
+                                    <Input required className={classes.titleField} placeholder='Title' id='txtEventTitle' value={title} onChange={(event) => handleTitleInput(event)} />
                                 </Typography>
                             </Grid>
                             <Grid item>
@@ -291,6 +344,7 @@ const CreateEvent = () => {
                                     <Typography variant="body1" color="textPrimary" component="span">
                                         <strong>This event starts: </strong>
                                         <TextField
+                                            required
                                             className={'input' + (focus === START_DATE ? ' -focused' : '')}
                                             {...startDateInputProps}
                                             placeholder='from'
@@ -300,12 +354,24 @@ const CreateEvent = () => {
                                         <ArrowForwardIcon style={{ margin: '10 10 auto' }} />
 
                                         <TextField
+                                            required
                                             className={'input' + (focus === END_DATE ? ' -focused' : '')}
                                             {...endDateInputProps}
                                             placeholder='to'
                                             variant='outlined'
                                         />
                                     </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography variant="body1" color="textPrimary" component="span" style={{ marginRight: 10 }}>
+                                        <strong>Cover photo: </strong>
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        component="label"
+                                        color="primary"
+                                        onClick={handleOpenPhotoUploadDialog}
+                                    >Upload File</Button>
                                 </Grid>
                             </Grid>
                         )}
@@ -317,6 +383,7 @@ const CreateEvent = () => {
                             </Typography>
 
                             <Select
+                                required
                                 id="txtCategory"
                                 variant='outlined'
                                 select='true'
@@ -328,6 +395,11 @@ const CreateEvent = () => {
                                 })}
                             </Select>
                         </Grid>
+                        <Grid item>
+                            <Typography variant="body1" color="textPrimary" component="span" style={{ marginRight: 10 }}>
+                                {showImageName}
+                            </Typography>
+                        </Grid>
                     </Grid>
                     <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
                         <Grid item xs>
@@ -335,6 +407,7 @@ const CreateEvent = () => {
                                 <strong>Number of participants: </strong>
                             </Typography>
                             <TextField
+                                required
                                 id="txtQuota"
                                 variant="outlined"
                                 type='number'
@@ -349,6 +422,7 @@ const CreateEvent = () => {
                                 <strong>Points per participant: </strong>
                             </Typography>
                             <TextField
+                                required
                                 id="txtPoint"
                                 variant="outlined"
                                 type='number'
@@ -375,15 +449,15 @@ const CreateEvent = () => {
                     <Grid item container spacing={3} style={{ marginTop: 20 }}>
                         <Grid item xs={12}>
                             <Form>
-                                <TextArea placeholder='Description' value={description} style={{ width: '100%', padding: 10 }} onChange={(event) => handleDescriptionInput(event)} />
+                                <TextArea required placeholder='Description' value={description} className={classes.descriptionField} onChange={(event) => handleDescriptionInput(event)} />
                             </Form>
                         </Grid>
                     </Grid>
                 </CardContent>
             </Card>
             {showConfirmation}
-            {showAlert}
             {showDiscard}
+            {showImageUploadDialog}
         </React.Fragment>
     )
 }
