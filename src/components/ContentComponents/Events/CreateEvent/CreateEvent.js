@@ -97,7 +97,7 @@ const CreateEvent = () => {
             authorEmail: author,
             categoryId: category,
             description: description,
-            endDate: new Date(endDate).setUTCMilliseconds(),
+            endDate: new Date().setUTCMilliseconds(endDate),
             id: "",
             images: [],
             location: realLocation,
