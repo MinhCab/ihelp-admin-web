@@ -8,6 +8,7 @@ import moment from 'moment';
 import React from 'react'
 
 import axios from "../../../../api/axios"
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 const EventDetail = (props) => {
 
     const classes = useStyles();
+    const history = useHistory()
     const [details, setDetails] = React.useState({})
     const [category, setCategory] = React.useState({})
     const [status, setStatus] = React.useState({})
@@ -92,6 +94,7 @@ const EventDetail = (props) => {
         axios.delete('/api/events/' + props.match.params.id)
             .then(res => {
                 console.log(res)
+                history.goBack()
             }).catch(err => {
                 console.log(err.message)
             })
