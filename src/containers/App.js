@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Switch } from 'react-router-dom'
 
 import { theme } from '../assets/jss/Theme-variable'
 import GlobalStyles from '../assets/jss/GlobalStyles'
@@ -9,6 +9,7 @@ import Login from '../components/ContentComponents/Login/Login'
 import FullLayout from '../components/FullLayout/FullLayout'
 import PrivateRoute from '../routes/PrivateRoute/PrivateRoute';
 import AuthProvider from '../hoc/StoringAuth/AuthContext';
+import PublicRoute from '../routes/PublicRoute/PublicRoute';
 
 class App extends Component {
 
@@ -19,7 +20,7 @@ class App extends Component {
         <AuthProvider>
           <BrowserRouter>
             <Switch>
-              <Route path="/login" exact component={Login} />
+              <PublicRoute path="/login" restricted={true} exact component={Login} />
               <PrivateRoute path="/home" component={() => (
                 <FullLayout />
               )} />

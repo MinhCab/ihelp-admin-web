@@ -18,7 +18,6 @@ import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import axios from '../../api/axios'
 
-
 // import { useAlert } from '../../hoc/StoringAlertMessage/StoreAlertMessage'
 // import AlertSnackbar from './UI/AlertSnackbar/AlertSnackbar';
 
