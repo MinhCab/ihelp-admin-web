@@ -23,7 +23,25 @@ const useStyles = makeStyles((theme) => ({
 
     Typography: {
         paddingBottom: '10px',
+    },
 
+    description: {
+        paddingBottom: '10px',
+        width: '100%',
+        maxWidth: 1000
+    },
+
+    title: {
+        paddingBottom: '10px'
+    },
+
+    side: {
+        justifyContent: 'flex-end'
+    },
+
+    sidecontent: {
+        paddingBottom: '30px',
+        justifyContent: 'flex-end'
     },
 
     chips: {
@@ -149,29 +167,21 @@ const EventDetail = (props) => {
 
     } else if (status.name === 'Approved') {
         showActionBtns = (
-            <div>
-                <hr />
-                <br />
                 <CardActions>
                     {disableBtn}
                 </CardActions>
-            </div>
         )
     } else if (status.name === 'In progress') {
         showActionBtns = (
-            <div>
-                <hr />
-                <br />
                 <CardActions>
                     {finishBtn}
                 </CardActions>
-            </div>
         )
     }
 
     return (
         <Card className={classes.root}>
-            <Grid container spacing={2}>
+            <Grid container spacing={4}>
                 <Grid item>
                     {/*Image will be updated after firebase injection */}
                     <CardMedia
@@ -185,91 +195,86 @@ const EventDetail = (props) => {
                     <Grid item xs container direction="column" spacing={2}>
                         <CardHeader
                             title={
-                                <Typography className={classes.Typography} variant="h1" color="textPrimary" component="h1">
+                                <Typography className={classes.title} variant="h1" color="textPrimary" component="h1">
                                     {details.title}
                                 </Typography>
                             }
                             subheader={
-                                <div>
-                                    <Grid item xs>
-                                        <Typography variant="body1" color="textSecondary" component="span">
-                                            <strong>Created on: </strong> {moment(details.createdDate).format('MMMM Do YYYY')}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <Typography variant="body2" color="textSecondary" component="span">
-                                            <strong>by: </strong> {details.accountEmail}
-                                        </Typography>
-                                    </Grid>
-                                </div>
-                            }
-                            action={
-                                <IconButton onClick={handleClick}>
-                                    <MoreVert aria-label="settings" />
-                                </IconButton>
+                                <Grid item xs>
+                                    <Typography variant="body1" color="textSecondary" component="span">
+                                        <strong>Created on: </strong> {moment(details.createdDate).format('MMMM Do YYYY')}
+                                    </Typography>
+                                </Grid>
                             }
                         />
 
-                            <CardContent>
-                                <Grid item container xs className={classes.Typography}>
-                                    {/* <Grid item xs> */}
-                                        <Typography variant="body1" color="textPrimary" component="span">
-                                            <strong>Events start from: </strong> {moment(details.startDate).format('MMMM Do YYYY')}
-                                        </Typography>
-                                    {/* </Grid> */}
-                                    {/* <Grid item>
-                                        <Typography variant="body1" color="textPrimary" component="span">
-                                            <strong>to: </strong> {moment(details.endDate).format('MMMM Do YYYY')}
-                                        </Typography>
-                                    </Grid> */}
-                                </Grid>
-                                <Grid item container xs className={classes.Typography}>
-                                    <Typography variant="body1" color="primary" component="span">
-                                        <strong>Points for this event: {details.point}</strong>
-                                    </Typography>
-                                </Grid>
-                                {/* <Grid item container xs className={classes.Typography}> */}
-                                    <Typography variant="body1" color="textPrimary" component="span">
-                                        <strong>Location: </strong> {details.location}
-                                    </Typography>
-                                {/* </Grid> */}
-                                <Grid item container xs className={classes.Typography}>
-                                    {/* <Grid item xs> */}
-                                        <Typography variant="body1" color="textPrimary" component="span">
-                                            <strong>Category: </strong>
-                                            <Chip color='primary' label={category.name} />
-                                        </Typography>
-                                    </Grid>
-                                    {/* <Grid item >
-                                        <Typography variant="body1" color="textPrimary" component="span">
-                                            <strong>Status: </strong>
-                                            <Chip color='primary' variant='outlined' label={status.name} />
-                                        </Typography>
-                                    </Grid> */}
-                                {/* </Grid> */}
-                                <Grid item container xs className={classes.Typography}>
-                                    {/* <Grid item xs> */}
-                                        <Typography variant="body1" color="textPrimary" component="span">
-                                            <strong>Type: </strong>
-                                            {showOnsite}
-                                        </Typography>
-                                    </Grid>
-                                    {/* <Grid item >
-                                        <Typography variant="body1" color="textPrimary" component="span">
-                                            <strong>Pending slots: </strong> {details.spot}
-                                        </Typography>
-                                    </Grid>
-                                </Grid> */}
-                                <Grid item container xs className={classes.Typography}>
-                                    <Typography variant="body1" color="textPrimary" component="span">
-                                        <strong>Description: </strong> {details.description}
-                                    </Typography>
-                                </Grid>
+                        <CardContent>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span">
+                                    <strong>Events start from: </strong> {moment(details.startDate).format('MMMM Do YYYY')}
+                                </Typography>
+                            </Grid>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span">
+                                    <strong>Type: </strong>
+                                    {showOnsite}
+                                </Typography>
+                            </Grid>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span">
+                                    <strong>Location: </strong> {details.location}
+                                </Typography>
+                            </Grid>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span">
+                                    <strong>Category: </strong>
+                                    <Chip color='primary' label={category.name} />
+                                </Typography>
+                            </Grid>
+
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span">
+                                    <strong>Status: </strong>
+                                    <Chip color='primary' variant='outlined' label={status.name} />
+                                </Typography>
+                            </Grid>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span">
+                                    <strong>Pending slots: </strong> {details.spot}
+                                </Typography>
+                            </Grid>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="primary" component="span">
+                                    <strong>Points for this event: {details.point}</strong>
+                                </Typography>
+                            </Grid>
+                            <Typography variant="body1" color="textPrimary" component="span" noWrap>
+                                    {details.description}
+                            </Typography>
                         </CardContent>
+                        {showActionBtns}
+                    </Grid>
+                    <Grid item>
+                        <Grid item container xs className={classes.side}>
+                            <CardActions className={classes.side}>
+                                <IconButton onClick={handleClick}>
+                                    <MoreVert aria-label="settings" />
+                                </IconButton>
+                            </CardActions>
+                        </Grid>
+                        <Grid item container xs className={classes.sidecontent}>
+                            <Typography variant="body2" color="textSecondary" component="span">
+                                <strong>by: </strong> {details.accountEmail}
+                            </Typography>
+                        </Grid>
+                        <Grid item className={classes.side}>
+                            <Typography variant="body1" color="textPrimary" component="span">
+                                <strong>to: </strong> {moment(details.endDate).format('MMMM Do YYYY')}
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-            {showActionBtns}
             <Popover
                 id={id}
                 open={open}
