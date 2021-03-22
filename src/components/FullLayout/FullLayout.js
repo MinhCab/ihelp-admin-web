@@ -10,11 +10,12 @@ import PrivateRoute from '../../routes/PrivateRoute/PrivateRoute';
 
 import Dashboard from '../ContentComponents/Dashboard/Dashboard'
 import Events from '../ContentComponents/Events/Events'
-import Services from '../ContentComponents/Services/DashboardServices/DashboardServices'
+import Services from '../ContentComponents/Services/Services'
 import Users from '../ContentComponents/Users/DashboardAdmins/DashboardAdmins'
 import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
 import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
+import CreateService from '../ContentComponents/Services/CreateService/CreateService'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import axios from '../../api/axios'
 
@@ -142,12 +143,17 @@ const FullLayout = () => {
           <div className={classes.content}>
             <Switch>
               <PrivateRoute exact path={`${url}/dashboard`} component={Dashboard} />
+
               <PrivateRoute exact path={`${url}/events`} component={Events} />
               <PrivateRoute exact path={`${url}/events/create`} component={CreateEvent} />
               <PrivateRoute exact path={`${url}/events/details/:id`} component={EventDetail} />
+
               <PrivateRoute exact path={`${url}/services`} component={Services} />
+              <PrivateRoute exact path={`${url}/services/create`} component={CreateService} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
+
               <PrivateRoute exact path={`${url}/users`} component={Users} />
+              
               <Redirect from='/' to={`${url}/dashboard`} />
             </Switch>
           </div>

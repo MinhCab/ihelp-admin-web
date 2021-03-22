@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import { BrowserRouter, Switch } from 'react-router-dom'
+import { BrowserRouter, Redirect, Switch } from 'react-router-dom'
 
 import { theme } from '../assets/jss/Theme-variable'
 import GlobalStyles from '../assets/jss/GlobalStyles'
@@ -24,6 +24,8 @@ class App extends Component {
               <PrivateRoute path="/home" component={() => (
                 <FullLayout />
               )} />
+
+              <Redirect from='/' to='/home' />
             </Switch>
           </BrowserRouter>
         </AuthProvider>

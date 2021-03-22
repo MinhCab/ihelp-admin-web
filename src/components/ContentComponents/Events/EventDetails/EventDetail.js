@@ -60,18 +60,20 @@ const EventDetail = (props) => {
     const classes = useStyles();
     const history = useHistory()
     const [details, setDetails] = React.useState({})
-    const [category, setCategory] = React.useState({})
+    const [categories, setCategories] = React.useState([])
     const [status, setStatus] = React.useState({})
     const [onsite, setOnsite] = React.useState(false)
+    const [images, setImages] = React.useState([])
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     React.useEffect(() => {
         axios.get("/api/events/" + props.match.params.id)
             .then(res => {
                 setDetails(res.data)
-                setCategory(res.data.category)
+                setCategories(res.data.categories)
                 setStatus(res.data.status)
                 setOnsite(res.data.onsite)
+                setImages(res.data.images)
                 console.log(res.data)
             }).catch(error => {
                 console.log(error.message)
@@ -80,18 +82,42 @@ const EventDetail = (props) => {
 
     const approveEventHandler = () => {
         console.log('Approve event clicked')
+        axios.put('/api/events/' + props.match.params.id + '/3')
+            .then(res => {
+                window.location.reload();
+            }).catch(error => {
+                console.log(error.message)
+            })
     }
 
     const rejectEventHandler = () => {
         console.log('Reject event clicked')
+        axios.put('/api/events/' + props.match.params.id + '/6')
+            .then(res => {
+                window.location.reload()
+            }).catch(error => {
+                console.log(error.message)
+            })
     }
 
     const disableEventHandler = () => {
         console.log('Disable event clicked')
+        axios.put('/api/events/' + props.match.params.id + '/5')
+            .then(res => {
+                window.location.reload();
+            }).catch(error => {
+                console.log(error.message)
+            })
     }
 
     const finishEventHandler = () => {
         console.log('Finish event clicked')
+        axios.put('/api/events/' + props.match.params.id + '/4')
+            .then(res => {
+                window.location.reload();
+            }).catch(error => {
+                console.log(error.message)
+            })
     }
 
     const handleClick = (event) => {
@@ -111,7 +137,7 @@ const EventDetail = (props) => {
         console.log('Delete event clicked')
         axios.delete('/api/events/' + props.match.params.id)
             .then(res => {
-                // history.push('/home/events')
+                history.push('/home/events')
                 console.log(res)
                 history.goBack()
             }).catch(err => {
@@ -170,15 +196,20 @@ const EventDetail = (props) => {
 
     } else if (status.name === 'Approved') {
         showActionBtns = (
+            <Grid item container xs className={classes.Typography}>
                 <CardActions>
                     {disableBtn}
                 </CardActions>
+            </Grid>
+
         )
     } else if (status.name === 'In progress') {
         showActionBtns = (
+            <Grid item container xs className={classes.Typography}>
                 <CardActions>
                     {finishBtn}
                 </CardActions>
+            </Grid>
         )
     }
 
@@ -187,11 +218,18 @@ const EventDetail = (props) => {
             <Grid container spacing={4}>
                 <Grid item>
                     {/*Image will be updated after firebase injection */}
-                    <CardMedia
-                        className={classes.media}
-                        image="https://www.gstatic.com/webp/gallery/1.webp"
-                        title="Event image"
-                    />
+                    {images.map(img => {
+                        return (
+                            <CardMedia
+                                className={classes.media}
+                                // image="https://www.gstatic.com/webp/gallery/1.webp"
+                                image={img.url}
+                                title="Event image"
+                                key={img.imageId}
+                            />
+                        )
+                    })}
+                    
                     {/*Image will be updated after firebase injection */}
                 </Grid>
                 <Grid item xs={12} sm container>
@@ -231,7 +269,9 @@ const EventDetail = (props) => {
                             <Grid item container xs className={classes.Typography}>
                                 <Typography variant="body1" color="textPrimary" component="span">
                                     <strong>Category: </strong>
-                                    <Chip color='primary' label={category.name} />
+                                    {categories.map(cate => {
+                                        return (<Chip color='primary' variant='outlined' label={cate.name} key={cate.id}/>)
+                                    })}
                                 </Typography>
                             </Grid>
 
@@ -251,11 +291,14 @@ const EventDetail = (props) => {
                                     <strong>Points for this event: {details.point}</strong>
                                 </Typography>
                             </Grid>
-                            <Typography variant="body1" color="textPrimary" component="span" noWrap>
+                            <Grid item container xs className={classes.Typography}>
+                                <Typography variant="body1" color="textPrimary" component="span" noWrap>
                                     {details.description}
-                            </Typography>
+                                </Typography>
+                            </Grid>
+                            {showActionBtns}
                         </CardContent>
-                        {showActionBtns}
+
                     </Grid>
                     <Grid item>
                         <Grid item container xs className={classes.side}>
