@@ -99,11 +99,7 @@ const CreateEvent = () => {
             authorEmail: author,
             categoryId: category,
             description: description,
-<<<<<<< HEAD
-            endDate: new Date().setUTCMilliseconds(endDate),
-=======
             endDate: new Date().getMilliseconds(endDate),
->>>>>>> f1d14b127ad34e2cdd810d24e48d3c4c46151296
             id: "",
             location: realLocation,
             onsite: onSite,
