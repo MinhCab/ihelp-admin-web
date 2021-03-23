@@ -15,18 +15,14 @@ const columns = [
         }
     },
     { field: 'title', headerName: 'Title', width: 250 },
-    {
-        field: 'category', headerName: 'Category', width: 150,
-        renderCell: (params) => {
-            return <p>{params.value.name}</p>
-        }
-    },
-    {
-        field: 'authorAccount', headerName: 'Host email', width: 180,
-        renderCell: (params) => {
-            return <p>{params.value.email}</p>
-        }
-    },
+    // {
+    //     field: 'category', headerName: 'Category', width: 150,
+    //     renderCell: (params) => {
+    //         return <p>{params.value.name}</p>
+    //     }
+    // },
+    { field: 'authorFullName', headerName: 'Host name', width: 150 },
+    { field: 'authorEmail', headerName: 'Host email', width: 180 },
     {
         field: 'startDate', headerName: 'Start date', width: 200,
         renderCell: (params) => {
@@ -106,6 +102,7 @@ const Events = () => {
             .then(res => {
                 setEvents(res.data.events)
                 setTotalItems(res.data.totalItems)
+                console.log(res.data.events)
             }).catch(error => {
                 console.log(error.message)
             })

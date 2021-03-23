@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel, ListItem, ListItemText, List } from '@material-ui/core'
 import moment from 'moment'
 import React, { useEffect } from 'react'
 import { enGB } from 'date-fns/locale'
@@ -13,6 +13,7 @@ import { EventConfirmationDialog } from '../../../FullLayout/UI/ConfirmationDial
 import AlertDialog from '../../../FullLayout/UI/AlertDialog/AlertDialog'
 import { storage } from '../../../../api/config/firebase/FirebaseStorage/firebase-storage'
 import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'
+import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete'
 
 const useStyles = makeStyles(theme => ({
     finalButton: {
@@ -29,6 +30,19 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0.5),
         fontSize: 25
     },
+
+    select: {
+        width: 205
+    },
+
+    locationSuggest: {
+        width: '100%',
+        maxWidth: 360,
+        backgroundColor: theme.palette.background.paper,
+        overflow: 'auto',
+        maxHeight: 300,
+        position: 'absolute'
+    }
 }))
 
 const CreateEvent = () => {
@@ -49,6 +63,10 @@ const CreateEvent = () => {
     const [point, setPoint] = React.useState(0)
     const [onSite, setOnSite] = React.useState(true)
     const [location, setLocation] = React.useState('')
+    const [coordinates, setCoordinates] = React.useState({
+        lat: null,
+        lng: null
+    })
     const [description, setDescription] = React.useState('')
 
     const handleTitleInput = (event) => {
@@ -71,8 +89,11 @@ const CreateEvent = () => {
         setOnSite(!onSite)
     }
 
-    const handleLocationInput = (event) => {
-        setLocation(event.target.value)
+    const handleSelectGoogleLocation = async (value) => {
+        const results = await geocodeByAddress(value)
+        const latLng = await getLatLng(results[0])
+        setLocation(value)
+        setCoordinates(latLng)
     }
 
     const handleDescriptionInput = (event) => {
@@ -89,29 +110,35 @@ const CreateEvent = () => {
 
         const imageURL = await uploadImageToFirebase()
 
-        let realLocation = location
+        let realLocation = null
 
         if (onSite === false) {
             realLocation = 'Online'
+        } else {
+            realLocation = 'lat:' + coordinates.lat +',lng:'+coordinates.lng
         }
 
         const event = {
             authorEmail: author,
-            categoryId: category,
+            categoryIds: [
+                category
+            ],
             description: description,
-            endDate: new Date().getMilliseconds(endDate),
+            endDate: moment(endDate).format('yyyy-MM-DD HH:mm:ss'),
             id: "",
             location: realLocation,
             onsite: onSite,
             point: point,
             quota: quota,
-            startDate: new Date().getMilliseconds(startDate),
+            startDate: moment(startDate).format('yyyy-MM-DD HH:mm:ss'),
             statusId: 2,
             title: title,
-            image: {
-                type: 'jpg',
-                url: imageURL
-            }
+            images: [
+                {
+                    type: 'cover',
+                    url: imageURL
+                }
+            ]
         }
 
         console.log(event)
@@ -136,7 +163,7 @@ const CreateEvent = () => {
         setConfirmInfo({
             title: title.toUpperCase(),
             startDate: startDate.toString(),
-            endDate: endDate.toString(),
+            endDate: endDate,
             category: categories.find(res => res.id === category).name,
             onsite: onSite,
             quota: quota,
@@ -144,6 +171,7 @@ const CreateEvent = () => {
             description: description,
             location: realLocation,
         })
+        console.log(confirmInfo)
         setOpenConfirmation(true)
     }
 
@@ -214,7 +242,7 @@ const CreateEvent = () => {
     }
 
     useEffect(() => {
-        axios.get('/api/event-category')
+        axios.get('/api/event-categories')
             .then(res => {
                 console.log(res.data)
                 setCategories(res.data)
@@ -239,10 +267,25 @@ const CreateEvent = () => {
     let showImageUploadDialog = null
     let showLocationField = (
         <Grid item>
-            <Typography variant='body1' color='textPrimary' component='span'>
-                <strong>Location: </strong>
-                <Input required id='txtLocation' value={location} onChange={(event) => handleLocationInput(event)} />
-            </Typography>
+            <PlacesAutocomplete value={location} onChange={setLocation} onSelect={handleSelectGoogleLocation} >
+                {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+                    <Typography variant='body1' color='textPrimary' component='span'>
+                        <strong>Location: </strong> <TextField variant='outlined' {...getInputProps({ placeholder: 'Type location' })} />
+
+                            <List className={classes.locationSuggest}>
+                                {loading ? <div>...loading</div> : null}
+
+                                {suggestions.map((suggest) => {
+                                    return (
+                                        <ListItem button divider {...getSuggestionItemProps(suggest)} key={suggest.index}>
+                                            <ListItemText>{suggest.description}</ListItemText>
+                                        </ListItem>
+                                    )
+                                })}
+                            </List>
+                    </Typography>
+                )}
+            </PlacesAutocomplete>
         </Grid>
     )
 
@@ -379,6 +422,7 @@ const CreateEvent = () => {
                             </Typography>
 
                             <Select
+                                className={classes.select}
                                 required
                                 id="txtCategory"
                                 variant='outlined'

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, Typography, Grid, DialogActions, DialogTitle, Button } from '@material-ui/core'
+import { Dialog, DialogContent, Typography, Grid, DialogActions, DialogTitle, Button, Divider } from '@material-ui/core'
 import moment from 'moment'
 import React from 'react'
 
@@ -11,10 +11,12 @@ const EventConfirmationDialog = (props) => {
         showType = 'Online'
     } else {
         showLocation = (
-            <Grid item>
-                <Typography variant='body1' color='textPrimary' component='span'>
-                    <strong>Location at: </strong> {details.location}
-                </Typography>
+            <Grid container spacing={2}>
+                <Grid item>
+                    <Typography variant='body1' color='textPrimary' component='span'>
+                        <strong>Location at: </strong> {details.location}
+                    </Typography>
+                </Grid>
             </Grid>
         )
     }
@@ -24,7 +26,11 @@ const EventConfirmationDialog = (props) => {
             open={props.isOpen}
             onClose={props.cancel}
         >
-            <DialogTitle >Your event will be created with the following information: </DialogTitle>
+            <DialogTitle>
+                <Typography variant='h4' color='textPrimary' component='span'>
+                    <strong>Your event will be created with the following information: </strong>
+                </Typography>
+            </DialogTitle>
             <DialogContent>
                 <Grid container spacing={2}>
                     <Grid item xs>
@@ -58,7 +64,6 @@ const EventConfirmationDialog = (props) => {
                             <strong>Event's type: </strong> {showType}
                         </Typography>
                     </Grid>
-                    {showLocation}
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs>
@@ -72,6 +77,7 @@ const EventConfirmationDialog = (props) => {
                         </Typography>
                     </Grid>
                 </Grid>
+                {showLocation}
                 <Grid container spacing={2}>
                     <Grid item xs>
                         <Typography variant='body1' color='textPrimary' component='span'>
@@ -81,7 +87,12 @@ const EventConfirmationDialog = (props) => {
                 </Grid>
                 <Grid container spacing={2}>
                     <Grid item xs>
-                        <Typography variant='body1' color='textPrimary' component='span'>
+                        <Divider />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+                    <Grid item xs>
+                        <Typography variant='body1' color='primary' component='span'>
                             <strong>Do you want to create this event? </strong>
                         </Typography>
                     </Grid>

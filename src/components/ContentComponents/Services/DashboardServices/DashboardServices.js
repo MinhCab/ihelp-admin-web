@@ -32,11 +32,14 @@ const columns = [
     }
   },
   { field: 'title', headerName: 'Title', width: 250 },
+  // {
+  //   field: 'serviceType', headerName: 'Service Type', width: 150,
+  //   renderCell: (params) => {
+  //     return <p>{params.value.name}</p>
+  //   }
+  // },
   {
-    field: 'serviceType', headerName: 'Service Type', width: 150,
-    renderCell: (params) => {
-      return <p>{params.value.name}</p>
-    }
+    field: 'accountFullName', headerName: 'Host name', width: 150
   },
   {
     field: 'accountEmail', headerName: 'Host email', width: 150
@@ -84,22 +87,28 @@ const columns = [
 
 const DashboardServices = () => {
 
-  const [services, setServices] = React.useState([])
-
   const history = useHistory()
+  const [services, setServices] = React.useState([])
+  const [page, setPage] = React.useState(0)
+  const [totalItems, setTotalItems] = React.useState(0)
 
   React.useEffect(() => {
-    axios.get('/api/services/status/2')
+    axios.get('/api/services/status/2?page=' + page)
       .then(res => {
-        console.log(res)
-        setServices(res.data)
+        setServices(res.data.services)
+        setTotalItems(res.data.totalItems)
+        console.log(res.data)
       }).catch(err => {
         console.log(err.message)
       })
-  }, [])
+  }, [page, totalItems])
 
   const showServiceDetails = (event) => {
     history.push('/home/services/' + event.row.id)
+  }
+
+  const pagingHandler = (params) => {
+    setPage(params.page)
   }
 
   return (
@@ -107,7 +116,16 @@ const DashboardServices = () => {
       <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending services" subheader="These remaining services that waits to be confirm" />
       <CardContent>
         <div style={{ height: 400, width: '100%' }}>
-          <DataGrid rows={services} columns={columns} pageSize={5} onRowClick={(rows) => showServiceDetails(rows)} />
+          <DataGrid 
+            rows={services} 
+            columns={columns} 
+            pageSize={10} 
+            onRowClick={(rows) => showServiceDetails(rows)} 
+            pagination
+            paginationMode='server'
+            onPageChange={pagingHandler}
+            rowCount={totalItems}
+          />
         </div>
       </CardContent>
     </Card>

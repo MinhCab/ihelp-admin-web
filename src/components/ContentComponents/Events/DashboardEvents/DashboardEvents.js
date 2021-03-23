@@ -15,18 +15,8 @@ const columns = [
     }
   },
   { field: 'title', headerName: 'Title', width: 250 },
-  {
-    field: 'category', headerName: 'Category', width: 150,
-    renderCell: (params) => {
-      return <p>{params.value.name}</p>
-    }
-  },
-  {
-    field: 'authorAccount', headerName: 'Host email', width: 180,
-    renderCell: (params) => {
-      return <p>{params.value.email}</p>
-    }
-  },
+  { field: 'authorFullName', headerName: 'Host name', width: 150 },
+  { field: 'authorEmail', headerName: 'Host email', width: 180 },
   {
     field: 'startDate', headerName: 'Start date', width: 200,
     renderCell: (params) => {
@@ -96,7 +86,7 @@ const DashboardEvents = () => {
 
   const pagingHandler = (params) => {
     setPage(params.page)
-}
+  }
 
   React.useEffect(() => {
     axios.get('/api/events/status/2?page=' + page)
