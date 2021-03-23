@@ -137,7 +137,6 @@ const EventDetail = (props) => {
         console.log('Delete event clicked')
         axios.delete('/api/events/' + props.match.params.id)
             .then(res => {
-                history.push('/home/events')
                 console.log(res)
                 history.goBack()
             }).catch(err => {
@@ -166,7 +165,7 @@ const EventDetail = (props) => {
     const id = open ? 'simple-popover' : undefined;
     const username = getCookie('userEmail')
 
-    let showOnsite = <Chip color='primary' label='Online' />
+    let showOnsite = <Button color='primary' variant='contained'>Online</Button>
     let approveBtn = <Button startIcon={<ThumbUpIcon />} color="primary" variant='contained' onClick={approveEventHandler}>Approve</Button>
     let rejectBtn = <Button startIcon={<ThumbDownIcon />} color="secondary" variant='contained' onClick={rejectEventHandler}>Reject</Button>
     let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained' onClick={finishEventHandler}>Finish this event</Button>
@@ -174,7 +173,7 @@ const EventDetail = (props) => {
     let showActionBtns = null
     let deleteBtn = null
     if (onsite === true) {
-        showOnsite = <Chip color='secondary' label='On site' />
+        showOnsite = <Button color='secondary' variant='contained'>On site</Button>
     }
 
     if (status.name === 'Pending') {
@@ -270,7 +269,7 @@ const EventDetail = (props) => {
                                 <Typography variant="body1" color="textPrimary" component="span">
                                     <strong>Category: </strong>
                                     {categories.map(cate => {
-                                        return (<Chip color='primary' variant='outlined' label={cate.name} key={cate.id}/>)
+                                        return (<Chip style={{margin: '5px'}} color='primary' variant='outlined' label={cate.name} key={cate.id} />)
                                     })}
                                 </Typography>
                             </Grid>
