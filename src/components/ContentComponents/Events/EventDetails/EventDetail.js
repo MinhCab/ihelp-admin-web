@@ -10,6 +10,7 @@ import { useHistory } from 'react-router';
 
 import axios from "../../../../api/axios"
 import noImage from '../../../../assets/images/no-image.jpg'
+import EditEvent from '../EditEvent/EditEvent';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -60,6 +61,8 @@ const EventDetail = (props) => {
 
     const classes = useStyles();
     const history = useHistory()
+    const [openEditDialog, setOpenEditDialog] = React.useState(false)
+
     const [details, setDetails] = React.useState({})
     const [categories, setCategories] = React.useState([])
     const [status, setStatus] = React.useState({})
@@ -132,6 +135,12 @@ const EventDetail = (props) => {
     const editHandler = () => {
         // const { eventDetails } = React.useContext(StoreContext) //cách lấy ra nhưng phải sử dụng reducer để thay đổi giá trị
         console.log('Edit event clicked')
+        setOpenEditDialog(true)
+    }
+
+    const handleCloseEditDialog = () => {
+        console.log('Close edit dialog clicked')
+        setOpenEditDialog(false)
     }
 
     const deleteHandler = () => {
@@ -173,6 +182,7 @@ const EventDetail = (props) => {
     let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained' onClick={disableEventHandler}>Disable this event</Button>
     let showActionBtns = null
     let deleteBtn = null
+    let editDialog = null
     let showImages = (
         <CardMedia
             className={classes.media}
@@ -235,122 +245,204 @@ const EventDetail = (props) => {
         })
     }
 
+    if(openEditDialog) {
+        editDialog = (
+            <EditEvent infor={details} isOpen={openEditDialog} close={handleCloseEditDialog}/>
+        )
+    }
+
     return (
+      <>
         <Card className={classes.root}>
-            <Grid container spacing={4}>
-                <Grid item>
-                    {showImages}
-                </Grid>
-                <Grid item xs={12} sm container>
-                    <Grid item xs container direction="column" spacing={2}>
-                        <CardHeader
-                            title={
-                                <Typography className={classes.title} variant="h1" color="textPrimary" component="h1">
-                                    {details.title}
-                                </Typography>
-                            }
-                            subheader={
-                                <Grid item xs>
-                                    <Typography variant="body1" color="textSecondary" component="span">
-                                        <strong>Created on: </strong> {moment(details.createdDate).format('MMMM Do YYYY')}
-                                    </Typography>
-                                </Grid>
-                            }
-                        />
-
-                        <CardContent>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Events start from: </strong> {moment(details.startDate).format('MMMM Do YYYY')}
-                                </Typography>
-                            </Grid>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Type: </strong>
-                                    {showOnsite}
-                                </Typography>
-                            </Grid>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Location: </strong> {details.location}
-                                </Typography>
-                            </Grid>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Category: </strong>
-                                    {categories.map(cate => {
-                                        return (<Chip style={{margin: '5px'}} color='primary' variant='outlined' label={cate.name} key={cate.id} />)
-                                    })}
-                                </Typography>
-                            </Grid>
-
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Status: </strong>
-                                    <Chip color='primary' variant='outlined' label={status.name} />
-                                </Typography>
-                            </Grid>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    <strong>Pending slots: </strong> {details.spot}
-                                </Typography>
-                            </Grid>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="primary" component="span">
-                                    <strong>Points for this event: {details.point}</strong>
-                                </Typography>
-                            </Grid>
-                            <Grid item container xs className={classes.description} wrap='nowrap'>
-                                <Typography variant="body1" color="textPrimary" component="span">
-                                    {details.description}
-                                </Typography>
-                            </Grid>
-                            {showActionBtns}
-                        </CardContent>
-
+          <Grid container spacing={4}>
+            <Grid item>{showImages}</Grid>
+            <Grid item xs={12} sm container>
+              <Grid item xs container direction="column" spacing={2}>
+                <CardHeader
+                  title={
+                    <Typography
+                      className={classes.title}
+                      variant="h1"
+                      color="textPrimary"
+                      component="h1"
+                    >
+                      {details.title}
+                    </Typography>
+                  }
+                  subheader={
+                    <Grid item xs>
+                      <Typography
+                        variant="body1"
+                        color="textSecondary"
+                        component="span"
+                      >
+                        <strong>Created on: </strong>{" "}
+                        {moment(details.createdDate).format("MMMM Do YYYY")}
+                      </Typography>
                     </Grid>
-                    <Grid item>
-                        <Grid item container xs className={classes.side}>
-                            <CardActions className={classes.side}>
-                                <IconButton onClick={handleClick}>
-                                    <MoreVert aria-label="settings" />
-                                </IconButton>
-                            </CardActions>
-                        </Grid>
-                        <Grid item container xs className={classes.sidecontent}>
-                            <Typography variant="body2" color="textSecondary" component="span">
-                                <strong>by: </strong> {details.accountEmail}
-                            </Typography>
-                        </Grid>
-                        <Grid item className={classes.side}>
-                            <Typography variant="body1" color="textPrimary" component="span">
-                                <strong>to: </strong> {moment(details.endDate).format('MMMM Do YYYY')}
-                            </Typography>
-                        </Grid>
-                    </Grid>
+                  }
+                />
+
+                <CardContent>
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      <strong>Events start from: </strong>{" "}
+                      {moment(details.startDate).format("MMMM Do YYYY")}
+                    </Typography>
+                  </Grid>
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      <strong>Type: </strong>
+                      {showOnsite}
+                    </Typography>
+                  </Grid>
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      <strong>Location: </strong> {details.location}
+                    </Typography>
+                  </Grid>
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      <strong>Category: </strong>
+                      {categories.map((cate) => {
+                        return (
+                          <Chip
+                            style={{ margin: "5px" }}
+                            color="primary"
+                            variant="outlined"
+                            label={cate.name}
+                            key={cate.id}
+                          />
+                        );
+                      })}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      <strong>Status: </strong>
+                      <Chip
+                        color="primary"
+                        variant="outlined"
+                        label={status.name}
+                      />
+                    </Typography>
+                  </Grid>
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      <strong>Pending slots: </strong> {details.spot}
+                    </Typography>
+                  </Grid>
+                  <Grid item container xs className={classes.Typography}>
+                    <Typography
+                      variant="body1"
+                      color="primary"
+                      component="span"
+                    >
+                      <strong>Points for this event: {details.point}</strong>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    container
+                    xs
+                    className={classes.description}
+                    wrap="nowrap"
+                  >
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                    >
+                      {details.description}
+                    </Typography>
+                  </Grid>
+                  {showActionBtns}
+                </CardContent>
+              </Grid>
+              <Grid item>
+                <Grid item container xs className={classes.side}>
+                  <CardActions className={classes.side}>
+                    <IconButton onClick={handleClick}>
+                      <MoreVert aria-label="settings" />
+                    </IconButton>
+                  </CardActions>
                 </Grid>
+                <Grid item container xs className={classes.sidecontent}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="span"
+                  >
+                    <strong>by: </strong> {details.accountEmail}
+                  </Typography>
+                </Grid>
+                <Grid item className={classes.side}>
+                  <Typography
+                    variant="body1"
+                    color="textPrimary"
+                    component="span"
+                  >
+                    <strong>to: </strong>{" "}
+                    {moment(details.endDate).format("MMMM Do YYYY")}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
-            <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                <Paper style={{ maxWidth: 'auto', textAlign: 'center' }}>
-                    <Button className={classes.settings} color='primary' variant='outlined' onClick={editHandler}>Edit</Button>
-                    {deleteBtn}
-                </Paper>
-            </Popover>
+          </Grid>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <Paper style={{ maxWidth: "auto", textAlign: "center" }}>
+              <Button
+                className={classes.settings}
+                color="primary"
+                variant="outlined"
+                onClick={editHandler}
+              >
+                Edit
+              </Button>
+              {deleteBtn}
+            </Paper>
+          </Popover>
         </Card>
-
+        {editDialog}
+      </>
     );
 }
 
