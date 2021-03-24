@@ -1,9 +1,8 @@
-import { Button, Card, CardContent, CardHeader, Grid } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, Grid, TextField } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
-// import SearchBar from "material-ui-search-bar";
 
 import axios from '../../../api/axios'
 
@@ -73,7 +72,7 @@ const Events = () => {
     const [events, setEvents] = useState([])
     const [page, setPage] = useState(0)
     const [totalItems, setTotalItems] = useState(0)
-    // const [search, setSearch] = useState(null)
+    const [search, setSearch] = useState(null)
 
     const createEventHandler = () => {
         history.push('/home/events/create')
@@ -87,15 +86,16 @@ const Events = () => {
         setPage(params.page)
     }
 
-    // const handleSearchRequest = () => {
-    //     axios.get('/api/events/title/' + search + '?page=' + page)
-    //         .then(res => {
-    //             setEvents(res.data.events)
-    //             setTotalItems(res.data.totalItems)
-    //         }).catch(err => {
-    //             console.log(err.message)
-    //         })
-    // }
+    const handleSearchRequest = () => {
+        setPage(0)
+        axios.get('/api/events/title/' + search + '?page=' + page)
+            .then(res => {
+                setEvents(res.data.events)
+                setTotalItems(res.data.totalItems)
+            }).catch(err => {
+                console.log(err.message)
+            })
+    }
 
     useEffect(() => {
         axios.get('/api/events?page=' + page)
@@ -117,11 +117,10 @@ const Events = () => {
                             <Button color='primary' variant='contained' onClick={createEventHandler}>Create</Button>
                         </Grid>
                         <Grid item>
-                            {/* <SearchBar 
-                                value={search}
-                                onChange={(event) => setSearch(event.value)}
-                                onRequestSearch={handleSearchRequest}
-                            /> */}
+                            <form>
+                                <TextField id='search-bar' label='Search' onSubmit={handleSearchRequest}/>
+                            </form>
+                            
                         </Grid>
                     </Grid>
                 }
