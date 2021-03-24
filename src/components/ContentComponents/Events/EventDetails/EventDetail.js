@@ -6,9 +6,10 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import CancelIcon from '@material-ui/icons/Cancel';
 import moment from 'moment';
 import React from 'react'
+import { useHistory } from 'react-router';
 
 import axios from "../../../../api/axios"
-import { useHistory } from 'react-router';
+import noImage from '../../../../assets/images/no-image.jpg'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -172,6 +173,15 @@ const EventDetail = (props) => {
     let disableBtn = <Button startIcon={<CancelIcon />} color="secondary" variant='contained' onClick={disableEventHandler}>Disable this event</Button>
     let showActionBtns = null
     let deleteBtn = null
+    let showImages = (
+        <CardMedia
+            className={classes.media}
+            image={noImage}
+            title="No image"
+            key='no-image'
+        />
+    )
+
     if (onsite === true) {
         showOnsite = <Button color='secondary' variant='contained'>On site</Button>
     }
@@ -212,24 +222,24 @@ const EventDetail = (props) => {
         )
     }
 
+    if (images.length !== 0) {
+        showImages = images.map(img => {
+            return (
+                <CardMedia
+                    className={classes.media}
+                    image={img.url}
+                    title="Event image"
+                    key={img.imageId}
+                />
+            )
+        })
+    }
+
     return (
         <Card className={classes.root}>
             <Grid container spacing={4}>
                 <Grid item>
-                    {/*Image will be updated after firebase injection */}
-                    {images.map(img => {
-                        return (
-                            <CardMedia
-                                className={classes.media}
-                                // image="https://www.gstatic.com/webp/gallery/1.webp"
-                                image={img.url}
-                                title="Event image"
-                                key={img.imageId}
-                            />
-                        )
-                    })}
-                    
-                    {/*Image will be updated after firebase injection */}
+                    {showImages}
                 </Grid>
                 <Grid item xs={12} sm container>
                     <Grid item xs container direction="column" spacing={2}>
