@@ -118,7 +118,7 @@ const Events = () => {
                         </Grid>
                         <Grid item>
                             <form>
-                                <TextField id='search-bar' label='Search' onSubmit={handleSearchRequest}/>
+                                <TextField id='search-bar' label='Search' onSubmit={handleSearchRequest} variant='outlined'/>
                             </form>
                             
                         </Grid>
