@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, Typography, Grid, DialogActions, DialogTitle, Button, Divider } from '@material-ui/core'
+import { Dialog, DialogContent, Typography, Grid, DialogActions, DialogTitle, Button, Divider, Chip } from '@material-ui/core'
 import moment from 'moment'
 import React from 'react'
 
@@ -54,7 +54,12 @@ const EventConfirmationDialog = (props) => {
                 <Grid container spacing={2}>
                     <Grid item xs>
                         <Typography variant='body1' color='textPrimary' component='span'>
-                            <strong>Category: </strong> {details.category}
+                            <strong>Category: </strong> 
+                            {
+                                details.category.map(cate=> {
+                                    return (<Chip key={cate.id} label={cate.name} />)
+                                })
+                            }
                         </Typography>
                     </Grid>
                 </Grid>

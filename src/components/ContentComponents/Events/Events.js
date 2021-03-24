@@ -56,7 +56,7 @@ const columns = [
         renderCell: (params) => {
             let color = 'primary';
             let type = params.value;
-            if (type.id === 2) {
+            if (type.id === 2 || type.id === 5) {
                 color = 'secondary'
             }
             return (

@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel, ListItem, ListItemText, List } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, Grid, makeStyles, Typography, TextField, MenuItem, Select, Input, Switch, FormControlLabel, ListItem, ListItemText, List, Chip } from '@material-ui/core'
 import moment from 'moment'
 import React, { useEffect } from 'react'
 import { enGB } from 'date-fns/locale'
@@ -30,11 +30,6 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(0.5),
         fontSize: 25
     },
-
-    select: {
-        width: 205
-    },
-
     locationSuggest: {
         width: '100%',
         maxWidth: 360,
@@ -58,7 +53,7 @@ const CreateEvent = () => {
     const [title, setTitle] = React.useState('')
     const [startDate, setStartDate] = React.useState()
     const [endDate, setEndDate] = React.useState()
-    const [category, setCategory] = React.useState({})
+    const [category, setCategory] = React.useState([])
     const [quota, setQuota] = React.useState(1)
     const [point, setPoint] = React.useState(0)
     const [onSite, setOnSite] = React.useState(true)
@@ -109,7 +104,7 @@ const CreateEvent = () => {
         console.log('Procced clicked')
 
         const imageURL = await uploadImageToFirebase()
-
+        
         let realLocation = null
 
         if (onSite === false) {
@@ -118,11 +113,15 @@ const CreateEvent = () => {
             realLocation = 'lat:' + coordinates.lat +',lng:'+coordinates.lng
         }
 
+        let cateIDs = []
+
+        category.map(cate => {
+            return cateIDs.push(cate.id)
+        })
+
         const event = {
             authorEmail: author,
-            categoryIds: [
-                category
-            ],
+            categoryIds: cateIDs,
             description: description,
             endDate: moment(endDate).format('yyyy-MM-DD HH:mm:ss'),
             id: "",
@@ -131,7 +130,7 @@ const CreateEvent = () => {
             point: point,
             quota: quota,
             startDate: moment(startDate).format('yyyy-MM-DD HH:mm:ss'),
-            statusId: 2,
+            statusId: 3,
             title: title,
             images: [
                 {
@@ -164,14 +163,13 @@ const CreateEvent = () => {
             title: title.toUpperCase(),
             startDate: startDate.toString(),
             endDate: endDate,
-            category: categories.find(res => res.id === category).name,
+            category: category,
             onsite: onSite,
             quota: quota,
             point: point,
             description: description,
             location: realLocation,
         })
-        console.log(confirmInfo)
         setOpenConfirmation(true)
     }
 
@@ -201,28 +199,31 @@ const CreateEvent = () => {
     }
 
     const uploadImageToFirebase = async () => {
-        return new Promise((resolve, reject) => {
-            const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
-            uploadImageTask.on(
-                "state_changed",
-                snapshot => { },
-                error => {
-                    console.log(error)
-                    reject('upload image to firebase - reject: ' + error)
-                },
-                () => {
-                    storage
-                        .ref("images/events/")
-                        .child(image.name)
-                        .getDownloadURL()
-                        .then(url => {
-                            console.log('upload image to firebase - resolve: ' + url)
-                            resolve(url)
-                        })
-                }
-            )
-        })
-
+        if (image === null) {
+            return null
+        } else {
+            return new Promise((resolve, reject) => {
+                const uploadImageTask = storage.ref(`images/events/${image.name}`).put(image)
+                uploadImageTask.on(
+                    "state_changed",
+                    snapshot => { },
+                    error => {
+                        console.log(error)
+                        reject('upload image to firebase - reject: ' + error)
+                    },
+                    () => {
+                        storage
+                            .ref("images/events/")
+                            .child(image.name)
+                            .getDownloadURL()
+                            .then(url => {
+                                console.log('upload image to firebase - resolve: ' + url)
+                                resolve(url)
+                            })
+                    }
+                )
+            })
+        }
     }
 
     const getCookie = (cname) => {
@@ -422,16 +423,24 @@ const CreateEvent = () => {
                             </Typography>
 
                             <Select
-                                className={classes.select}
                                 required
                                 id="txtCategory"
-                                variant='outlined'
                                 select='true'
                                 value={category}
-                                onChange={(event) => handleCategoryInput(event)}
+                                multiple
+                                onChange={handleCategoryInput}
+                                input={<Input id="select-multiple-chip" />}
+                                renderValue={(selected) => {
+                                    return (
+                                        <div>
+                                            {selected.map(value => {
+                                               return <Chip key={value.id} label={value.name} />
+                                            })}
+                                        </div>
+                                    )}}
                             >
                                 {categories.map(cate => {
-                                    return <MenuItem key={cate.id} value={cate.id} >{cate.name}</MenuItem>
+                                    return <MenuItem key={cate.id} value={cate} >{cate.name}</MenuItem>
                                 })}
                             </Select>
                         </Grid>

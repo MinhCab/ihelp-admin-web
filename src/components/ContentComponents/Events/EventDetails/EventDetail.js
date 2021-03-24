@@ -290,8 +290,8 @@ const EventDetail = (props) => {
                                     <strong>Points for this event: {details.point}</strong>
                                 </Typography>
                             </Grid>
-                            <Grid item container xs className={classes.Typography}>
-                                <Typography variant="body1" color="textPrimary" component="span" noWrap>
+                            <Grid item container xs className={classes.description} wrap='nowrap'>
+                                <Typography variant="body1" color="textPrimary" component="span">
                                     {details.description}
                                 </Typography>
                             </Grid>

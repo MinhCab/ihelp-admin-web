@@ -1,11 +1,19 @@
 import React from 'react';
 import { DataGrid } from '@material-ui/data-grid';
-import { Card, CardContent, CardHeader } from '@material-ui/core';
+import { Card, CardContent, CardHeader, createMuiTheme, ThemeProvider } from '@material-ui/core';
 import Button from '@material-ui/core/Button'
 import moment from 'moment';
 
 import axios from '../../../../api/axios'
 import { useHistory } from 'react-router-dom';
+
+const buttonTheme = createMuiTheme({
+  palette: {
+    secondary: {
+      main: '#008c3a'
+    }
+  }
+})
 
 const columns = [
   {
@@ -39,23 +47,22 @@ const columns = [
           On site
         </Button>)
       } else {
-        return (<Button variant="outlined" color='secondary' size="small">
-          Online
-      </Button>)
+        return (
+          <ThemeProvider theme={buttonTheme}>
+            <Button variant="outlined" color='secondary' size="small">
+              Online
+            </Button>
+          </ThemeProvider>
+        )
       }
     }
   },
   {
     field: 'status', headerName: 'Status', width: 120,
     renderCell: (params) => {
-      let color = 'secondary';
-      let type = params.value;
-      if (type.id === 1) {
-        color = 'primary'
-      }
       return (
-        <Button variant="contained" color={color} size="small">
-          {type.name}
+        <Button variant="contained" color='secondary' size="small">
+          {params.value.name}
         </Button>
       );
     }
