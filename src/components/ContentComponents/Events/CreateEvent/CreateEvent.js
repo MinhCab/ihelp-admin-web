@@ -28,7 +28,7 @@ import { useHistory } from "react-router";
 
 import axios from "../../../../api/axios";
 import { EventConfirmationDialog } from "../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog";
-import AlertDialog from "../../../FullLayout/UI/AlertDialog/AlertDialog";
+import { DiscardAlertDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import { storage } from "../../../../api/config/firebase/FirebaseStorage/firebase-storage";
 import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
 import PlacesAutocomplete, {
@@ -351,7 +351,7 @@ const CreateEvent = () => {
 
   if (openDiscard) {
     showDiscard = (
-      <AlertDialog
+      <DiscardAlertDialog
         isOpen={openDiscard}
         closing={handleCancelDiscard}
         proceed={handleProceedDiscard}

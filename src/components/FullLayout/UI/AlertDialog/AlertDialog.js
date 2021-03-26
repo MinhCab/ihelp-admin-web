@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogTitle } from '@material-ui/core'
 import React from 'react'
 
-const AlertDialog = (props) => {
+const DiscardAlertDialog = (props) => {
     return (
         <Dialog
             open={props.isOpen}
@@ -20,4 +20,15 @@ const AlertDialog = (props) => {
     )
 }
 
-export default AlertDialog
+const StatusAlertDialog = (props) => {
+
+    return (
+      <Dialog open={props.isOpen} onClose={props.closing}>
+        <DialogTitle>
+          {status}
+        </DialogTitle>
+      </Dialog>
+    );
+}
+
+export { DiscardAlertDialog, StatusAlertDialog };

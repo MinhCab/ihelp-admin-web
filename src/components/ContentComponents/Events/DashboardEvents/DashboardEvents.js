@@ -124,6 +124,7 @@ const DashboardEvents = () => {
             paginationMode='server'
             onPageChange={pagingHandler}
             rowCount={totalItems}
+            autoHeight='true'
           />
         </div>
       </CardContent>

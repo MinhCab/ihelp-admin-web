@@ -130,17 +130,13 @@ const EventDetail = (props) => {
 
     const handleClose = () => {
         setAnchorEl(null);
+        setOpenEditDialog(false)
     };
 
     const editHandler = () => {
         // const { eventDetails } = React.useContext(StoreContext) //cách lấy ra nhưng phải sử dụng reducer để thay đổi giá trị
         console.log('Edit event clicked')
         setOpenEditDialog(true)
-    }
-
-    const handleCloseEditDialog = () => {
-        console.log('Close edit dialog clicked')
-        setOpenEditDialog(false)
     }
 
     const deleteHandler = () => {
@@ -152,6 +148,10 @@ const EventDetail = (props) => {
             }).catch(err => {
                 console.log(err.message)
             })
+    }
+
+    const handleUpdateProcess = (updateDetails) => {
+      
     }
 
     const getCookie = (cname) => {
@@ -169,7 +169,6 @@ const EventDetail = (props) => {
         }
         return "";
     }
-
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
@@ -196,58 +195,60 @@ const EventDetail = (props) => {
         showOnsite = <Button color='secondary' variant='contained'>On site</Button>
     }
 
-    if (status.name === 'Pending') {
+    if (status.name === "Pending") {
+      deleteBtn = (
+        <Button
+          className={classes.settings}
+          color="secondary"
+          variant="outlined"
+          onClick={deleteHandler}
+        >
+          Delete
+        </Button>
+      );
 
-        deleteBtn = <Button className={classes.settings} color='secondary' variant='outlined' onClick={deleteHandler}>Delete</Button>
-
-        if (username !== details.accountEmail) {
-            showActionBtns = (
-                <div>
-                    <hr />
-                    <br />
-                    <CardActions>
-                        {approveBtn}
-                        {rejectBtn}
-                    </CardActions>
-                </div>
-            )
-        }
-
-    } else if (status.name === 'Approved') {
+      if (username !== details.accountEmail) {
         showActionBtns = (
-            <Grid item container xs className={classes.Typography}>
-                <CardActions>
-                    {disableBtn}
-                </CardActions>
-            </Grid>
-
-        )
-    } else if (status.name === 'In progress') {
-        showActionBtns = (
-            <Grid item container xs className={classes.Typography}>
-                <CardActions>
-                    {finishBtn}
-                </CardActions>
-            </Grid>
-        )
+          <div>
+            <hr />
+            <br />
+            <CardActions>
+              {approveBtn}
+              {rejectBtn}
+            </CardActions>
+          </div>
+        );
+      }
+    } else if (status.name === "Approved") {
+      showActionBtns = (
+        <Grid item container xs className={classes.Typography}>
+          <CardActions>{disableBtn}</CardActions>
+        </Grid>
+      );
+    } else if (status.name === "In progress") {
+      showActionBtns = (
+        <Grid item container xs className={classes.Typography}>
+          <CardActions>{finishBtn}</CardActions>
+        </Grid>
+      );
     }
 
     if (images.length !== 0) {
-        showImages = images.map(img => {
-            return (
-                <CardMedia
-                    className={classes.media}
-                    image={img.url}
-                    title="Event image"
-                    key={img.imageId}
-                />
-            )
-        })
+      showImages = images.map((img) => {
+        return (
+          <CardMedia
+            className={classes.media}
+            image={img.url}
+            title="Event image"
+            key={img.imageId}
+          />
+        );
+      });
     }
 
     if(openEditDialog) {
         editDialog = (
-            <EditEvent infor={details} isOpen={openEditDialog} close={handleCloseEditDialog}/>
+            <EditEvent infor={details} isOpen={openEditDialog} close={handleClose} update={handleUpdateProcess}/>
         )
     }
 

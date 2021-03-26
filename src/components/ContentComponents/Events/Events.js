@@ -55,7 +55,7 @@ const columns = [
         renderCell: (params) => {
             let color = 'primary';
             let type = params.value;
-            if (type.id === 2 || type.id === 5) {
+            if (type.id === 2 || type.id === 4) {
                 color = 'secondary'
             }
             return (
@@ -100,13 +100,13 @@ const Events = () => {
     useEffect(() => {
         axios.get('/api/events?page=' + page)
             .then(res => {
-                setEvents(res.data.events)
+                console.log(res.data)
                 setTotalItems(res.data.totalItems)
-                console.log(res.data.events)
+                setEvents(res.data.events)
             }).catch(error => {
                 console.log(error.message)
             })
-    }, [page, totalItems])
+    }, [page])
 
     return (
         <Card>
@@ -137,6 +137,7 @@ const Events = () => {
                         onPageChange={pagingHandler}
                         paginationMode='server'
                         rowCount={totalItems}
+                        autoHeight='true'
                     />
                 </div>
             </CardContent>

@@ -4,19 +4,18 @@ import {
   DialogContentText,
   DialogTitle,
   FormControlLabel,
-  Input,
   makeStyles,
-  Select,
   Switch,
   TextField,
   List,
-  Grid,
   Button,
   MenuItem,
   Chip,
   ListItem,
   ListItemText,
-  DialogActions
+  DialogActions,
+  Select,
+  Input
 } from "@material-ui/core";
 import { enGB } from "date-fns/locale";
 import React, { useEffect } from "react";
@@ -25,16 +24,9 @@ import PlacesAutocomplete from "react-places-autocomplete";
 import { TextArea } from "semantic-ui-react";
 
 import axios from '../../../../api/axios'
-import noImage from '../../../../assets/images/no-image.jpg'
+import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'
 
 const useStyles = makeStyles((theme) => ({
-  finalButton: {
-    margin: theme.spacing(0.5),
-  },
-
-  titleField: {
-    fontSize: 60,
-  },
 
   descriptionField: {
     width: '100%',
@@ -44,8 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   locationSuggest: {
-    width: "100%",
-    maxWidth: 360,
+    maxWidth: 450,
     backgroundColor: theme.palette.background.paper,
     overflow: "auto",
     maxHeight: 300,
@@ -59,29 +50,34 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EditEvent = (props) => {
-  const classes = useStyles()
-  const [categories, setCategories] = React.useState([])
+  const classes = useStyles();
+  const info = props.infor;
+  const [categories, setCategories] = React.useState([]);
+  const [openPhotoDialog, setOpenPhotoDialog] = React.useState(false)
 
-  const [title, setTitle] = React.useState();
-  const [startDate, setStartDate] = React.useState();
-  const [endDate, setEndDate] = React.useState();
-  const [category, setCategory] = React.useState([]);
-  const [quota, setQuota] = React.useState(1);
-  const [point, setPoint] = React.useState(0);
-  const [onSite, setOnSite] = React.useState(true);
-  const [location, setLocation] = React.useState("");
+  const [title, setTitle] = React.useState(info.title);
+  const [startDate, setStartDate] = React.useState(new Date(info.startDate));
+  const [endDate, setEndDate] = React.useState(new Date(info.endDate));
+  const [category, setCategory] = React.useState(info.categories);
+  const [quota, setQuota] = React.useState(info.quota);
+  const [point, setPoint] = React.useState(info.point);
+  const [onSite, setOnSite] = React.useState(info.onsite);
+  const [location, setLocation] = React.useState(info.location);
+  const [images, setImages] = React.useState(info.images)
+  const [image, setImage] = React.useState(null)
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
     lng: null,
   });
-  const [description, setDescription] = React.useState("");
+  const [description, setDescription] = React.useState(info.description);
 
   const handleTitleInput = (event) => {
     setTitle(event.target.value);
   };
 
   const handleCategoryInput = (event) => {
-    setCategory(event.target.value);
+    console.log("lên đây r nè");
+    setCategory(event.target.value)
   };
 
   const handleQuotaInput = (event) => {
@@ -107,27 +103,47 @@ const EditEvent = (props) => {
     setDescription(event.target.value);
   };
 
+  const handleUploadPhoto = () => {
+    setOpenPhotoDialog(true)
+  }
+
+  const handleClosePhotoDialog = () => {
+    setOpenPhotoDialog(false);
+  }
+
+  const handleConfirmPhotoDialog = () => {
+    console.log('confirm clicked')
+  }
+
+  const updateProcess = () => {
+    // const updateDetails = {
+    //   description: "string",
+    //   endDate: "yyyy-MM-dd HH:mm:ss",
+    //   id: "string",
+    //   location: "string",
+    //   onsite: true,
+    //   point: 0,
+    //   quota: 0,
+    //   startDate: "yyyy-MM-dd HH:mm:ss",
+    //   title: "string"
+    // }
+    };
+
+  
   useEffect(() => {
     axios
       .get("/api/event-categories")
       .then((res) => {
-        console.log(res.data);
+        console.log(res);
         setCategories(res.data);
       })
       .catch((err) => {
         console.log(err.message);
-        // openAlert(true)
-        // const alertInfo = {
-        //     type: 'error',
-        //     message: err.message,
-        //     isOpen: openAlert
-        // }
-        // setAlert.receiveMessage(alertInfo)
       });
   }, []);
 
   let showType = null;
-  let showImage = noImage
+  let showUploadPhotoDialog = null
   let showLocationField = (
     <DialogContentText>
       <PlacesAutocomplete
@@ -140,6 +156,7 @@ const EditEvent = (props) => {
             <TextField
               variant="outlined"
               {...getInputProps({ placeholder: "Type location" })}
+              fullWidth
             />
             <List className={classes.locationSuggest}>
               {loading ? <div>...loading</div> : null}
@@ -170,159 +187,166 @@ const EditEvent = (props) => {
     showLocationField = null;
   }
 
-  // if (!props.image) {
-  //   showImage = props.image
-  // }
+  if(openPhotoDialog) {
+    showUploadPhotoDialog = (
+      <PhotoUploadDialog
+        isOpen={openPhotoDialog}
+        cancel={handleClosePhotoDialog}
+        confirm={handleConfirmPhotoDialog}
+        image={image}
+      />
+    )
+  }
 
   return (
-    <Dialog open={props.isOpen} onClose={props.close}>
-      <DialogTitle>
-        <h2>Edit Events</h2>
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          <img
-            className={classes.imagePreview}
-            alt="cover photo"
-            src={showImage}
-          />
-        </DialogContentText>
-        <DialogContentText>
-          <TextField
-            variant="outlined"
-            value={title}
-            onChange={handleTitleInput}
-            label="Title"
-            fullWidth
-          />
-        </DialogContentText>
-        <DialogContentText>
-          <DateRangePicker
-            startDate={startDate}
-            endDate={endDate}
-            onStartDateChange={setStartDate}
-            onEndDateChange={setEndDate}
-            minimumDate={new Date()}
-            minimumLength={1}
-            format="dd MMM yyyy"
-            locale={enGB}
-          >
-            {({ startDateInputProps, endDateInputProps, focus }) => (
-              <>
-                <TextField
-                  required
-                  className={
-                    "input" + (focus === START_DATE ? " -focused" : "")
-                  }
-                  {...startDateInputProps}
-                  label="From"
-                  variant="outlined"
-                />
-                <TextField
-                  required
-                  className={"input" + (focus === END_DATE ? " -focused" : "")}
-                  {...endDateInputProps}
-                  label="To"
-                  variant="outlined"
-                />
-              </>
-            )}
-          </DateRangePicker>
-        </DialogContentText>
-        <DialogContentText>
-          <Button
-            variant="contained"
-            component="label"
-            color="primary"
-            onClick={console.log("clicked")}
-          >
-            Upload Cover Photo
-          </Button>
-        </DialogContentText>
-        <DialogContentText>
-          <Select
-            style={{ maxWidth: "100%" }}
-            required
-            id="txtCategory"
-            select="true"
-            value={category}
-            multiple
-            onChange={handleCategoryInput}
-            input={
-              <TextField fullWidth variant="outlined" label="Categories" />
-            }
-            renderValue={(selected) => {
-              return (
-                <div>
-                  {selected.map((value) => {
-                    return <Chip key={value.id} label={value.name} />;
-                  })}
-                </div>
-              );
-            }}
-          >
-            {categories.map((cate) => {
-              return (
-                <MenuItem key={cate.id} value={cate}>
-                  {cate.name}
-                </MenuItem>
-              );
+    <>
+      <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
+        <DialogTitle>
+          <strong style={{ fontSize: 20 }}>Edit Events</strong>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {images.map((img) => {
+              return <img className={classes.imagePreview} alt="cover photo" src={img.url} />;
             })}
-          </Select>
-        </DialogContentText>
-        <DialogContentText>
-          <TextField
-            variant="outlined"
-            value={quota}
-            onChange={handleQuotaInput}
-            label="Number of participants"
-          />
-        </DialogContentText>
-        <DialogContentText>
-          <TextField
-            variant="outlined"
-            value={point}
-            onChange={handlePointInput}
-            label="Points per participant"
-          />
-        </DialogContentText>
-        <DialogContentText>
-          <FormControlLabel
-            control={
-              <Switch
-                name="onSiteType"
-                checked={onSite}
-                onChange={handleOnsiteTypeInput}
-                color="primary"
-              />
-            }
-            label={showType}
-            labelPlacement="end"
-          />
-        </DialogContentText>
-        {showLocationField}
-        <DialogContentText>
-          <TextArea
-            required
-            placeholder="Description"
-            value={description}
-            className={classes.descriptionField}
-            onChange={(event) => handleDescriptionInput(event)}
-          />
-        </DialogContentText>
-        <DialogActions>
-          <Button
-            fullWidth
-            onClick={props.update}
-            variant="contained"
-            color="primary"
-          >
-            Update
-          </Button>
-        </DialogActions>
-      </DialogContent>
-    </Dialog>
+          </DialogContentText>
+          <DialogContentText>
+            <TextField
+              variant="outlined"
+              value={title}
+              onChange={handleTitleInput}
+              label="Title"
+              fullWidth
+            />
+          </DialogContentText>
+          <DialogContentText>
+            <DateRangePicker
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={setStartDate}
+              onEndDateChange={setEndDate}
+              minimumDate={new Date()}
+              minimumLength={1}
+              format="dd MMM yyyy"
+              locale={enGB}
+            >
+              {({ startDateInputProps, endDateInputProps, focus }) => (
+                <>
+                  <TextField
+                    required
+                    className={
+                      "input" + (focus === START_DATE ? " -focused" : "")
+                    }
+                    {...startDateInputProps}
+                    label="From"
+                    variant="outlined"
+                  />
+                  <TextField
+                    required
+                    className={
+                      "input" + (focus === END_DATE ? " -focused" : "")
+                    }
+                    {...endDateInputProps}
+                    label="To"
+                    variant="outlined"
+                  />
+                </>
+              )}
+            </DateRangePicker>
+          </DialogContentText>
+          <DialogContentText>
+            <Button
+              variant="contained"
+              component="label"
+              color="primary"
+              onClick={handleUploadPhoto}
+            >
+              Upload Cover Photo
+            </Button>
+          </DialogContentText>
+          <DialogContentText>
+            <Select
+              required
+              id="txtCategory"
+              select="true"
+              value={category}
+              multiple
+              onChange={(event) => handleCategoryInput(event)}
+              input={<Input />}
+              renderValue={(selected) => {
+                return (
+                  <div>
+                    {selected.map((value) => {
+                      return <Chip key={value.id} label={value.name} />;
+                    })}
+                  </div>
+                );
+              }}
+            >
+              {categories.map((cate) => {
+                return (
+                  <MenuItem key={cate.id} value={cate}>
+                    {cate.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </DialogContentText>
+          <DialogContentText>
+            <TextField
+              variant="outlined"
+              value={quota}
+              onChange={handleQuotaInput}
+              label="Number of participants"
+            />
+          </DialogContentText>
+          <DialogContentText>
+            <TextField
+              variant="outlined"
+              value={point}
+              onChange={handlePointInput}
+              label="Points per participant"
+            />
+          </DialogContentText>
+          <DialogContentText>
+            <FormControlLabel
+              control={
+                <Switch
+                  name="onSiteType"
+                  checked={onSite}
+                  onChange={handleOnsiteTypeInput}
+                  color="primary"
+                />
+              }
+              label={showType}
+              labelPlacement="end"
+            />
+          </DialogContentText>
+          {showLocationField}
+          <DialogContentText>
+            <TextArea
+              required
+              placeholder="Description"
+              value={description}
+              className={classes.descriptionField}
+              onChange={(event) => handleDescriptionInput(event)}
+            />
+          </DialogContentText>
+          <DialogActions>
+            <Button
+              fullWidth
+              onClick={updateProcess}
+              variant="contained"
+              color="primary"
+            >
+              Update
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+      {showUploadPhotoDialog}
+    </>
   );
-};
+};;
 
 export default EditEvent;
