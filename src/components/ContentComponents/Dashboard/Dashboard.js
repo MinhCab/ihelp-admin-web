@@ -4,12 +4,6 @@ import { Grid } from '@material-ui/core';
 import Events from '../Events/DashboardEvents/DashboardEvents';
 import Admins from '../Users/DashboardAdmins/DashboardAdmins'
 import Services from '../Services/DashboardServices/DashboardServices'
-// import BlogCard from '../Components/DashboardComponents/BlogCards';
-
-// import us1 from '../assets/images/backgrounds/u1.jpg'
-// import us2 from '../assets/images/backgrounds/u2.jpg'
-// import us3 from '../assets/images/backgrounds/u3.jpg'
-// import us4 from '../assets/images/backgrounds/u4.jpg'
 
 const Dashboard = () => {
     return (

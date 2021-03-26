@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import axios from '../../../../api/axios'
 import { useHistory } from 'react-router-dom';
+import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 
 const buttonTheme = createMuiTheme({
   palette: {
@@ -23,7 +24,7 @@ const columns = [
     }
   },
   { field: 'title', headerName: 'Title', width: 250 },
-  { field: 'authorFullName', headerName: 'Host name', width: 150 },
+  { field: 'fullName', headerName: 'Host name', width: 150 },
   { field: 'authorEmail', headerName: 'Host email', width: 180 },
   {
     field: 'startDate', headerName: 'Start date', width: 200,
@@ -69,16 +70,6 @@ const columns = [
   }
 ];
 
-// const events = [
-//   { id: 1, create_date: '2015-01-01 08:22:13', title: 'Tại sao Coca ở McDonald ngon hơn?', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
-//   { id: 2, create_date: '2015-01-01 08:22:13', title: 'Caviar làm máy PS5 bọc 4 cân rưỡi vàng, tay cầm bọc da cá sấu, giá 499.000 USD', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
-//   { id: 3, create_date: '2015-01-01 08:22:13', title: 'Snow', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'On Site' },
-//   { id: 4, create_date: '2015-01-01 08:22:13', title: 'Snow', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
-//   { id: 5, create_date: '2015-01-01 08:22:13', title: 'Snow', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
-//   { id: 6, create_date: '2015-01-01 08:22:13', title: 'Snow', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
-//   { id: 7, create_date: '2015-01-01 08:22:13', title: 'Snow', category: 'Education', host_name: 'Jon Snow', host_email: 'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', pending_slots: 10, type: 'Online' },
-// ]
-
 
 const DashboardEvents = () => {
 
@@ -86,6 +77,9 @@ const DashboardEvents = () => {
   const [events, setEvents] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [totalItems, setTotalItems] = React.useState(0)
+  const [loading, setLoading] = React.useState(false)
+  const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false)
+  const [error, setError] = React.useState('')
 
   const showEventDetails = (event) => {
     history.push('/home/events/details/' + event.row.id)
@@ -95,40 +89,69 @@ const DashboardEvents = () => {
     setPage(params.page)
   }
 
+  const handleCloseErrorSnackbar = () => {
+    setOpenErrorSnackbar(false)
+  }
+
   React.useEffect(() => {
-    axios.get('/api/events/status/2?page=' + page)
-      .then(res => {
-        setEvents(res.data.events)
-        setTotalItems(res.data.totalItems)
-        console.log(res.data)
-      }).catch(error => {
-        console.log(error.message)
-      })
-      return {
-        
-      }
+    if(!loading) {
+      setLoading(true)
+      axios
+        .get("/api/events/status/2?page=" + page)
+        .then((res) => {
+          console.log(res.data);
+          setTotalItems(res.data.totalItems);
+          setEvents(res.data.events);
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.log(error)
+          setError('Cannot get information from server, please try again');
+          setLoading(false)
+          setOpenErrorSnackbar(true)
+        }); 
+    }
   }, [page, totalItems])
   
+  let showErrorSnackbar = null
+  if(openErrorSnackbar) {
+    showErrorSnackbar = (
+      <AlertSnackbar 
+        isOpen={openErrorSnackbar} 
+        close={handleCloseErrorSnackbar}
+        alertType='error'
+        message={error}
+      />
+    )
+  }
 
   return (
-    <Card>
-      <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending events" subheader="These remaining events that waits to be confirm" />
-      <CardContent>
-        <div style={{ height: 650, width: '100%' }}>
-          <DataGrid 
-            rows={events} 
-            columns={columns} 
-            pageSize={10} 
-            onRowClick={(rows) => showEventDetails(rows)} 
-            pagination
-            paginationMode='server'
-            onPageChange={pagingHandler}
-            rowCount={totalItems}
-            autoHeight='true'
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader
+          titleTypographyProps={{ variant: "h4" }}
+          title="Pending events"
+          subheader="These remaining events that waits to be confirm"
+        />
+        <CardContent>
+          <div style={{ width: "100%" }}>
+            <DataGrid
+              rows={events}
+              columns={columns}
+              pageSize={10}
+              onRowClick={(rows) => showEventDetails(rows)}
+              pagination
+              paginationMode="server"
+              onPageChange={pagingHandler}
+              rowCount={totalItems}
+              autoHeight="true"
+              loading={loading}
+            />
+          </div>
+        </CardContent>
+      </Card>
+      {showErrorSnackbar}
+    </>
   );
 }
 

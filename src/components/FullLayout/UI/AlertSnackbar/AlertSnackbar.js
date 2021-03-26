@@ -7,11 +7,10 @@ const Alert = (props) => {
   }
 
 const AlertSnackbar = (props) => {
-    const info = props.alertInfo
     return (
-        <Snackbar open={info.isOpen} autoHideDuration={6000} onClose={props.close}>
-            <Alert onClose={props.close} severity={info.alertType}>
-                {info.message}
+        <Snackbar open={props.isOpen} autoHideDuration={6000} onClose={props.close}>
+            <Alert onClose={props.close} severity={props.alertType}>
+                {props.message}
             </Alert>
         </Snackbar>
     )

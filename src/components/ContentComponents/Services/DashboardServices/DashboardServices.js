@@ -6,6 +6,7 @@ import Button from '@material-ui/core/Button'
 
 import axios from '../../../../api/axios'
 import { useHistory } from 'react-router';
+import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 
 const buttonTheme = createMuiTheme({
   palette: {
@@ -32,12 +33,6 @@ const columns = [
     }
   },
   { field: 'title', headerName: 'Title', width: 250 },
-  // {
-  //   field: 'serviceType', headerName: 'Service Type', width: 150,
-  //   renderCell: (params) => {
-  //     return <p>{params.value.name}</p>
-  //   }
-  // },
   {
     field: 'accountFullName', headerName: 'Host name', width: 150
   },
@@ -75,32 +70,33 @@ const columns = [
   }
 ];
 
-// const services = [
-//   { id: 1, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-//   { id: 2, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-//   { id: 3, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-//   { id: 4, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-//   { id: 5, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-//   { id: 6, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-//   { id: 7, create_date: '2015-01-01 08:22:13', title: 'Snow', host_name: 'Jon Snow', host_email:'jon@snow.com', start_date: '2015-01-01 08:22:13', end_date: '2015-01-01 08:22:13', category: 'Food'},
-// ]
-
 const DashboardServices = () => {
 
   const history = useHistory()
   const [services, setServices] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [totalItems, setTotalItems] = React.useState(0)
+  const [loading, setLoading] = React.useState(false)
+  const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false)
+  const [error, setError] = React.useState('')
 
   React.useEffect(() => {
-    axios.get('/api/services/status/2?page=' + page)
-      .then(res => {
-        setServices(res.data.services)
-        setTotalItems(res.data.totalItems)
-        console.log(res.data)
-      }).catch(err => {
-        console.log(err.message)
-      })
+    if(!loading) {
+      setLoading(true)
+      axios
+        .get("/api/services/status/2?page=" + page)
+        .then((res) => {
+          console.log(res.data);
+          setTotalItems(res.data.totalItems);
+          setServices(res.data.services);
+          setLoading(false)
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setError('Cannot get information from server, please try again')
+          setOpenErrorSnackbar(true)
+        });
+    }
   }, [page, totalItems])
 
   const showServiceDetails = (event) => {
@@ -111,24 +107,41 @@ const DashboardServices = () => {
     setPage(params.page)
   }
 
+  let showErrorSnackbar = null
+  if(openErrorSnackbar) {
+    <AlertSnackbar 
+      isOpen={openErrorSnackbar}
+      close={handleCloseErrorSnackbar}
+      alertType='error'
+      message={error}
+    />
+  }
+
   return (
-    <Card>
-      <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Pending services" subheader="These remaining services that waits to be confirm" />
-      <CardContent>
-        <div style={{ height: 400, width: '100%' }}>
-          <DataGrid 
-            rows={services} 
-            columns={columns} 
-            pageSize={10} 
-            onRowClick={(rows) => showServiceDetails(rows)} 
-            pagination
-            paginationMode='server'
-            onPageChange={pagingHandler}
-            rowCount={totalItems}
-          />
-        </div>
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader
+          titleTypographyProps={{ variant: "h4" }}
+          title="Pending services"
+          subheader="These remaining services that waits to be confirm"
+        />
+        <CardContent>
+          <div style={{ height: 400, width: "100%" }}>
+            <DataGrid
+              rows={services}
+              columns={columns}
+              pageSize={10}
+              onRowClick={(rows) => showServiceDetails(rows)}
+              pagination
+              paginationMode="server"
+              onPageChange={pagingHandler}
+              rowCount={totalItems}
+            />
+          </div>
+        </CardContent>
+      </Card>
+      {showErrorSnackbar}
+    </>
   );
 }
 

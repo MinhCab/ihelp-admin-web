@@ -11,6 +11,7 @@
     "@material-ui/pickers": "^3.3.10",
     "@material-ui/styles": "^4.11.3",
     "axios": "^0.21.1",
+    "clsx": "^1.1.1",
     "date-fns": "^2.19.0",
     "firebase": "^8.3.0",
     "formik": "^2.2.6",
@@ -22,6 +23,7 @@
     "react-places-autocomplete": "^7.3.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
+    "react-swipeable-views": "^0.13.9",
     "semantic-ui-react": "^2.0.3",
     "yup": "^0.32.9"
   },

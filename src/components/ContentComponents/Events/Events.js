@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 
 import axios from '../../../api/axios'
+import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const additionalButtonTheme = createMuiTheme({
   palette: {
@@ -25,7 +26,7 @@ const columns = [
         }
     },
     { field: 'title', headerName: 'Title', width: 250 },
-    { field: 'authorFullName', headerName: 'Host name', width: 150 },
+    { field: 'fullName', headerName: 'Host name', width: 150 },
     { field: 'authorEmail', headerName: 'Host email', width: 180 },
     {
         field: 'startDate', headerName: 'Start date', width: 200,
@@ -110,6 +111,9 @@ const Events = () => {
     const [page, setPage] = useState(0)
     const [totalItems, setTotalItems] = useState(0)
     const [search, setSearch] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
 
     const createEventHandler = () => {
         history.push('/home/events/create')
@@ -134,52 +138,94 @@ const Events = () => {
             })
     }
 
+    const handleCloseErrorSnackbar = () => {
+      setOpenErrorSnackbar(false)
+    }
+
     useEffect(() => {
-        axios.get('/api/events?page=' + page)
-            .then(res => {
-                console.log(res.data)
-                setTotalItems(res.data.totalItems)
-                setEvents(res.data.events)
-            }).catch(error => {
-                console.log(error.message)
-            })
-    }, [page])
+      if(!loading) {
+        setLoading(true)
+        axios
+          .get("/api/events?page=" + page)
+          .then((res) => {
+            console.log(res.data);
+            setTotalItems(res.data.totalItems);
+            setEvents(res.data.events);
+            setLoading(false)
+          })
+          .catch((error) => {
+            console.log(error.message);
+            setError('Cannot get information from server, please try again')
+            setLoading(false)
+            setOpenErrorSnackbar(true)
+          });
+      }
+    }, [page, totalItems]);
+
+    let errorSnackbar = null
+    if(openErrorSnackbar) {
+      errorSnackbar = (
+        <AlertSnackbar 
+          isOpen={openErrorSnackbar}
+          close={handleCloseErrorSnackbar}
+          alertType='error'
+          message={error}
+        />
+      )
+    }
 
     return (
+      <>
         <Card>
-            <CardHeader
-                title={
-                    <Grid container spacing={3}>
-                        <Grid item xs>
-                            <Button color='primary' variant='contained' onClick={createEventHandler}>Create</Button>
-                        </Grid>
-                        <Grid item>
-                            <form>
-                                <TextField id='search-bar' label='Search' onSubmit={handleSearchRequest} variant='outlined'/>
-                            </form>
-                            
-                        </Grid>
-                    </Grid>
-                }
-            />
-            <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Events" subheader="Events from the iHelp volunteers" />
-            <CardContent>
-                <div style={{ height: 650, width: '100%' }}>
-                    <DataGrid 
-                        rows={events} 
-                        columns={columns} 
-                        pageSize={10} 
-                        onRowClick={(rows) => showEventDetails(rows)} 
-                        pagination 
-                        onPageChange={pagingHandler}
-                        paginationMode='server'
-                        rowCount={totalItems}
-                        autoHeight='true'
+          <CardHeader
+            title={
+              <Grid container spacing={3}>
+                <Grid item xs>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={createEventHandler}
+                  >
+                    Create
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <form>
+                    <TextField
+                      id="search-bar"
+                      label="Search"
+                      onSubmit={handleSearchRequest}
+                      variant="outlined"
                     />
-                </div>
-            </CardContent>
+                  </form>
+                </Grid>
+              </Grid>
+            }
+          />
+          <CardHeader
+            titleTypographyProps={{ variant: "h4" }}
+            title="Events"
+            subheader="Events from the iHelp volunteers"
+          />
+          <CardContent>
+            <div style={{ height: 650, width: "100%" }}>
+              <DataGrid
+                rows={events}
+                columns={columns}
+                pageSize={10}
+                onRowClick={(rows) => showEventDetails(rows)}
+                pagination
+                onPageChange={pagingHandler}
+                paginationMode="server"
+                rowCount={totalItems}
+                autoHeight="true"
+              />
+            </div>
+          </CardContent>
         </Card>
-    )
+        {errorSnackbar}
+      </>
+    );
 }
 
 export default Events

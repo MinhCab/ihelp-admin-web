@@ -37,7 +37,7 @@ const instance = axios.create({
 instance.defaults.headers.post['Content-Type'] = 'application/json'
 
 const refreshAccessToken = async () => {
-  instance.get('/ihelp/refreshtoken', {
+  instance.post('/refreshtoken', {
     headers: {
       isRefreshToken: 'true'
     }

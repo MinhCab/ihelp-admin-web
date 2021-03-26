@@ -11,6 +11,7 @@ import { useHistory } from 'react-router';
 import axios from "../../../../api/axios"
 import noImage from '../../../../assets/images/no-image.jpg'
 import EditEvent from '../EditEvent/EditEvent';
+import TabsLayout from '../../../FullLayout/UI/TabsLayout/TabsLayout';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -210,8 +211,6 @@ const EventDetail = (props) => {
       if (username !== details.accountEmail) {
         showActionBtns = (
           <div>
-            <hr />
-            <br />
             <CardActions>
               {approveBtn}
               {rejectBtn}
@@ -382,8 +381,8 @@ const EventDetail = (props) => {
                       {details.description}
                     </Typography>
                   </Grid>
-                  {showActionBtns}
                 </CardContent>
+                {showActionBtns}
               </Grid>
               <Grid item>
                 <Grid item container xs className={classes.side}>
@@ -415,6 +414,7 @@ const EventDetail = (props) => {
               </Grid>
             </Grid>
           </Grid>
+          <TabsLayout eventID={props.match.params.id}/>
           <Popover
             id={id}
             open={open}
