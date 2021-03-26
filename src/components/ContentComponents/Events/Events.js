@@ -1,10 +1,21 @@
-import { Button, Card, CardContent, CardHeader, Grid, TextField } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, createMuiTheme, Grid, TextField, ThemeProvider } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
 
 import axios from '../../../api/axios'
+
+const additionalButtonTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#008c3a",
+    },
+    secondary: {
+      main: "#039be5",
+    },
+  },
+});
 
 const columns = [
     {
@@ -14,12 +25,6 @@ const columns = [
         }
     },
     { field: 'title', headerName: 'Title', width: 250 },
-    // {
-    //     field: 'category', headerName: 'Category', width: 150,
-    //     renderCell: (params) => {
-    //         return <p>{params.value.name}</p>
-    //     }
-    // },
     { field: 'authorFullName', headerName: 'Host name', width: 150 },
     { field: 'authorEmail', headerName: 'Host email', width: 180 },
     {
@@ -40,29 +45,61 @@ const columns = [
         renderCell: (params) => {
             let showOnSite = params.value
             if (showOnSite === true) {
-                return (<Button variant="outlined" color='primary' size="small">
+                return (
+                  <Button variant="outlined" color="primary" size="small">
                     On site
-                </Button>)
+                  </Button>
+                );
             } else {
-                return (<Button variant="outlined" color='secondary' size="small">
-                    Online
-                </Button>)
+                return (
+                  <ThemeProvider theme={additionalButtonTheme}>
+                    <Button variant="outlined" color="primary" size="small">
+                      Online
+                    </Button>
+                  </ThemeProvider>
+                );
             }
         }
     },
     {
         field: 'status', headerName: 'Status', width: 120,
         renderCell: (params) => {
-            let color = 'primary';
             let type = params.value;
-            if (type.id === 2 || type.id === 4) {
-                color = 'secondary'
-            }
-            return (
-                <Button variant="contained" color={color} size="small">
-                    {type.name}
+            if (type.id === 3) {
+                return (
+                  <ThemeProvider theme={additionalButtonTheme}>
+                    <Button variant="contained" color='primary' size="small">
+                      {type.name}
+                    </Button>
+                  </ThemeProvider>
+                );
+            } else if(type.id === 2) {
+                return (
+                  <ThemeProvider theme={additionalButtonTheme}>
+                    <Button variant="contained" color="secondary" size="small">
+                      {type.name}
+                    </Button>
+                  </ThemeProvider>
+                );
+            } else if(type.id === 4) {
+                return (
+                    <Button variant="contained" color='primary' size="small">
+                      {type.name}
+                    </Button>
+                )
+            } else if(type.id === 5) {
+              return (
+                <Button variant="contained" color="inherit" size="small">
+                  {type.name}
                 </Button>
-            );
+              );
+            } else {
+                return (
+                    <Button variant="contained" color='secondary' size="small">
+                      {type.name}
+                    </Button>
+                )
+            }
         }
     }
 ]
