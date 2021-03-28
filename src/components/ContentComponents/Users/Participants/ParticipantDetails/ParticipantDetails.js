@@ -21,7 +21,7 @@ const ParticipantDetails = (props) => {
       <Dialog fullWidth open={props.isOpen} onClose={props.close}>
         <DialogContent>
           <Grid container spacing={3}>
-              <Grid item xs={3}>
+              <Grid item xs={4}>
                 <Avatar
                   className={classes.avatar}
                   alt="Participant Avatar"

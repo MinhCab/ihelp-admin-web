@@ -101,6 +101,7 @@ const Login = () => {
       axios.post('/login', loginInfo)
         .then(res => {
           if (res.data) {
+            console.log(res.data)
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(getCookie("accessToken"));
             setSuccess(true);

@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
         padding: 20,
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
     },
 }))
 
@@ -28,7 +28,7 @@ const Participants = (props) => {
     if (!loading) {
       setLoading(true);
       axios
-        .get("/ihelp/accounts/event/" + props.eventID)
+        .get("/accounts/event/" + props.eventID)
         .then((res) => {
           console.log(res);
           setParticipants(res.data);
@@ -65,8 +65,8 @@ const Participants = (props) => {
   return (
     <>
       <Grid container item xs className={classes.root}>
-          {/* {showParticipants} */}
-          <Participant viewDetails={props.participantDetails}/>
+          {showParticipants}
+          {/* <Participant viewDetails={props.participantDetails}/> */}
       </Grid>
       {showErrorSnackbar}
     </>
