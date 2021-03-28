@@ -77,6 +77,10 @@ const Feedbacks = (props) => {
     // const [error, setError] = useState("");
     // const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
 
+    const handleFeedbackClicked = (event) => {
+      props.feedbackDetails(event.row)
+    }
+
     // const handleCloseErrorSnackbar = () => {
     //     setOpenErrorSnackbar(false)
     // }
@@ -116,6 +120,7 @@ const Feedbacks = (props) => {
               pageSize={10}
               autoHeight
             //   loading={loading}
+              onRowClick={(rows) => handleFeedbackClicked(rows)}
             />
             {/* {showErrorSnackbar} */}
         </div>

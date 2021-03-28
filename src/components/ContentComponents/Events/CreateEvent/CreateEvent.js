@@ -126,16 +126,14 @@ const CreateEvent = () => {
 
     const imageURL = await uploadImageToFirebase();
 
-    let realLocation = null;
+    let realLocation = location;
 
     if (onSite === false) {
       realLocation = "Online";
-    } else {
-      realLocation = "lat:" + coordinates.lat + ",lng:" + coordinates.lng;
     }
 
     let cateIDs = [];
-
+    
     category.map((cate) => {
       return cateIDs.push(cate.id);
     });
@@ -147,6 +145,8 @@ const CreateEvent = () => {
       endDate: moment(endDate).format("yyyy-MM-DD HH:mm:ss"),
       id: "",
       location: realLocation,
+      latitude: coordinates.lat,
+      longitude: coordinates.lng,
       onsite: onSite,
       point: point,
       quota: quota,

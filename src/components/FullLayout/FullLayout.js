@@ -15,7 +15,8 @@ import Users from '../ContentComponents/Users/DashboardAdmins/DashboardAdmins'
 import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
 import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
-import CreateService from '../ContentComponents/Services/CreateService/CreateService'
+import CreateService from '../ContentComponents/Services/CreateService/CreateService';
+import Profile from '../ContentComponents/Users/Profile/Profile'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import axios from '../../api/axios'
 
@@ -153,6 +154,8 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
               <PrivateRoute exact path={`${url}/users`} component={Users} />
+
+              <PrivateRoute exact path={`${url}/profile`} component={Profile} />
               
               <Redirect from='/' to={`${url}/dashboard`} />
             </Switch>

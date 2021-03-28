@@ -12,9 +12,11 @@ import axios from "../../../../api/axios"
 import noImage from '../../../../assets/images/no-image.jpg'
 import EditEvent from '../EditEvent/EditEvent';
 import TabsLayout from '../../../FullLayout/UI/TabsLayout/TabsLayout';
+import ParticipantDetails from '../../Users/Participants/ParticipantDetails/ParticipantDetails';
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        display: 'auto',
         flex: '1 1 auto',
         width: '100%',
         padding: '25px'
@@ -63,6 +65,8 @@ const EventDetail = (props) => {
     const classes = useStyles();
     const history = useHistory()
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
+    const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false)
+    const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false)
 
     const [details, setDetails] = React.useState({})
     const [categories, setCategories] = React.useState([])
@@ -70,6 +74,7 @@ const EventDetail = (props) => {
     const [onsite, setOnsite] = React.useState(false)
     const [images, setImages] = React.useState([])
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [participantDetails, setParticipantDetails] = React.useState({})
 
     React.useEffect(() => {
         axios.get("/api/events/" + props.match.params.id)
@@ -155,6 +160,21 @@ const EventDetail = (props) => {
       
     }
 
+    const handleParticipantDetails = (details) => {
+      console.log('participant ' + details.email + ' clicked')
+      setParticipantDetails(details)
+      setOpenParticipantDetails(true)
+    }
+
+    const handleCloseParticipantDetails = () => {
+      setParticipantDetails(null)
+      setOpenParticipantDetails(false)
+    }
+
+    const handleFeedbackDetails = (details) => {
+      console.log('feedback clicked')
+    }
+
     const getCookie = (cname) => {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
@@ -183,6 +203,7 @@ const EventDetail = (props) => {
     let showActionBtns = null
     let deleteBtn = null
     let editDialog = null
+    let showParticipantDetails = null
     let showImages = (
         <CardMedia
             className={classes.media}
@@ -249,6 +270,16 @@ const EventDetail = (props) => {
         editDialog = (
             <EditEvent infor={details} isOpen={openEditDialog} close={handleClose} update={handleUpdateProcess}/>
         )
+    }
+
+    if(openParticipantDetails) {
+      showParticipantDetails = (
+        <ParticipantDetails
+          isOpen={openParticipantDetails}
+          close={handleCloseParticipantDetails}
+          details={participantDetails}
+        />
+      )
     }
 
     return (
@@ -414,7 +445,7 @@ const EventDetail = (props) => {
               </Grid>
             </Grid>
           </Grid>
-          <TabsLayout eventID={props.match.params.id}/>
+          <TabsLayout eventID={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
           <Popover
             id={id}
             open={open}
@@ -443,6 +474,7 @@ const EventDetail = (props) => {
           </Popover>
         </Card>
         {editDialog}
+        {showParticipantDetails}
       </>
     );
 }

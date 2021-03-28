@@ -33,12 +33,8 @@ const columns = [
     }
   },
   { field: 'title', headerName: 'Title', width: 250 },
-  {
-    field: 'accountFullName', headerName: 'Host name', width: 150
-  },
-  {
-    field: 'accountEmail', headerName: 'Host email', width: 150
-  },
+  { field: 'fullName', headerName: 'Host name', width: 150 },
+  { field: 'accountEmail', headerName: 'Host email', width: 150 },
   {
     field: 'startDate', headerName: 'Start date', width: 180,
     renderCell: (params) => {
@@ -79,6 +75,10 @@ const DashboardServices = () => {
   const [loading, setLoading] = React.useState(false)
   const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false)
   const [error, setError] = React.useState('')
+
+  const handleCloseErrorSnackbar = () => {
+    setOpenErrorSnackbar(false)
+  }
 
   React.useEffect(() => {
     if(!loading) {
