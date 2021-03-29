@@ -32,17 +32,23 @@ const columns = [
             return <p>{moment(params.value).format("MMM Do YYYY")}</p>
         }
     },
-    { field: 'title', headerName: 'Title', width: 250 },
+    { field: 'title', headerName: 'Title', width: 300 },
     // {
     //   field: 'serviceType', headerName: 'Service Type', width: 150,
     //   renderCell: (params) => {
     //     return <p>{params.value.name}</p>
     //   }
     // },
-    { field: 'accountFullName', headerName: 'Host name', width: 200 },
-    { field: 'accountEmail', headerName: 'Host email', width: 200 },
+    { field: 'accountEmail', headerName: 'Host email', width: 230 },
+    { field: 'fullName', headerName: 'Host name', width: 200 },
     {
         field: 'startDate', headerName: 'Start date', width: 180,
+        renderCell: (params) => {
+            return <p>{moment(params.value).format("MMM Do YYYY")}</p>
+        }
+    },
+    {
+        field: 'endDate', headerName: 'End date', width: 180,
         renderCell: (params) => {
             return <p>{moment(params.value).format("MMM Do YYYY")}</p>
         }

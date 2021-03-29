@@ -127,16 +127,17 @@ const Events = () => {
         setPage(params.page)
     }
 
-    const handleSearchRequest = () => {
-        setPage(0)
-        axios.get('/api/events/title/' + search + '?page=' + page)
-            .then(res => {
-                setEvents(res.data.events)
-                setTotalItems(res.data.totalItems)
-            }).catch(err => {
-                console.log(err.message)
-            })
-    }
+    // const handleSearchRequest = () => {
+    //     setPage(0)
+    //     axios.get('/api/events/title/' + search + '?page=' + page)
+    //         .then(res => {
+    //             setEvents(null)
+    //             setSearchE
+    //             setTotalItems(res.data.totalItems)
+    //         }).catch(err => {
+    //             console.log(err.message)
+    //         })
+    // }
 
     const handleCloseErrorSnackbar = () => {
       setOpenErrorSnackbar(false)
@@ -163,6 +164,7 @@ const Events = () => {
     }, [page, totalItems]);
 
     let errorSnackbar = null
+    // let showEvent = null
     if(openErrorSnackbar) {
       errorSnackbar = (
         <AlertSnackbar 
@@ -173,6 +175,10 @@ const Events = () => {
         />
       )
     }
+
+    // if(events.length !== 0) {
+    //   showEvent = events
+    // }
 
     return (
       <>
@@ -194,8 +200,7 @@ const Events = () => {
                     <TextField
                       id="search-bar"
                       label="Search"
-                      onSubmit={handleSearchRequest}
-                      variant="outlined"
+                      variant="outlined"  
                     />
                   </form>
                 </Grid>

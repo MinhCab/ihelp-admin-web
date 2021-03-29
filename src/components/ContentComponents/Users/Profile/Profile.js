@@ -15,6 +15,7 @@ import {
 
 import profileimg from '../../../../assets/images/avatar/user_1.png'
 import axios from '../../../../api/axios'
+import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 const useStyles = makeStyles({
     avatar: {
         height:100,
@@ -61,7 +62,7 @@ const useStyles = makeStyles({
 
       let showErrorSnackbar = null
       if(openErrorSnackbar) {
-          <AlertSnackbar 
+          <AlertSnackbar
             isOpen={openErrorSnackbar}
             close={handleCloseErrorSnackbar}
             message={error}

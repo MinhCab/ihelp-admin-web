@@ -87,7 +87,7 @@ const FullLayout = () => {
   }
 
   const profileHandler = () => {
-    history.replace('/profile/' + getCookie('userEmail'))
+    history.push('/profile/details/' + getCookie('userEmail'))
   }
 
   // const handleCloseAlert = (event, reason) => {
@@ -156,7 +156,7 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/services/create`} component={CreateService} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
-              <PrivateRoute exact path={`${url}/profile/:email`} component={Profile} />
+              <PrivateRoute exact path={`${url}/profile/details/:email`} component={Profile} />
 
               <PrivateRoute exact path={`${url}/users`} component={Users} />
 

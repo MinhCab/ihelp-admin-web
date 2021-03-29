@@ -24,7 +24,7 @@ const Participant = (props) => {
     const classes = useStyles()
     const details = props.infor
     return (
-      <Card className={classes.root} onClick={props.viewDetails}>
+      <Card className={classes.root} onClick={() => props.viewDetails(details)}>
         <CardMedia
           className={classes.cover}
           image={details.imageUrl}

@@ -1,5 +1,10 @@
-import { Avatar, Box, Dialog, DialogContent, DialogTitle, Button, Grid, makeStyles, TextField, Typography } from '@material-ui/core'
+import { Avatar, Dialog, DialogContent, Button, Grid, makeStyles, Typography, DialogActions, Divider } from '@material-ui/core'
+import WcIcon from '@material-ui/icons/Wc';
+import AlarmOnIcon from '@material-ui/icons/AlarmOn';
+import PhoneIcon from '@material-ui/icons/Phone';
+import BalancePointsIcon from '@material-ui/icons/SettingsInputSvideo';
 import React from 'react'
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     avatarLabel: {
@@ -16,38 +21,89 @@ const useStyles = makeStyles((theme) => ({
 const ParticipantDetails = (props) => {
     const details = props.details
     const classes = useStyles()
+    const history = useHistory()
+
+    const handleViewProfile = () => {
+      history.push('/home/profile/details/' + details.email)
+    }
 
     return (
       <Dialog fullWidth open={props.isOpen} onClose={props.close}>
-        <DialogContent>
+        <DialogContent style={{marginBottom: 10}}>
           <Grid container spacing={3}>
-              <Grid item xs={4}>
-                <Avatar
-                  className={classes.avatar}
-                  alt="Participant Avatar"
-                  src="https://firebasestorage.googleapis.com/v0/b/ihelp-307104.appspot.com/o/images%2Fevents%2F20181209_000945_IMG_5756.JPG?alt=media&token=df883e19-b906-498b-8b18-91002acb0a36"
-                />
-              </Grid>
-              <Grid>
+            <Grid item xs={4}>
+              <Avatar
+                className={classes.avatar}
+                alt="Participant Avatar"
+                src={details.imageUrl}
+              />
+            </Grid>
+            <Grid>
+              <Typography
+                style={{ marginTop: 10 }}
+                component="h3"
+                variant="h4"
+                color="textPrimary"
+              >
+                <strong>{details.fullname}</strong>
+              </Typography>
+
+              <Typography
+                style={{ marginTop: 10 }}
+                variant="subtitle1"
+                color="textSecondary"
+              >
+                {details.email}
+              </Typography>
+
+              <div style={{ marginTop: 30 }}>
                 <Typography
-                  style={{ marginTop: 10 }}
-                  component="h3"
-                  variant="h4"
+                  component="span"
+                  variant="body1"
                   color="textPrimary"
                 >
-                  <strong>Le Bui Hoang Minh</strong>
+                  <WcIcon style={{ marginRight: 10 }} /> Male
                 </Typography>
 
+                <br />
+
                 <Typography
-                  style={{ marginTop: 10 }}
-                  variant="subtitle1"
-                  color="textSecondary"
+                  component="span"
+                  variant="body1"
+                  color="textPrimary"
                 >
-                  minhcab19345@gmail.com
+                  <AlarmOnIcon style={{ marginRight: 10 }} /> Joint this event
+                  on 20-10-2022
                 </Typography>
-              </Grid>
+
+                <br />
+
+                <Typography
+                  component="span"
+                  variant="body1"
+                  color="textPrimary"
+                >
+                  <PhoneIcon style={{ marginRight: 10 }} /> {details.phone}
+                </Typography>
+
+                <br />
+
+                <Typography
+                  component="span"
+                  variant="body1"
+                  color="primary"
+                >
+                  <strong><BalancePointsIcon style={{ marginRight: 10 }} />Balance points: 4241</strong>
+                </Typography>
+              </div>
+            </Grid>
           </Grid>
         </DialogContent>
+        
+        <DialogActions>
+          <Button fullWidth variant='contained' color='primary' onClick={handleViewProfile}>View full profile</Button>
+          <Button fullWidth variant='contained' color='secondary'>Kick user out of event</Button>
+        </DialogActions>
       </Dialog>
     );
 }

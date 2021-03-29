@@ -379,7 +379,7 @@ const CreateEvent = () => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Card>
         <CardHeader
           title={
@@ -625,7 +625,7 @@ const CreateEvent = () => {
       {showConfirmation}
       {showDiscard}
       {showImageUploadDialog}
-    </React.Fragment>
+    </>
   );
 };
 
