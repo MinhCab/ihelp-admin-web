@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Grid,
     Card,
@@ -12,7 +12,9 @@ import {
     Button,
     TextField
   } from '@material-ui/core';
+
 import profileimg from '../../../../assets/images/avatar/user_1.png'
+import axios from '../../../../api/axios'
 const useStyles = makeStyles({
     avatar: {
         height:100,
@@ -22,9 +24,9 @@ const useStyles = makeStyles({
     }
   })
 
-  const Profile = () => {
+  const Profile = (props) => {
     const classes = useStyles();
-    const [values, setValues] = useState({
+    const [details, setdetails] = useState({
         firstName: 'Jonathan',
         lastName: 'Deo',
         email: 'jonathan@deo.com',
@@ -32,14 +34,43 @@ const useStyles = makeStyles({
         state: 'Gujrat',
         country: 'India'
       });
+    const [error, setError] = useState()
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
     
       const handleChange = (event) => {
-        setValues({
-          ...values,
+        setdetails({
+          ...details,
           [event.target.name]: event.target.value
         });
       };
+
+      const handleCloseErrorSnackbar = () => {
+          setOpenErrorSnackbar(false)
+      }
+
+      useEffect(() => {
+          axios.get('/accounts/' + props.match.params.email )
+            .then(res => {
+                console.log(res.data)
+                setDetails(res.data)
+            }).catch(err => {
+                setError(err.message)
+                setOpenErrorSnackbar(true)
+            })
+      }, [])
+
+      let showErrorSnackbar = null
+      if(openErrorSnackbar) {
+          <AlertSnackbar 
+            isOpen={openErrorSnackbar}
+            close={handleCloseErrorSnackbar}
+            message={error}
+            alertType='error'
+          />
+      }
+
     return (
+        <>
         <Grid container spacing={3}>
             <Grid item lg={3} md={12} xs={12}>
                 <Card elevation={1} >
@@ -69,7 +100,7 @@ const useStyles = makeStyles({
                                     name="firstName"
                                     onChange={handleChange}
                                     required
-                                    value={values.firstName}
+                                    value={details.firstName}
                                     variant="outlined"
                                 />
                                 </Grid>
@@ -80,7 +111,7 @@ const useStyles = makeStyles({
                                     name="lastName"
                                     onChange={handleChange}
                                     required
-                                    value={values.lastName}
+                                    value={details.lastName}
                                     variant="outlined"
                                 />
                                 </Grid>
@@ -91,7 +122,7 @@ const useStyles = makeStyles({
                                     name="email"
                                     onChange={handleChange}
                                     required
-                                    value={values.email}
+                                    value={details.email}
                                     variant="outlined"
                                 />
                                 </Grid>
@@ -102,7 +133,7 @@ const useStyles = makeStyles({
                                     name="phone"
                                     onChange={handleChange}
                                     type="number"
-                                    value={values.phone}
+                                    value={details.phone}
                                     variant="outlined"
                                 />
                                 </Grid>
@@ -113,7 +144,7 @@ const useStyles = makeStyles({
                                     name="country"
                                     onChange={handleChange}
                                     required
-                                    value={values.country}
+                                    value={details.country}
                                     variant="outlined"
                                 />
                                 </Grid>
@@ -126,7 +157,7 @@ const useStyles = makeStyles({
                                     required
                                     select
                                     SelectProps={{ native: true }}
-                                    value={values.state}
+                                    value={details.state}
                                     variant="outlined"
                                 >
                                     <option value="India"> India </option>
@@ -155,6 +186,8 @@ const useStyles = makeStyles({
                 </Card>
             </Grid>
         </Grid>
+        {showErrorSnackbar}
+        </>
     );
 }
  

@@ -27,7 +27,7 @@ const Sidebar = (props) => {
     const SidebarContent = (
         <Box height="100%" display="flex" flexDirection="column" >
 
-            <Profile fullname={props.fullname} logoutClicked={props.clicked} />
+            <Profile profileClicked={props.profileClicked} logoutClicked={props.logoutClicked} />
 
             <Divider />
 
@@ -48,7 +48,7 @@ const Sidebar = (props) => {
                 variant="contained" 
                 color="primary" 
                 startIcon={<ExitToApp/>}
-                onClick={props.clicked}
+                onClick={props.logoutClicked}
             >
                 <strong>Logout</strong>
             </Button>

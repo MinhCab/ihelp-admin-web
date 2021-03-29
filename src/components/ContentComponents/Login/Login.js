@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory()
-  const { setAccessToken } = useAuth()
+  const { setAccessToken, setUser } = useAuth()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
@@ -104,6 +104,7 @@ const Login = () => {
             console.log(res.data)
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(getCookie("accessToken"));
+            setUser(res.data);
             setSuccess(true);
             setLoading(false);
             history.push("/home/dashboard");

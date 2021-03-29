@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Avatar, Box, Typography, makeStyles, Menu, MenuItem } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import uimage from '../../../assets/images/avatar/IMG_2478-2.jpg';
 import bgprofile from '../../../assets/images/avatar/user-info.png';
+import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
     piclarge: {
@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile = (props) => {
     const classes = useStyles()
     const [anchorEl, setAnchorEl] = useState(null)
+    const { user } = useAuth()
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -40,14 +41,13 @@ const Profile = (props) => {
         setAnchorEl(null);
     };
 
-
     return (
         <Box className={classes.profileBg} color="white">
             <Box p={3}>
-                <Avatar className={classes.piclarge} src={uimage} />
+                <Avatar className={classes.piclarge} src={user.imageUrl} />
             </Box>
             <Typography variant="h6" className={classes.profileTextBg} onClick={handleClick}>
-                {props.fullname}
+                {user.fullname}
                 <Box flexGrow={1} />
                 <ExpandMoreIcon fontSize="small" />
             </Typography>
@@ -61,7 +61,7 @@ const Profile = (props) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={props.profileClicked}>My Profile</MenuItem>
                 <MenuItem onClick={props.logoutClicked}>Logout</MenuItem>
             </Menu>
         </Box>

@@ -23,7 +23,7 @@ function getCookie(cname) {
   }
 
 function useAuthProvider() {
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState({})
     const [accessToken, setAccessToken] = useState(getCookie('accessToken'))
     console.log('From authContext - token: ' + accessToken)
     console.log('From authContext - user: ' + user)

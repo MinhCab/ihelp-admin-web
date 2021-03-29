@@ -63,16 +63,15 @@ const FullLayout = () => {
   // const setAlert = useAlert()
   const history = useHistory()
   const classes = useStyles();
-  const {setUser, setAccessToken} = useAuth()
+  const { setUser, setAccessToken} = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const [userFullname, setUserFullname] = useState(null)
   // const [openAlert, setOpenAlert] = useState(false)
 
   React.useEffect(() => {
     axios.get('/accounts/' + getCookie('userEmail').trim())
       .then(res => {
-        setUserFullname(res.data.fullname)
+        setUser(res.data)
       }).catch(err => {
         console.log('Error from get account info - FullLayout.js: ' + err.message)
       })
@@ -85,6 +84,10 @@ const FullLayout = () => {
     setAccessToken(null)
     console.log('logout token: ' + getCookie('accessToken'))
     history.replace('/login')
+  }
+
+  const profileHandler = () => {
+    history.replace('/profile/' + getCookie('userEmail'))
   }
 
   // const handleCloseAlert = (event, reason) => {
@@ -136,8 +139,8 @@ const FullLayout = () => {
         isSidebarOpen={isSidebarOpen}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
-        clicked={logoutHandler}
-        fullname={userFullname}
+        logoutClicked={logoutHandler}
+        profileClicked={profileHandler}
       />
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
@@ -153,9 +156,10 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/services/create`} component={CreateService} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
+              <PrivateRoute exact path={`${url}/profile/:email`} component={Profile} />
+
               <PrivateRoute exact path={`${url}/users`} component={Users} />
 
-              <PrivateRoute exact path={`${url}/profile`} component={Profile} />
               
               <Redirect from='/' to={`${url}/dashboard`} />
             </Switch>
