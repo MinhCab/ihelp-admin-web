@@ -445,7 +445,7 @@ const EventDetail = (props) => {
               </Grid>
             </Grid>
           </Grid>
-          <TabsLayout eventID={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
+          <TabsLayout participantType='event' id={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
           <Popover
             id={id}
             open={open}

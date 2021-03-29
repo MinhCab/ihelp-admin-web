@@ -428,7 +428,7 @@ const ServiceDetail = (props) => {
               </Grid>
             </Grid>
           </Grid>
-          <TabsLayout serviceID={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
+          <TabsLayout participantType='service' id={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
           <Popover
             id={id}
             open={open}

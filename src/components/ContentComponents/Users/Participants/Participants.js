@@ -28,7 +28,7 @@ const Participants = (props) => {
     if (!loading) {
       setLoading(true);
       axios
-        .get("/accounts/event/" + props.eventID)
+        .get("/accounts/" + props.participantType +"/" + props.id)
         .then((res) => {
           console.log(res);
           setParticipants(res.data);

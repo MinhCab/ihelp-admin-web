@@ -27,14 +27,7 @@ const useStyles = makeStyles({
 
   const Profile = (props) => {
     const classes = useStyles();
-    const [details, setdetails] = useState({
-        firstName: 'Jonathan',
-        lastName: 'Deo',
-        email: 'jonathan@deo.com',
-        phone: '9999999999',
-        state: 'Gujrat',
-        country: 'India'
-      });
+    const [details, setDetails] = useState({});
     const [error, setError] = useState()
     const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
     
@@ -77,9 +70,9 @@ const useStyles = makeStyles({
                 <Card elevation={1} >
                     <CardContent>
                         <Box textAlign="center">
-                            <Avatar alt="Travis Howard" className={classes.avatar} src={profileimg} />
-                            <Typography variant="h4">Jonathan Deo</Typography>
-                            <Typography variant="body2">Web Designer</Typography>
+                            <Avatar alt="Travis Howard" className={classes.avatar} src={details.imageUrl} />
+                            <Typography variant="h4">{details.fullname}</Typography>
+                            <Typography variant="body2">{details.email}</Typography>
                         </Box>
                     </CardContent>
                     <Divider light/>
@@ -88,7 +81,7 @@ const useStyles = makeStyles({
                     </CardContent>
                 </Card>
             </Grid>
-            <Grid item lg={9} md={12} xs={12}>
+            {/* <Grid item lg={9} md={12} xs={12}>
                 <Card elevation={1}>
                     <CardHeader titleTypographyProps={{variant:'h4' }} title="Edit Profile" subheader="change the setting you want"/>
                     <CardContent>
@@ -185,7 +178,7 @@ const useStyles = makeStyles({
                         </form>
                     </CardContent>
                 </Card>
-            </Grid>
+            </Grid> */}
         </Grid>
         {showErrorSnackbar}
         </>
