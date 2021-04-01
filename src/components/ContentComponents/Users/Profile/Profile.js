@@ -64,24 +64,35 @@ const useStyles = makeStyles({
       }
 
     return (
-        <>
+      <>
         <Grid container spacing={3}>
-            <Grid item lg={3} md={12} xs={12}>
-                <Card elevation={1} >
-                    <CardContent>
-                        <Box textAlign="center">
-                            <Avatar alt="Travis Howard" className={classes.avatar} src={details.imageUrl} />
-                            <Typography variant="h4">{details.fullname}</Typography>
-                            <Typography variant="body2">{details.email}</Typography>
-                        </Box>
-                    </CardContent>
-                    <Divider light/>
-                    <CardContent>
-                        <Button fullWidth size="large" variant="outlined" color="secondary">Contact me</Button>
-                    </CardContent>
-                </Card>
-            </Grid>
-            {/* <Grid item lg={9} md={12} xs={12}>
+          <Grid item lg={3} md={12} xs={12}>
+            <Card elevation={1}>
+              <CardContent>
+                <Box textAlign="center">
+                  <Avatar
+                    alt="Travis Howard"
+                    className={classes.avatar}
+                    src={details.imageUrl}
+                  />
+                  <Typography variant="h4">{details.fullname}</Typography>
+                  <Typography variant="body2">{details.email}</Typography>
+                </Box>
+              </CardContent>
+              <Divider light/>
+              <CardContent>
+                <Button
+                  fullWidth
+                  size="large"
+                  variant="outlined"
+                  color="secondary"
+                >
+                  Contact me
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* <Grid item lg={9} md={12} xs={12}>
                 <Card elevation={1}>
                     <CardHeader titleTypographyProps={{variant:'h4' }} title="Edit Profile" subheader="change the setting you want"/>
                     <CardContent>
@@ -181,7 +192,7 @@ const useStyles = makeStyles({
             </Grid> */}
         </Grid>
         {showErrorSnackbar}
-        </>
+      </>
     );
 }
  

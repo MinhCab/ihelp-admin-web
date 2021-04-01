@@ -10,6 +10,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@material-ui/pickers": "^3.3.10",
     "@material-ui/styles": "^4.11.3",
+    "@material-ui/x-grid": "^4.0.0-alpha.23",
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
     "date-fns": "^2.19.0",

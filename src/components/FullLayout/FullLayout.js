@@ -11,14 +11,16 @@ import PrivateRoute from '../../routes/PrivateRoute/PrivateRoute';
 import Dashboard from '../ContentComponents/Dashboard/Dashboard'
 import Events from '../ContentComponents/Events/Events'
 import Services from '../ContentComponents/Services/Services'
-import Users from '../ContentComponents/Users/DashboardAdmins/DashboardAdmins'
+import Users from '../ContentComponents/Users/Users'
 import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
 import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
 import CreateService from '../ContentComponents/Services/CreateService/CreateService';
 import Profile from '../ContentComponents/Users/Profile/Profile'
+import Reports from '../ContentComponents/Reports/Reports'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import axios from '../../api/axios'
+import CreateUser from '../ContentComponents/Users/CreateUser/CreateUser';
 
 // import { useAlert } from '../../hoc/StoringAlertMessage/StoreAlertMessage'
 // import AlertSnackbar from './UI/AlertSnackbar/AlertSnackbar';
@@ -87,7 +89,7 @@ const FullLayout = () => {
   }
 
   const profileHandler = () => {
-    history.push('/profile/details/' + getCookie('userEmail'))
+    history.push('/home/users/' + getCookie('userEmail'))
   }
 
   // const handleCloseAlert = (event, reason) => {
@@ -156,10 +158,12 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/services/create`} component={CreateService} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
-              <PrivateRoute exact path={`${url}/profile/details/:email`} component={Profile} />
 
               <PrivateRoute exact path={`${url}/users`} component={Users} />
+              <PrivateRoute exact path={`${url}/users/create`} component={CreateUser} />
+              <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
 
+              <PrivateRoute exact path={`${url}/reports`} component={Reports} />
               
               <Redirect from='/' to={`${url}/dashboard`} />
             </Switch>
