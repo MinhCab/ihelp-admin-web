@@ -16,6 +16,7 @@
     "date-fns": "^2.19.0",
     "firebase": "^8.3.0",
     "formik": "^2.2.6",
+    "material-ui-phone-number": "^2.2.6",
     "material-ui-search-bar": "^1.0.0",
     "moment": "^2.29.1",
     "react": "^17.0.1",

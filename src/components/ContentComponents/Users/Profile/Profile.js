@@ -24,11 +24,15 @@ import {
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import PhoneInput from 'material-ui-phone-number'
+
 import { DiscardAlertDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
-
 import axios from "../../../../api/axios";
 import ChangePassword from "./ChangePassword/ChangePassword";
+import ChangeRole from "./ChangeRole/ChangeRole";
+import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents";
+import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
 
 const useStyles = makeStyles({
   avatar: {
@@ -68,6 +72,7 @@ const Profile = (props) => {
   const [openPhotoUploadDialog, setOpenPhotoUploadDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false)
+  const [openChangeRoleDialog, setOpenChangeRoleDialog] = useState(false)
 
   const editFullnameHandler = (event) => {
     setFullname(event.target.value);
@@ -81,8 +86,8 @@ const Profile = (props) => {
     setBirthDate(date);
   };
 
-  const editPhoneHandler = (event) => {
-    setPhone(event.target.value);
+  const editPhoneHandler = (value) => {
+    setPhone(value);
   };
 
   const editGenderHandler = (event) => {
@@ -170,8 +175,19 @@ const Profile = (props) => {
     setOpenChangePasswordDialog(true)
   }
 
+  const confirmChangePassword = () => {
+  }
+
   const closeChangePasswordHandler = () => {
     setOpenChangePasswordDialog(false)
+  }
+
+  const changeRoleHandler = () => {
+    setOpenChangeRoleDialog(true)
+  }
+
+  const closeChangeRoleDialog = () => {
+    setOpenChangeRoleDialog(false)
   }
 
   useEffect(() => {
@@ -197,6 +213,7 @@ const Profile = (props) => {
   let showDiscardDialog = null;
   let showImageUploadDialog = null;
   let showChangePasswordDialog = null;
+  let showChangeRoleDialog = null;
   let showEditForm = (
     <Card elevation={1}>
       <CardContent>
@@ -273,6 +290,7 @@ const Profile = (props) => {
           variant="outlined"
           color="primary"
           onClick={editProfileHandler}
+          style={{marginBottom: 10}}
         >
           Edit Profile
         </Button>
@@ -294,11 +312,11 @@ const Profile = (props) => {
       <Card elevation={1}>
         <CardContent>
           <Box textAlign="center">
-              <Avatar
-                alt="Travis Howard"
-                className={classes.avatar}
-                src={imageUrl}
-              />
+            <Avatar
+              alt="Travis Howard"
+              className={classes.avatar}
+              src={imageUrl}
+            />
             <Typography variant="h4">
               <TextField
                 value={fullname}
@@ -335,12 +353,20 @@ const Profile = (props) => {
 
             <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
             {/* <strong>Phone number: </strong> {details.phone} */}
-            <TextField
+            {/* <TextField
               value={phone}
               variant="outlined"
               onChange={editPhoneHandler}
               label="Phone number"
               type="number"
+            /> */}
+
+            <PhoneInput
+              defaultCountry={"vn"}
+              regions="asia"
+              value={phone}
+              onChange={editPhoneHandler}
+              variant='outlined'
             />
             <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
             {/* <strong>Gender: </strong> {details.gender ? "Male" : "Female"} */}
@@ -417,115 +443,33 @@ const Profile = (props) => {
     )
   }
 
+  if(openChangeRoleDialog) {
+    showChangeRoleDialog = (
+      <ChangeRole 
+        isOpen={openChangeRoleDialog}
+        close={closeChangeRoleDialog}
+      />
+    )
+  }
+
   return (
     <>
       <Grid container spacing={3}>
         <Grid item lg={3} md={12} xs={12}>
           {showEditForm}
         </Grid>
-        {/* <Grid item lg={9} md={12} xs={12}>
-                <Card elevation={1}>
-                    <CardHeader titleTypographyProps={{variant:'h4' }} title="Edit Profile" subheader="change the setting you want"/>
-                    <CardContent>
-                    <form autoComplete="off" noValidate >
-                            <Grid  container spacing={3} >
-                                <Grid item md={12} xs={12} >
-                                <TextField
-                                    fullWidth
-                                    label="First name"
-                                    name="firstName"
-                                    onChange={handleChange}
-                                    required
-                                    value={details.firstName}
-                                    variant="outlined"
-                                />
-                                </Grid>
-                                <Grid item md={12} xs={12} >
-                                <TextField
-                                    fullWidth
-                                    label="Last name"
-                                    name="lastName"
-                                    onChange={handleChange}
-                                    required
-                                    value={details.lastName}
-                                    variant="outlined"
-                                />
-                                </Grid>
-                                <Grid item md={12} xs={12} >
-                                <TextField
-                                    fullWidth
-                                    label="Email Address"
-                                    name="email"
-                                    onChange={handleChange}
-                                    required
-                                    value={details.email}
-                                    variant="outlined"
-                                />
-                                </Grid>
-                                <Grid item md={12} xs={12} >
-                                <TextField
-                                    fullWidth
-                                    label="Phone Number"
-                                    name="phone"
-                                    onChange={handleChange}
-                                    type="number"
-                                    value={details.phone}
-                                    variant="outlined"
-                                />
-                                </Grid>
-                                <Grid item md={12} xs={12} >
-                                <TextField
-                                    fullWidth
-                                    label="Country"
-                                    name="country"
-                                    onChange={handleChange}
-                                    required
-                                    value={details.country}
-                                    variant="outlined"
-                                />
-                                </Grid>
-                                <Grid item md={12} xs={12} >
-                                <TextField
-                                    fullWidth
-                                    label="Select State"
-                                    name="state"
-                                    onChange={handleChange}
-                                    required
-                                    select
-                                    SelectProps={{ native: true }}
-                                    value={details.state}
-                                    variant="outlined"
-                                >
-                                    <option value="India"> India </option>
-                                    <option value="USA"> USA </option>
-                                    <option value="Canada"> Canada </option>
-                                </TextField>
-                                </Grid>
-                            </Grid>
-                            
-                            
-                            <Box
-                            display="flex"
-                            justifyContent="flex-start"
-                            mt={3}
-                            >
-                            <Button
-                                color="primary"
-                                variant="contained"
-                            >
-                                Save details
-                            </Button>
-                            </Box>
-                        
-                        </form>
-                    </CardContent>
-                </Card>
-            </Grid> */}
+        <Grid item lg={9} md={12} xs={12}>
+          <ProfileSelfServices email={props.match.params.email}/>
+        </Grid>
+        <Grid item md={12} xs={12}>
+          <ProfileSelfEvents email={props.match.params.email}/>
+        </Grid>
       </Grid>
       {showErrorSnackbar}
       {showDiscardDialog}
       {showImageUploadDialog}
       {showChangePasswordDialog}
+      {showChangeRoleDialog}
       {loading && (
         <CircularProgress size={60} className={classes.buttonProgress} />
       )}

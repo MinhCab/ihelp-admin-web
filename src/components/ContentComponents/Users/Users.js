@@ -79,7 +79,7 @@ const Users = () => {
             setLoading(false)
           })
           .catch((err) => {
-            console.log(err.message);
+            console.log('Cannot not get information from server, please try again later');
             setError(err.message)
             setOpenErrorSnackbar(true)
           });
@@ -87,7 +87,7 @@ const Users = () => {
     }, [])
 
     let showErrorSnackbar = null
-    openErrorSnackbar ? showErrorSnackbar = (<AlertSnackbar isOpen={openErrorSnackbar} close={handleCloseErrorSnackbar} message={error} />) : null
+    openErrorSnackbar ? showErrorSnackbar = (<AlertSnackbar isOpen={openErrorSnackbar} close={handleCloseErrorSnackbar} message={error} alertType='error' />) : null
 
     return (
       <>
