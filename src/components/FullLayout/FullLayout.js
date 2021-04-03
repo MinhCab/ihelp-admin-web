@@ -14,7 +14,6 @@ import Services from '../ContentComponents/Services/Services'
 import Users from '../ContentComponents/Users/Users'
 import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
-import CreateEvent from '../ContentComponents/Events/CreateEvent/CreateEvent';
 import CreateService from '../ContentComponents/Services/CreateService/CreateService';
 import Profile from '../ContentComponents/Users/Profile/Profile'
 import Reports from '../ContentComponents/Reports/Reports'
@@ -62,13 +61,11 @@ const useStyles = makeStyles((theme) => ({
 
 const FullLayout = () => {
   const { url } = useRouteMatch()
-  // const setAlert = useAlert()
   const history = useHistory()
   const classes = useStyles();
   const { setUser, setAccessToken} = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  // const [openAlert, setOpenAlert] = useState(false)
 
   React.useEffect(() => {
     axios.get('/accounts/' + getCookie('userEmail').trim())
@@ -87,17 +84,6 @@ const FullLayout = () => {
     console.log('logout token: ' + getCookie('accessToken'))
     history.replace('/login')
   }
-
-  const profileHandler = () => {
-    history.push('/home/users/' + getCookie('userEmail'))
-  }
-
-  // const handleCloseAlert = (event, reason) => {
-  //   if (reason === 'clickaway') {
-  //       return;
-  //   }
-  //   setOpenAlert(false);
-  // };
 
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -122,17 +108,6 @@ const FullLayout = () => {
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=localhost:3000/login";
   }
 
-  // // let showAlert = null
-  // const alert = setAlert.message
-  // setOpenAlert(alert.isOpen)
-
-  //   if (alert.isOpen) {
-  //       showAlert = <AlertSnackbar
-  //           alertInfo={alert}
-  //           close={handleCloseAlert}
-  //       />
-  //   }
-
   return (
 
     <div className={classes.root}>
@@ -150,7 +125,6 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/dashboard`} component={Dashboard} />
 
               <PrivateRoute exact path={`${url}/events`} component={Events} />
-              <PrivateRoute exact path={`${url}/events/create`} component={CreateEvent} />
               <PrivateRoute exact path={`${url}/events/details/:id`} component={EventDetail} />
 
               <PrivateRoute exact path={`${url}/services`} component={Services} />

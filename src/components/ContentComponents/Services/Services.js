@@ -144,6 +144,7 @@ const Services = () => {
                         onPageChange={pagingHandler}
                         rowCount={totalItems}
                         autoHeight
+                        loading={loading}
                     />
                 </div>
             </CardContent>
