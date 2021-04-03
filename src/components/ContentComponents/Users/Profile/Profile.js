@@ -445,7 +445,7 @@ const Profile = (props) => {
 
   if(openChangeRoleDialog) {
     showChangeRoleDialog = (
-      <ChangeRole 
+      <ChangeRole   
         isOpen={openChangeRoleDialog}
         close={closeChangeRoleDialog}
       />

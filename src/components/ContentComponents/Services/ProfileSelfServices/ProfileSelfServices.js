@@ -127,7 +127,7 @@ const ProfileSelfServices = (props) => {
           subheader="All of the services of this user"
         />
         <CardContent>
-          <div style={{ height: 400, width: "100%" }}>
+          <div style={{ width: "100%" }}>
             <DataGrid
               rows={services}
               columns={columns}
@@ -137,6 +137,7 @@ const ProfileSelfServices = (props) => {
               paginationMode="server"
               onPageChange={pagingHandler}
               rowCount={totalItems}
+              autoHeight
             />
           </div>
         </CardContent>
