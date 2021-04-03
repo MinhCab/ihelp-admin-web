@@ -15,15 +15,34 @@ const columns = [
     },
     { field: 'email', headerName: 'Email', width: 200 },
     { field: 'fullname', headerName: 'Name', width: 250 },
-    { field: 'gender', headerName: 'Gender', width: 150 },
-    { field: 'dateOfBirth', headerName: 'Birthdate', type: 'dateTime', width: 180,
+    { field: 'gender', headerName: 'Gender', width: 120, 
+      renderCell: (params) => {
+        if(params.value) {
+          return <p>Male</p>
+        } else {
+          return <p>Female</p>
+        }
+      }
+    },
+    { field: 'dateOfBirth', headerName: 'Birthdate', type: 'dateTime', width: 170,
         renderCell: (params) => {
             return <p>{moment(params.value).format("MMM Do YYYY")}</p>
-        }
+        } 
     },
-    { field: 'balancePoint', headerName: 'Remaining points', width: 200 },
-    { field: 'contributionPoint', headerName: 'Contribution points', width: 200 },
+    { field: 'balancePoint', headerName: 'Remaining points', width: 170 },
+    { field: 'contributionPoint', headerName: 'Contribution points', width: 170 },
     { field: 'phone', headerName: 'Phone number', width: 160 },
+    { field: 'role', headerName: 'Role', width: 120,
+      renderCell: (params) => {
+        if(params.value.id === 'admin') {
+          return (<Button variant='contained' color='primary'>Admin</Button>)
+        } else if(params.value.id === 'user') {
+          return (<Button variant='outlined' color='primary'>User</Button>)
+        } else {
+          return (<Button variant='contained' color='secondary'>Manager</Button>)
+        }
+      }
+    }
 ]
 
 const Users = () => {
@@ -45,7 +64,7 @@ const Users = () => {
     //             console.log(err.message)
     //         })
     // }, [page, totalItems])
-
+  
     const setIdToUserList = (list) => {
         let count = 0
         const newArray = list.map(item => ({...item, id: count++}))

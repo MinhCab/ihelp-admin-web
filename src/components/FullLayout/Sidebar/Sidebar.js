@@ -6,6 +6,7 @@ import {SidebarWidth} from '../../../assets/jss/Theme-variable'
 import Menuitems from './MenuItems';
 import Profile from './Profile';
 import { ExitToApp } from '@material-ui/icons';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     mobileSidebar: {
@@ -23,11 +24,32 @@ const useStyles = makeStyles((theme) => ({
 
 const Sidebar = (props) => {
     const classes = useStyles();
+    const history = useHistory()
+
+    const profileHandler = () => {
+        history.push('/profile/details/' + getCookie('userEmail'))
+      }
+
+      const getCookie = (cname) => {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i];
+          while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+          }
+          if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+          }
+        }
+        return "";
+      }
 
     const SidebarContent = (
         <Box height="100%" display="flex" flexDirection="column" >
 
-            <Profile profileClicked={props.profileClicked} logoutClicked={props.logoutClicked} />
+            <Profile profileClicked={profileHandler} logoutClicked={props.logoutClicked} />
 
             <Divider />
 

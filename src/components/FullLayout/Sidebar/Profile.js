@@ -47,7 +47,7 @@ const Profile = (props) => {
                 <Avatar className={classes.piclarge} src={user.imageUrl} />
             </Box>
             <Typography variant="h6" className={classes.profileTextBg} onClick={handleClick}>
-                {user.fullname}
+                {user.fullName}
                 <Box flexGrow={1} />
                 <ExpandMoreIcon fontSize="small" />
             </Typography>
