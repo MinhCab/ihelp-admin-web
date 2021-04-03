@@ -86,10 +86,6 @@ const FullLayout = () => {
     history.replace('/login')
   }
 
-  const profileHandler = () => {
-    history.push('/profile/details/' + getCookie('userEmail'))
-  }
-
   // const handleCloseAlert = (event, reason) => {
   //   if (reason === 'clickaway') {
   //       return;
@@ -140,7 +136,6 @@ const FullLayout = () => {
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
         logoutClicked={logoutHandler}
-        profileClicked={profileHandler}
       />
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
