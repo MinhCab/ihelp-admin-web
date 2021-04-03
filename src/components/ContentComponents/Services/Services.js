@@ -83,16 +83,22 @@ const Services = () => {
     const [services, setServices] = React.useState([])
     const [page, setPage] = React.useState(0)
     const [totalItems, setTotalItems] = React.useState(0)
+    const [loading, setLoading] = React.useState(false)
 
     React.useEffect(() => {
+        if(!loading) {
+            setLoading(true)
         axios.get('/api/services?page=' + page)
             .then(res => {
                 setServices(res.data.services)
                 setTotalItems(res.data.totalItems)
                 console.log(res.data)
+                setLoading(false)
             }).catch(err => {
                 console.log(err.message)
+                setLoading(false)
             })
+        }
     }, [page, totalItems])
 
     const showServiceDetails = (event) => {

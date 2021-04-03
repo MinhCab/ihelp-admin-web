@@ -224,6 +224,7 @@ const Events = () => {
                 paginationMode="server"
                 rowCount={totalItems}
                 autoHeight="true"
+                loading={loading}
               />
             </div>
           </CardContent>

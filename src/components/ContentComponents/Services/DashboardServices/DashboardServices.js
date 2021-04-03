@@ -95,6 +95,7 @@ const DashboardServices = () => {
           console.log(err.message);
           setError('Cannot get information from server, please try again')
           setOpenErrorSnackbar(true)
+          setLoading(false)
         });
     }
   }, [page, totalItems])
@@ -136,6 +137,7 @@ const DashboardServices = () => {
               paginationMode="server"
               onPageChange={pagingHandler}
               rowCount={totalItems}
+              loading={loading}
             />
           </div>
         </CardContent>

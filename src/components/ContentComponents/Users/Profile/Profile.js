@@ -162,7 +162,7 @@ const Profile = (props) => {
   };
 
   const setDefaultDetails = () => {
-    setFullname(details.fullname);
+    setFullname(details.fullName);
     setEmail(details.email);
     setBirthDate(details.dateOfBirth);
     setPhone(details.phone);
@@ -225,7 +225,7 @@ const Profile = (props) => {
               src={details.imageUrl}
             />
           </IconButton>
-          <Typography variant="h4">{details.fullname}</Typography>
+          <Typography variant="h4">{details.fullName}</Typography>
           <Grid container style={{ marginTop: 10 }} spacing={1}>
             <Grid item xs>
               <Paper
