@@ -137,6 +137,7 @@ const Services = () => {
                         paginationMode='server'
                         onPageChange={pagingHandler}
                         rowCount={totalItems}
+                        autoHeight
                     />
                 </div>
             </CardContent>

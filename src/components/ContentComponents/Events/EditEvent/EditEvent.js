@@ -16,7 +16,12 @@ import {
   DialogActions,
   Select,
   Input,
-  createMuiTheme
+  createMuiTheme,
+  Grid,
+  Card,
+  CardHeader,
+  CardContent,
+  Box
 } from "@material-ui/core";
 import { enGB } from "date-fns/locale";
 import React, { useEffect } from "react";
@@ -201,7 +206,7 @@ const EditEvent = (props) => {
 
   return (
     <>
-      <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
+      {/* <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
         <DialogTitle>
           <strong style={{ fontSize: 20 }}>Edit Events</strong>
         </DialogTitle>
@@ -344,6 +349,124 @@ const EditEvent = (props) => {
             </Button>
           </DialogActions>
         </DialogContent>
+      </Dialog> */}
+      <Dialog open={props.isOpen} onClose={props.close}>
+        <Card elevation={1}>
+          <CardHeader
+            titleTypographyProps={{ variant: "h4" }}
+            title="Edit Event"
+            subheader="Change the information for this event"
+          />
+          <CardContent>
+            <form autoComplete="off">
+              <Grid container spacing={3}>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Title"
+                    name="txtTitle"
+                    onChange={handleTitleInput}
+                    required
+                    value={title}
+                    variant="outlined"
+                  />
+                </Grid>
+
+                <Grid item md={12} xs={12}>
+                  <DateRangePicker
+                    startDate={startDate}
+                    endDate={endDate}
+                    onStartDateChange={setStartDate}
+                    onEndDateChange={setEndDate}
+                    minimumDate={new Date()}
+                    minimumLength={1}
+                    format="dd MMM yyyy"
+                    locale={enGB}
+                  >
+                    {({ startDateInputProps, endDateInputProps, focus }) => (
+                      <>
+                        <TextField
+                          required
+                          className={
+                            "input" + (focus === START_DATE ? " -focused" : "")
+                          }
+                          {...startDateInputProps}
+                          label="From"
+                          variant="outlined"
+                        />
+                        <TextField
+                          required
+                          className={
+                            "input" + (focus === END_DATE ? " -focused" : "")
+                          }
+                          {...endDateInputProps}
+                          label="To"
+                          variant="outlined"
+                        />
+                      </>
+                    )}
+                  </DateRangePicker>
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    name="email"
+                    // onChange={handleChange}
+                    required
+                    // value={details.email}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    name="phone"
+                    // onChange={handleChange}
+                    type="number"
+                    // value={details.phone}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Country"
+                    name="country"
+                    // onChange={handleChange}
+                    required
+                    // value={details.country}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Select State"
+                    name="state"
+                    // onChange={handleChange}
+                    required
+                    select
+                    SelectProps={{ native: true }}
+                    // value={details.state}
+                    variant="outlined"
+                  >
+                    <option value="India"> India </option>
+                    <option value="USA"> USA </option>
+                    <option value="Canada"> Canada </option>
+                  </TextField>
+                </Grid>
+              </Grid>
+
+              <Box display="flex" justifyContent="flex-start" mt={3}>
+                <Button color="primary" variant="contained">
+                  Save details
+                </Button>
+              </Box>
+            </form>
+          </CardContent>
+        </Card>
       </Dialog>
       {showUploadPhotoDialog}
     </>

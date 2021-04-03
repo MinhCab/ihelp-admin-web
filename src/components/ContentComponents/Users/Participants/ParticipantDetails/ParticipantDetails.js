@@ -24,7 +24,7 @@ const ParticipantDetails = (props) => {
     const history = useHistory()
 
     const handleViewProfile = () => {
-      history.push('/home/profile/details/' + details.email)
+      history.push('/home/users/' + details.email)
     }
 
     return (

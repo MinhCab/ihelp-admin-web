@@ -1,4 +1,4 @@
-import { HomeTwoTone, AccountCircleTwoTone, BallotTwoTone} from '@material-ui/icons';
+import { HomeTwoTone, AccountCircleTwoTone, BallotTwoTone, Report } from '@material-ui/icons';
 
 const MenuItems = [
     {
@@ -17,9 +17,14 @@ const MenuItems = [
       title: 'Services'
     },
     {
-      href: '/home/Users',
+      href: '/home/users',
       icon: AccountCircleTwoTone,
       title: 'Users'
+    },
+    {
+      href: '/home/reports',
+      icon: Report,
+      title: 'Reports'
     },
  ];
 
