@@ -27,7 +27,7 @@ const Sidebar = (props) => {
     const history = useHistory()
 
     const profileHandler = () => {
-        history.push('/profile/details/' + getCookie('userEmail'))
+        history.push('/home/users/' + getCookie('userEmail'))
       }
 
       const getCookie = (cname) => {

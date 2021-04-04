@@ -30,9 +30,9 @@ import { DiscardAlertDialog } from "../../../FullLayout/UI/AlertDialog/AlertDial
 import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
 import axios from "../../../../api/axios";
 import ChangePassword from "./ChangePassword/ChangePassword";
-import ChangeRole from "./ChangeRole/ChangeRole";
 import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents";
 import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
+import { useAuth } from "../../../../hoc/StoringAuth/AuthContext"
 
 const useStyles = makeStyles({
   avatar: {
@@ -54,6 +54,7 @@ const useStyles = makeStyles({
 
 const Profile = (props) => {
   const classes = useStyles();
+  const { user } = useAuth();
   const [details, setDetails] = useState({});
 
   const [fullname, setFullname] = useState(null);
@@ -62,17 +63,17 @@ const Profile = (props) => {
   const [phone, setPhone] = useState(0);
   const [gender, setGender] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+  const [role, setRole] = useState({});
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState();
   const [openAlertSnackbar, setOpenAlertSnackbar] = useState(false);
-  const [alertType, setAlertType] = useState('')
+  const [alertType, setAlertType] = useState("");
   const [activeEditForm, setActiveEditForm] = useState(false);
   const [openDiscardDialog, setOpenDiscardDialog] = useState(false);
   const [openPhotoUploadDialog, setOpenPhotoUploadDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false)
-  const [openChangeRoleDialog, setOpenChangeRoleDialog] = useState(false)
+  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false);
 
   const editFullnameHandler = (event) => {
     setFullname(event.target.value);
@@ -140,16 +141,16 @@ const Profile = (props) => {
         console.log(response);
         if (response.status === 200) {
           setDetails(response.data);
-          setMessage('Update profile Complete')
-          setAlertType('success')
-          setOpenAlertSnackbar(true)
+          setMessage("Update profile Complete");
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
           setLoading(false);
         }
       } catch (error) {
-        console.log('voo dday chwa')
+        console.log("voo dday chwa");
         setMessage("Update profile failed, please try again");
         setOpenAlertSnackbar(true);
-        setAlertType('error')
+        setAlertType("error");
         setLoading(false);
       }
     }
@@ -171,23 +172,34 @@ const Profile = (props) => {
     setImage(null);
   };
 
+  
   const changePasswordHandler = () => {
-    setOpenChangePasswordDialog(true)
-  }
-
-  const confirmChangePassword = () => {
-  }
-
+    setOpenChangePasswordDialog(true);
+  };
+  
+  const confirmChangePassword = () => {};
+  
   const closeChangePasswordHandler = () => {
-    setOpenChangePasswordDialog(false)
-  }
+    setOpenChangePasswordDialog(false);
+  };
 
-  const changeRoleHandler = () => {
-    setOpenChangeRoleDialog(true)
-  }
-
-  const closeChangeRoleDialog = () => {
-    setOpenChangeRoleDialog(false)
+  const updateRoleHandler = async(newRole) => {
+    try {
+      const response = await axios.put("/accounts/" + details.email + "/role/" + newRole);
+      console.log(response);
+      if (response.status === 200) {
+        setMessage("Change Role: Update account: " + details.email + " to " + newRole + " completed");
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        setDetails(response.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      setMessage("Change Role: Update role failed, please try again");
+      setOpenAlertSnackbar(true);
+      setAlertType("error");
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -199,11 +211,12 @@ const Profile = (props) => {
           console.log(res.data);
           setDetails(res.data);
           setLoading(false);
+          setRole(res.data.role)
         })
         .catch((err) => {
           setMessage(err.message);
           setOpenAlertSnackbar(true);
-          setAlertType('error')
+          setAlertType("error");
           setLoading(false);
         });
     }
@@ -213,7 +226,81 @@ const Profile = (props) => {
   let showDiscardDialog = null;
   let showImageUploadDialog = null;
   let showChangePasswordDialog = null;
-  let showChangeRoleDialog = null;
+  let showChangeRoleButton = null;
+
+  if (openAlertSnackbar) {
+    showErrorSnackbar = (
+      <AlertSnackbar
+        isOpen={openAlertSnackbar}
+        close={handleCloseErrorSnackbar}
+        message={message}
+        alertType={alertType}
+      />
+    );
+  }
+
+  openDiscardDialog
+    ? (showDiscardDialog = (
+        <DiscardAlertDialog
+          isOpen={openDiscardDialog}
+          closing={closeWithoutEditHandler}
+          proceed={proceedDiscardFormHandler}
+        />
+      ))
+    : null;
+
+  if (openPhotoUploadDialog) {
+    showImageUploadDialog = (
+      <PhotoUploadDialog
+        isOpen={openPhotoUploadDialog}
+        cancel={handleClosePhotoUploadDialog}
+        confirm={handleUploadImage}
+        image={image}
+      />
+    );
+  }
+
+  if (user.email !== details.email) {
+    if (user.role.id !== role.id) {
+      if (role.id === "user") {
+        showChangeRoleButton = (
+          <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            fullWidth
+            onClick={() => updateRoleHandler("manager")}
+            style={{ marginBottom: 10 }}
+          >
+            Promote to Manager
+          </Button>
+        );
+      } else {
+        showChangeRoleButton = (
+          <Button
+            variant="outlined"
+            color="secondary"
+            size="large"
+            fullWidth
+            onClick={() => updateRoleHandler("user")}
+            style={{ marginBottom: 10 }}
+          >
+            Demote to User
+          </Button>
+        );
+      }
+    }
+  }
+
+  if (openChangePasswordDialog) {
+    showChangePasswordDialog = (
+      <ChangePassword
+        isOpen={openChangePasswordDialog}
+        close={closeChangePasswordHandler}
+      />
+    );
+  }
+
   let showEditForm = (
     <Card elevation={1}>
       <CardContent>
@@ -258,7 +345,7 @@ const Profile = (props) => {
                   <strong>Role</strong>
                 </Typography>
                 <br />
-                Admin
+                {role.id}
               </Paper>
             </Grid>
           </Grid>
@@ -290,10 +377,11 @@ const Profile = (props) => {
           variant="outlined"
           color="primary"
           onClick={editProfileHandler}
-          style={{marginBottom: 10}}
+          style={{ marginBottom: 10 }}
         >
           Edit Profile
         </Button>
+        {showChangeRoleButton}
         <Button
           fullWidth
           size="large"
@@ -323,11 +411,11 @@ const Profile = (props) => {
                 variant="outlined"
                 onChange={editFullnameHandler}
                 label="Fullname"
+                fullWidth
               />
             </Typography>
           </Box>
           <Box textAlign="flex-start" marginTop="40px">
-            {/* <strong>Email: </strong> {details.email} */}
             <TextField
               value={email}
               variant="outlined"
@@ -335,10 +423,9 @@ const Profile = (props) => {
               label="Email Address"
               type="email"
               disabled
+              fullWidth
             />
             <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-            {/* <strong>Date of Birth: </strong>{" "}
-                  {moment(details.dateOfBirth).format("MMM Do YYYY")} */}
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
                 disableToolbar
@@ -348,37 +435,31 @@ const Profile = (props) => {
                 label="Birthdate"
                 value={birthDate}
                 onChange={editBirthDateHandler}
+                fullWidth
               />
             </MuiPickersUtilsProvider>
 
             <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-            {/* <strong>Phone number: </strong> {details.phone} */}
-            {/* <TextField
-              value={phone}
-              variant="outlined"
-              onChange={editPhoneHandler}
-              label="Phone number"
-              type="number"
-            /> */}
-
             <PhoneInput
               defaultCountry={"vn"}
               regions="asia"
               value={phone}
               onChange={editPhoneHandler}
-              variant='outlined'
+              variant="outlined"
+              fullWidth
             />
             <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-            {/* <strong>Gender: </strong> {details.gender ? "Male" : "Female"} */}
-            <Select
+            <TextField
+              select
               value={gender}
               onChange={editGenderHandler}
               label="Gender"
               variant="outlined"
+              fullWidth
             >
               <MenuItem value="true">Male</MenuItem>
               <MenuItem value="false">Female</MenuItem>
-            </Select>
+            </TextField>
           </Box>
         </CardContent>
         <Divider light />
@@ -402,56 +483,6 @@ const Profile = (props) => {
     );
   }
 
-  if (openAlertSnackbar) {
-    showErrorSnackbar = (
-      <AlertSnackbar
-        isOpen={openAlertSnackbar}
-        close={handleCloseErrorSnackbar}
-        message={message}
-        alertType={alertType}
-      />
-    );
-  }
-
-  openDiscardDialog
-    ? (showDiscardDialog = (
-        <DiscardAlertDialog
-          isOpen={openDiscardDialog}
-          closing={closeWithoutEditHandler}
-          proceed={proceedDiscardFormHandler}
-        />
-      ))
-    : null;
-
-  if (openPhotoUploadDialog) {
-    showImageUploadDialog = (
-      <PhotoUploadDialog
-        isOpen={openPhotoUploadDialog}
-        cancel={handleClosePhotoUploadDialog}
-        confirm={handleUploadImage}
-        image={image}
-      />
-    );
-  }
-
-  if(openChangePasswordDialog) {
-    showChangePasswordDialog = (
-      <ChangePassword 
-        isOpen={openChangePasswordDialog}
-        close={closeChangePasswordHandler}
-      />
-    )
-  }
-
-  if(openChangeRoleDialog) {
-    showChangeRoleDialog = (
-      <ChangeRole   
-        isOpen={openChangeRoleDialog}
-        close={closeChangeRoleDialog}
-      />
-    )
-  }
-
   return (
     <>
       <Grid container spacing={3}>
@@ -459,17 +490,16 @@ const Profile = (props) => {
           {showEditForm}
         </Grid>
         <Grid item lg={9} md={12} xs={12}>
-          <ProfileSelfServices email={props.match.params.email}/>
+          <ProfileSelfServices email={props.match.params.email} />
         </Grid>
         <Grid item md={12} xs={12}>
-          <ProfileSelfEvents email={props.match.params.email}/>
+          <ProfileSelfEvents email={props.match.params.email} />
         </Grid>
       </Grid>
       {showErrorSnackbar}
       {showDiscardDialog}
       {showImageUploadDialog}
       {showChangePasswordDialog}
-      {showChangeRoleDialog}
       {loading && (
         <CircularProgress size={60} className={classes.buttonProgress} />
       )}

@@ -21,9 +21,6 @@ import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import axios from '../../api/axios'
 import CreateUser from '../ContentComponents/Users/CreateUser/CreateUser';
 
-// import { useAlert } from '../../hoc/StoringAlertMessage/StoreAlertMessage'
-// import AlertSnackbar from './UI/AlertSnackbar/AlertSnackbar';
-
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -143,7 +140,6 @@ const FullLayout = () => {
           </div>
         </div>
       </div>
-      {/* {showAlert} */}
     </div>
   );
 }
