@@ -150,11 +150,13 @@ const Events = () => {
       .post("/api/events", event)
       .then((res) => {
         console.log(res);
-        setMessage("New event has been created")
+        setMessage(res.data)
         setAlertType('success')
         setOpenAlertSnackbar(true)
         setLoading(false)
-        // history.push("/home/events");
+        setOpenCreateEventDialog(false)
+        setPage(0)
+        setTotalItems(0)
       })
       .catch((err) => {
         console.log(err);
@@ -206,9 +208,6 @@ const Events = () => {
           console.log(res.data);
           setTotalItems(res.data.totalItems);
           setEvents(res.data.events);
-          // setMessage('Your event has been created successfully')
-          // setAlertType('success')
-          // setOpenAlertSnackbar(true)
           setLoading(false)
         })
         .catch((error) => {

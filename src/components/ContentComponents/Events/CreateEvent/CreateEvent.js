@@ -128,6 +128,16 @@ const CreateEvent = (props) => {
 
     const imageURL = await uploadImageToFirebase();
 
+    let images = []
+    if(imageURL) {
+      images = [
+        {
+          type: 'cover',
+          url: imageURL
+        }
+      ]
+    }
+    
     let realLocation = location;
 
     if (onSite === false) {
@@ -155,12 +165,7 @@ const CreateEvent = (props) => {
       startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
       statusId: 3,
       title: title,
-      images: [
-        {
-          type: "cover",
-          url: imageURL,
-        },
-      ],
+      images: images
     };
 
     console.log(event);
