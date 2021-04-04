@@ -3,7 +3,6 @@ import {
   Grid,
   Card,
   CardContent,
-  CardHeader,
   makeStyles,
   Typography,
   Avatar,
@@ -11,7 +10,6 @@ import {
   Box,
   Button,
   TextField,
-  Select,
   MenuItem,
   IconButton,
   CircularProgress,
@@ -56,6 +54,7 @@ const Profile = (props) => {
   const classes = useStyles();
   const { user } = useAuth();
   const [details, setDetails] = useState({});
+  const [role, setRole] = useState(null);
 
   const [fullname, setFullname] = useState(null);
   const [email, setEmail] = useState(null);
@@ -63,7 +62,6 @@ const Profile = (props) => {
   const [phone, setPhone] = useState(0);
   const [gender, setGender] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
-  const [role, setRole] = useState({});
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState();
@@ -126,7 +124,8 @@ const Profile = (props) => {
     setOpenDiscardDialog(false);
   };
 
-  const proceedEditFormHandler = async () => {
+  const proceedEditFormHandler = async (event) => {
+    event.preventDefault()
     if (!loading) {
       setLoading(true);
       const profile = {
@@ -140,10 +139,10 @@ const Profile = (props) => {
         const response = await axios.put("/accounts", profile);
         console.log(response);
         if (response.status === 200) {
-          setDetails(response.data);
           setMessage("Update profile Complete");
           setAlertType("success");
           setOpenAlertSnackbar(true);
+          setDetails(response.data);
           setLoading(false);
         }
       } catch (error) {
@@ -186,7 +185,6 @@ const Profile = (props) => {
   const updateRoleHandler = async(newRole) => {
     try {
       const response = await axios.put("/accounts/" + details.email + "/role/" + newRole);
-      console.log(response);
       if (response.status === 200) {
         setMessage("Change Role: Update account: " + details.email + " to " + newRole + " completed");
         setAlertType("success");
@@ -211,7 +209,7 @@ const Profile = (props) => {
           console.log(res.data);
           setDetails(res.data);
           setLoading(false);
-          setRole(res.data.role)
+          setRole(res.data.role.id)
         })
         .catch((err) => {
           setMessage(err.message);
@@ -220,7 +218,7 @@ const Profile = (props) => {
           setLoading(false);
         });
     }
-  }, [details]);
+  }, [details, role]);
 
   let showErrorSnackbar = null;
   let showDiscardDialog = null;
@@ -261,8 +259,8 @@ const Profile = (props) => {
   }
 
   if (user.email !== details.email) {
-    if (user.role.id !== role.id) {
-      if (role.id === "user") {
+    if (role !== 'admin') {
+      if (role === "user") {
         showChangeRoleButton = (
           <Button
             variant="outlined"
@@ -345,7 +343,7 @@ const Profile = (props) => {
                   <strong>Role</strong>
                 </Typography>
                 <br />
-                {role.id}
+                {role}
               </Paper>
             </Grid>
           </Grid>
@@ -398,87 +396,86 @@ const Profile = (props) => {
   if (activeEditForm) {
     showEditForm = (
       <Card elevation={1}>
-        <CardContent>
-          <Box textAlign="center">
-            <Avatar
-              alt="Travis Howard"
-              className={classes.avatar}
-              src={imageUrl}
-            />
-            <Typography variant="h4">
+        <form onSubmit={proceedEditFormHandler}>
+          <CardContent>
+            <Box textAlign="center">
+              <Avatar alt="Avatar" className={classes.avatar} src={imageUrl} />
+              <Typography variant="h4">
+                <TextField
+                  required
+                  value={fullname}
+                  variant="outlined"
+                  onChange={editFullnameHandler}
+                  label="Fullname"
+                  fullWidth
+                />
+              </Typography>
+            </Box>
+            <Box textAlign="flex-start" marginTop="40px">
               <TextField
-                value={fullname}
+                required
+                value={email}
                 variant="outlined"
-                onChange={editFullnameHandler}
-                label="Fullname"
+                onChange={editEmailHandler}
+                label="Email Address"
+                type="email"
+                disabled
                 fullWidth
               />
-            </Typography>
-          </Box>
-          <Box textAlign="flex-start" marginTop="40px">
-            <TextField
-              value={email}
-              variant="outlined"
-              onChange={editEmailHandler}
-              label="Email Address"
-              type="email"
-              disabled
-              fullWidth
-            />
-            <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-              <KeyboardDatePicker
-                disableToolbar
-                variant="dialog"
-                format="dd/MM/yyyy"
-                margin="normal"
-                label="Birthdate"
-                value={birthDate}
-                onChange={editBirthDateHandler}
-                fullWidth
-              />
-            </MuiPickersUtilsProvider>
+              <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  required
+                  disableToolbar
+                  variant="dialog"
+                  format="dd/MM/yyyy"
+                  margin="normal"
+                  label="Birthdate"
+                  value={birthDate}
+                  onChange={editBirthDateHandler}
+                  fullWidth
+                />
+              </MuiPickersUtilsProvider>
 
-            <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-            <PhoneInput
-              defaultCountry={"vn"}
-              regions="asia"
-              value={phone}
-              onChange={editPhoneHandler}
-              variant="outlined"
-              fullWidth
-            />
-            <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-            <TextField
-              select
-              value={gender}
-              onChange={editGenderHandler}
-              label="Gender"
-              variant="outlined"
-              fullWidth
+              <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
+              <PhoneInput
+                required
+                defaultCountry={"vn"}
+                regions="asia"
+                value={phone}
+                onChange={editPhoneHandler}
+                variant="outlined"
+                fullWidth
+              />
+              <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
+              <TextField
+                required
+                select
+                value={gender}
+                onChange={editGenderHandler}
+                label="Gender"
+                variant="outlined"
+                fullWidth
+              >
+                <MenuItem value="true">Male</MenuItem>
+                <MenuItem value="false">Female</MenuItem>
+              </TextField>
+            </Box>
+          </CardContent>
+          <Divider light />
+          <CardContent>
+            <Button variant="contained" color="primary" type="submit">
+              Update Profile
+            </Button>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={discardEditFormHandler}
             >
-              <MenuItem value="true">Male</MenuItem>
-              <MenuItem value="false">Female</MenuItem>
-            </TextField>
-          </Box>
-        </CardContent>
-        <Divider light />
-        <CardContent>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={proceedEditFormHandler}
-          >
-            Update Profile
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={discardEditFormHandler}
-          >
-            Discard
-          </Button>
-        </CardContent>
+              Discard
+            </Button>
+          </CardContent>
+        </form>
       </Card>
     );
   }
