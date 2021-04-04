@@ -41,8 +41,8 @@ const TabsLayout = (props) => {
         <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
           {/* <TabPanel content="Item One" />
           <TabPanel content="Iten Two" /> */}
-          <Participants participantType={props.participantType} participantDetails={props.participantDetails} id={props.id}/>
-          <Feedbacks eventID={props.eventID}/>
+          <Participants type={props.type} participantDetails={props.participantDetails} id={props.id}/>
+          <Feedbacks type={props.type} id={props.id}/>
         </SwipeableViews>
       </div>
     );

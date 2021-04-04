@@ -192,7 +192,7 @@ const ServiceDetail = (props) => {
     const id = open ? 'simple-popover' : undefined;
     const username = getCookie('userEmail')
 
-    let showOnsite = <Button color='primary' variant='contained'>Online</Button>
+    // let showOnsite = <Button color='primary' variant='contained'>Online</Button>
     let approveBtn = <Button startIcon={<ThumbUpIcon />} color="primary" variant='contained' onClick={approveEventHandler}>Approve</Button>
     let rejectBtn = <Button startIcon={<ThumbDownIcon />} color="secondary" variant='contained' onClick={rejectEventHandler}>Reject</Button>
     let finishBtn = <Button startIcon={<CheckCircleIcon />} color="primary" variant='contained' onClick={finishEventHandler}>Finish this service</Button>
@@ -428,7 +428,7 @@ const ServiceDetail = (props) => {
               </Grid>
             </Grid>
           </Grid>
-          <TabsLayout participantType='service' id={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
+          <TabsLayout type='service' id={props.match.params.id} participantDetails={handleParticipantDetails} feedbackDetails={handleFeedbackDetails}/>
           <Popover
             id={id}
             open={open}
