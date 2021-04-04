@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, CircularProgress, createMuiTheme, Grid, makeStyles, TextField, ThemeProvider } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, createMuiTheme, Grid, TextField, ThemeProvider } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -8,17 +8,6 @@ import axios from '../../../api/axios'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import CreateEvent from './CreateEvent/CreateEvent'
-
-const useStyles = makeStyles(theme => ({
-  buttonProgress: {
-    color: '#039be5',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    marginTop: -12,
-    marginLeft: -12,
-  },
-}))
 
 const additionalButtonTheme = createMuiTheme({
   palette: {
@@ -120,10 +109,10 @@ const columns = [
 
 const Events = () => {
   const history = useHistory()
-  const classes = useStyles()
   const [events, setEvents] = useState([])
   const [page, setPage] = useState(0)
   const [totalItems, setTotalItems] = useState(0)
+  const [cateList, setCateList] = useState([])
   // const [search, setSearch] = useState(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -153,7 +142,6 @@ const Events = () => {
         setMessage(res.data)
         setAlertType('success')
         setOpenAlertSnackbar(true)
-        setLoading(false)
         setOpenCreateEventDialog(false)
         setPage(0)
         setTotalItems(0)
@@ -163,7 +151,6 @@ const Events = () => {
         setMessage("Cannot create event, please try again later")
         setAlertType('error')
         setOpenAlertSnackbar(true)
-        setLoading(false)
       });
   }
 
@@ -193,10 +180,6 @@ const Events = () => {
 
   const handleCloseAlertSnackbar = () => {
     setOpenAlertSnackbar(false)
-  }
-
-  const setActiveLoadingHandler = () => {
-    setLoading(true)
   }
 
   useEffect(() => {
@@ -241,7 +224,6 @@ const Events = () => {
         isOpen={openCreateEventDialog}
         close={closeCreateEventDialogHandler}
         submit={submitCreateEventHandler}
-        activeLoading={setActiveLoadingHandler}
       />
     )
   }
@@ -309,7 +291,6 @@ const Events = () => {
           </div>
         </CardContent>
       </Card>
-      {loading && <CircularProgress size={60} className={classes.buttonProgress} />}
       {alertSnackbar}
       {showCreateEventDialog}
       {showDiscard}

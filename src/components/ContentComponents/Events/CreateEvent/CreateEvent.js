@@ -26,13 +26,11 @@ import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
 import "react-nice-dates/build/style.css";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import { TextArea } from "semantic-ui-react";
-import { useHistory } from "react-router";
 
-import axios from "../../../../api/axios";
 import { EventConfirmationDialog } from "../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog";
-import { DiscardAlertDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import { storage } from "../../../../api/config/firebase/FirebaseStorage/firebase-storage";
 import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
+import axios from '../../../../api/axios'
 import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
@@ -65,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateEvent = (props) => {
   const classes = useStyles();
-  const history = useHistory();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [confirmInfo, setConfirmInfo] = React.useState(null);
   const [categories, setCategories] = React.useState([]);
@@ -124,8 +121,6 @@ const CreateEvent = (props) => {
 
   const handleProceedConfirmation = async () => {
     console.log("Procced clicked");
-    props.activeLoading()
-
     const imageURL = await uploadImageToFirebase();
 
     let images = []
@@ -258,22 +253,11 @@ const CreateEvent = (props) => {
   };
 
   useEffect(() => {
-    axios
-      .get("/api/event-categories")
-      .then((res) => {
-        console.log(res.data);
-        setCategories(res.data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-        // openAlert(true)
-        // const alertInfo = {
-        //     type: 'error',
-        //     message: err.message,
-        //     isOpen: openAlert
-        // }
-        // setAlert.receiveMessage(alertInfo)
-      });
+    axios.get('/api/event-categories')
+    .then(res => {
+      setCategories(res.data);
+    }
+    )
   }, []);
 
   const author = getCookie("userEmail");
@@ -429,7 +413,7 @@ const CreateEvent = (props) => {
                         color="textPrimary"
                         component="span"
                       >
-                        <strong>This event starts: </strong>
+                        <strong>This event will start on: </strong>
                         <TextField
                           required
                           className={

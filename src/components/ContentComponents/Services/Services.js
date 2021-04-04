@@ -6,6 +6,9 @@ import { useHistory } from 'react-router'
 // import SearchBar from "material-ui-search-bar";
 
 import axios from '../../../api/axios'
+import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
+import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
+import CreateService from './CreateService/CreateService'
 
 
 const buttonTheme = createMuiTheme({
@@ -79,77 +82,173 @@ const columns = [
 ]
 
 const Services = () => {
-    const history = useHistory()
-    const [services, setServices] = React.useState([])
-    const [page, setPage] = React.useState(0)
-    const [totalItems, setTotalItems] = React.useState(0)
-    const [loading, setLoading] = React.useState(false)
+  const history = useHistory();
+  const [services, setServices] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [totalItems, setTotalItems] = React.useState(0);
 
-    React.useEffect(() => {
-        if(!loading) {
-            setLoading(true)
-        axios.get('/api/services?page=' + page)
-            .then(res => {
-                setServices(res.data.services)
-                setTotalItems(res.data.totalItems)
-                console.log(res.data)
-                setLoading(false)
-            }).catch(err => {
-                console.log(err.message)
-                setLoading(false)
-            })
-        }
-    }, [page, totalItems])
+  const [loading, setLoading] = React.useState(false);
+  const [openDiscard, setOpenDiscard] = React.useState(false)
+  const [openCreateServiceDialog, setOpenCreateServiceDialog] = React.useState(false)
+  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
+  const [message, setMessage] = React.useState('')
+  const [alertType, setAlertType] = React.useState('')
+  
 
-    const showServiceDetails = (event) => {
-        history.push('/home/services/' + event.row.id)
+  React.useEffect(() => {
+    if (!loading) {
+      setLoading(true);
+      axios
+        .get("/api/services?page=" + page)
+        .then((res) => {
+          setServices(res.data.services);
+          setTotalItems(res.data.totalItems);
+          console.log(res.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+        });
     }
+  }, [page, totalItems]);
 
-    const pagingHandler = (params) => {
-        setPage(params.page)
-    }
+  const showServiceDetails = (event) => {
+    history.push("/home/services/" + event.row.id);
+  };
 
-    const createServiceHandler = () => {
-        history.push('/home/services/create')
-    }
+  const pagingHandler = (params) => {
+    setPage(params.page);
+  };
 
-    return (
-        <Card>
-            <CardHeader
-                title={
-                    <Grid container spacing={3}>
-                        <Grid item xs>
-                            <Button color='primary' variant='contained' onClick={createServiceHandler}>Create</Button>
-                        </Grid>
-                        <Grid item>
-                            {/* <SearchBar 
-                                value={search}
-                                onChange={(event) => setSearch(event.value)}
-                                onRequestSearch={handleSearchRequest}
-                            /> */}
-                        </Grid>
-                    </Grid>
-                }
-            />
-            <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Services" subheader="Services on iHelp system" />
-            <CardContent>
-                <div style={{ height: 650, width: '100%' }}>
-                    <DataGrid
-                        rows={services}
-                        columns={columns}
-                        pageSize={10}
-                        onRowClick={(rows) => showServiceDetails(rows)}
-                        pagination
-                        paginationMode='server'
-                        onPageChange={pagingHandler}
-                        rowCount={totalItems}
-                        autoHeight
-                        loading={loading}
-                    />
-                </div>
-            </CardContent>
-        </Card>
+  const createServiceHandler = () => {
+    setOpenCreateServiceDialog(true);
+  };
+
+  const handleCancelDiscard = () => {
+    setOpenDiscard(false);
+  };
+
+  const handleProceedDiscard = () => {
+    setOpenCreateServiceDialog(false)
+    setOpenDiscard(false)
+  };
+
+  const closeCreateServiceDialogHandler = () => {
+    setOpenDiscard(true)
+  }
+
+  const handleCloseAlertSnackbar = () => {
+      setOpenAlertSnackbar(false)
+  }
+
+  const submitCreateServiceHandler = (service) => {
+    axios
+      .post("/api/services", service)
+      .then((res) => {
+        console.log(res);
+        setMessage(res.data)
+        setAlertType('success')
+        setOpenAlertSnackbar(true)
+        setOpenCreateServiceDialog(false)
+        setPage(0)
+        setTotalItems(0)
+      })
+      .catch((err) => {
+        console.log(err);
+        setOpenAlertSnackbar(true)
+        setMessage('Create Service: Cannot create this service, please try again')
+        setAlertType('error')
+      });
+  }
+
+  let showDiscard = null
+  let showCreateServiceDialog = null
+  let alertSnackbar = null
+
+  if(openCreateServiceDialog) {
+      showCreateServiceDialog = (
+        <CreateService
+          isOpen={openCreateServiceDialog}
+          close={closeCreateServiceDialogHandler}
+          submit={submitCreateServiceHandler}
+        />
+      );
+  }
+
+  if (openDiscard) {
+    showDiscard = (
+      <DiscardAlertDialog
+        isOpen={openDiscard}
+        closing={handleCancelDiscard}
+        proceed={handleProceedDiscard}
+      />
     );
+  }
+
+  if (openAlertSnackbar) {
+    alertSnackbar = (
+      <AlertSnackbar
+        isOpen={openAlertSnackbar}
+        close={handleCloseAlertSnackbar}
+        alertType={alertType}
+        message={message}
+      />
+    )
+  }
+
+  return (
+    <>
+      <Card>
+        <CardHeader
+          title={
+            <Grid container spacing={3}>
+              <Grid item xs>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={createServiceHandler}
+                >
+                  Create
+                </Button>
+              </Grid>
+              <Grid item>
+                {/* <SearchBar 
+                    value={search}
+                    onChange={(event) => setSearch(event.value)}
+                    onRequestSearch={handleSearchRequest}
+                /> */}
+              </Grid>
+            </Grid>
+          }
+        />
+        <CardHeader
+          titleTypographyProps={{ variant: "h4" }}
+          title="Services"
+          subheader="Services on iHelp system"
+        />
+        <CardContent>
+          <div style={{ height: 650, width: "100%" }}>
+            <DataGrid
+              rows={services}
+              columns={columns}
+              pageSize={10}
+              onRowClick={(rows) => showServiceDetails(rows)}
+              pagination
+              paginationMode="server"
+              onPageChange={pagingHandler}
+              rowCount={totalItems}
+              autoHeight
+              loading={loading}
+            />
+          </div>
+        </CardContent>
+      </Card>
+      {showCreateServiceDialog}
+      {showDiscard}
+      {alertSnackbar}
+    </>
+  );
 }
 
 export default Services
