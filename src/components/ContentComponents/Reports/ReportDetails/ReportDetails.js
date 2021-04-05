@@ -6,9 +6,9 @@ const ReportDetails = (props) => {
     return (
         <Dialog open={props.isOpen} onClose={props.close}>
             <DialogTitle>
-                    <h3>
-                        Report from <a href={`/home/users/${details.email}`}>{details.email}</a>
-                    </h3>
+                    <p style={{fontSize: 20}}>
+                        <strong>Report from </strong><a href={`/home/users/${details.email}`}>{details.email}</a>
+                    </p>
                     <strong>Created date: </strong> {details.createdDate}
             </DialogTitle>
             <DialogContent>

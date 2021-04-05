@@ -21,9 +21,7 @@ class App extends Component {
           <BrowserRouter>
             <Switch>
               <PublicRoute path="/login" restricted={true} exact component={Login} />
-              <PrivateRoute path="/home" component={() => (
-                <FullLayout />
-              )} />
+              <PrivateRoute path="/home" component={FullLayout} />
 
               <Redirect from='/' to='/home' />
             </Switch>

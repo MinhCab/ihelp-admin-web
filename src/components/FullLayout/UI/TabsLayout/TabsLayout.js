@@ -42,7 +42,7 @@ const TabsLayout = (props) => {
           {/* <TabPanel content="Item One" />
           <TabPanel content="Iten Two" /> */}
           <Participants type={props.type} participantDetails={props.participantDetails} id={props.id}/>
-          <Feedbacks type={props.type} id={props.id}/>
+          <Feedbacks type={props.type} feedbackDetails={props.feedbackDetails} id={props.id}/>
         </SwipeableViews>
       </div>
     );

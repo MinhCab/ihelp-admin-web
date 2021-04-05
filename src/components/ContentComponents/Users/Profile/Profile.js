@@ -273,7 +273,7 @@ const Profile = (props) => {
             Promote to Manager
           </Button>
         );
-      } else {
+      } else if (role === "manager") {
         showChangeRoleButton = (
           <Button
             variant="outlined"

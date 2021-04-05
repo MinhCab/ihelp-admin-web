@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory()
-  const { setAccessToken, setUser } = useAuth()
+  const { setAccessToken, loadInfo } = useAuth()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
@@ -89,7 +89,6 @@ const Login = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     if (!loading) {
       setSuccess(false);
       setLoading(true);
@@ -99,12 +98,12 @@ const Login = () => {
       }
   
       axios.post('/login', loginInfo)
-        .then(res => {
+        .then((res) => {
           if (res.data) {
             console.log(res.data)
             saveTokenAndEmailToCookies(res.data.accessToken, email);
-            setAccessToken(getCookie("accessToken"));
-            setUser(res.data);
+            setAccessToken(res.data.accessToken);
+            loadInfo()
             setSuccess(true);
             setLoading(false);
             history.push("/home/dashboard");
@@ -141,7 +140,7 @@ const Login = () => {
     setPassword(event.target.value)
   }
 
-  const handleCloseAlertSnackbar = (event, reason) => {
+  const handleCloseAlertSnackbar = (reason) => {
     if (reason === 'clickaway') {
       return;
     }

@@ -24,56 +24,60 @@ const columns = [
     },
 ]
 
-// const feedbacks = [
-//   {
-//     id: 'F_001',
-//     createDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     content:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     status: {
-//       id: 1,
-//       name: "Pending",
-//     },
-//   },
-//   {
-//     id: 'F_002',
-//     createDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     content:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     status: {
-//       id: 1,
-//       name: "Pending",
-//     },
-//   },
-//   {
-//     id: 'F_003',
-//     createDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     content:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     status: {
-//       id: 1,
-//       name: "Pending",
-//     },
-//   },
-//   {
-//     id: 'F_004',
-//     createDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     content:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     status: {
-//       id: 1,
-//       name: "Pending",
-//     },
-//   },
-// ];
+const feedbacks = [
+  {
+    id: "F_001",
+    createdDate: "10/10/2020",
+    email: "minhcab19345@gmail.com",
+    comment:
+      "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
+    rating: 5,
+    status: {
+      id: 2,
+      name: "Pending",
+    },
+  },
+  {
+    id: "F_002",
+    createdDate: "10/10/2020",
+    email: "minhcab19345@gmail.com",
+    comment:
+      "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
+    rating: 3,
+    status: {
+      id: 2,
+      name: "Pending",
+    },
+  },
+  {
+    id: "F_003",
+    createdDate: "10/10/2020",
+    email: "minhcab19345@gmail.com",
+    comment:
+      "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
+    rating: 5,
+    status: {
+      id: 2,
+      name: "Pending",
+    },
+  },
+  {
+    id: "F_004",
+    createdDate: "10/10/2020",
+    email: "minhcab19345@gmail.com",
+    comment:
+      "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
+    rating: 5,
+    status: {
+      id: 2,
+      name: "Pending",
+    },
+  },
+];
 
 const Feedbacks = (props) => {
     const classes = useStyles()
-    const [feedbacks, setFeedbacks] = useState([])
+    // const [feedbacks, setFeedbacks] = useState([])
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
@@ -86,22 +90,22 @@ const Feedbacks = (props) => {
         setOpenErrorSnackbar(false)
     }
 
-    useEffect(() => {
-        if (!loading) {
-            setLoading(true);
-            axios.get("/api/feedbacks/" + props.type + "/" + props.id)
-            .then(res => {
-                console.log(res.data)
-                setFeedbacks(res.data)
-                setLoading(false)
-            }).catch(err => {
-                console.log(err.message)
-                setError('Feedbacks error: Cannot get information from server, please try again later')
-                setOpenErrorSnackbar(true)
-                setLoading(false)
-            })
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (!loading) {
+    //         setLoading(true);
+    //         axios.get("/api/feedbacks/" + props.type + "/" + props.id)
+    //         .then(res => {
+    //             console.log(res.data)
+    //             setFeedbacks(res.data)
+    //             setLoading(false)
+    //         }).catch(err => {
+    //             console.log(err.message)
+    //             setError('Feedbacks error: Cannot get information from server, please try again later')
+    //             setOpenErrorSnackbar(true)
+    //             setLoading(false)
+    //         })
+    //     }
+    // }, [])
 
     let showErrorSnackbar = null
     if(openErrorSnackbar) {

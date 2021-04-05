@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, Grid } from '@material-ui/core';
 import { DataGrid } from '@material-ui/data-grid';
 import moment from 'moment';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReportDetails from './ReportDetails/ReportDetails';
+// import axios from '../../../api/axios'
+// import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const columns = [
   {
@@ -40,9 +42,34 @@ const Reports = () => {
         setOpenReportDetails(false)
     }
 
-    let showDetails = null
-    openReportDetails ? showDetails = (<ReportDetails isOpen={openReportDetails} close={closeReportDetailsHandler} details={reportDetails} />) : null
+    // const handleCloseErrorSnackbar = () => {
+    //   setOpenErrorSnackbar(false)
+    // }
 
+    // useEffect(() => {
+    //   axios.get('/api/feedbacks/reports')
+    //   .then(res => {
+    //     console.log(res.data)
+    //     setReports(res.data)
+    //   }).catch(err => {
+    //     setError('Getting reports: Cannot get reports from server, please try again')
+    //     setOpenErrorSnackbar(true)
+    //   })
+    // }, [])
+
+    let showDetails = null
+    // let showErrorSnackbar = null
+    openReportDetails ? showDetails = (<ReportDetails isOpen={openReportDetails} close={closeReportDetailsHandler} details={reportDetails} />) : null
+    // if(openErrorSnackbar) {
+    //   showErrorSnackbar = (
+    //     <AlertSnackbar 
+    //       isOpen={openErrorSnackbar}
+    //       close={handleCloseErrorSnackbar}
+    //       message={error}
+    //       alertType='error'
+    //     />
+    //   )
+    // }
     return (
       <>
         <Card>
@@ -52,10 +79,10 @@ const Reports = () => {
                 <Grid item xs></Grid>
                 <Grid item>
                   {/* <SearchBar 
-                                value={search}
-                                onChange={(event) => setSearch(event.value)}
-                                onRequestSearch={handleSearchRequest}
-                            /> */}
+                    value={search}
+                    onChange={(event) => setSearch(event.value)}
+                    onRequestSearch={handleSearchRequest}
+                  /> */}
                 </Grid>
               </Grid>
             }
@@ -81,6 +108,7 @@ const Reports = () => {
           </CardContent>
         </Card>
         {showDetails}
+        {/* {showErrorSnackbar} */}
       </>
     );
 }

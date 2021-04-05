@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
+import axios from '../../api/axios'
 
 const AuthContext = createContext()
 
@@ -22,13 +23,28 @@ function getCookie(cname) {
     return '';
   }
 
-function useAuthProvider() {
+const useAuthProvider = () => {
     const [user, setUser] = useState({})
+    const [role, setRole] = useState({})
     const [accessToken, setAccessToken] = useState(getCookie('accessToken'))
-    console.log('From authContext - token: ' + accessToken)
-    console.log('From authContext - user: ' + user)
-    
-    return {user, setUser, accessToken, setAccessToken}
+
+    const loadInfo = async() => {
+      await axios
+        .get("/accounts/" + getCookie("userEmail").trim())
+        .then((res) => {
+          setUser(res.data);
+          setRole(res.data.role);
+        })
+        .catch((err) => {
+          console.log("Error from AuthContext: " + err.message);
+        });
+    }
+
+    useEffect(() => {
+      loadInfo()
+    }, [])
+
+    return {user, setUser, accessToken, setAccessToken, role, setRole, loadInfo}
 }
 
 function AuthProvider(props) {

@@ -2,23 +2,23 @@ import React from 'react'
 import { Route, Redirect, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 
-function PrivateRoute({ component: Component, ...rest }) {
-    const { accessToken } = useAuth()
+function AdminRoute({ component: Component, ...rest }) {
+    const { accessToken, role } = useAuth()
     const location = useLocation()
-    console.log('from private route: ' + accessToken)
 
     let isAuth = accessToken ? true : false
+    let isAdmin = (role.id == 'admin') ? true : false
 
     return (
         <Route 
             {...rest}
             render={(props) => {
                 return(
-                    (isAuth) ? (<Component {...props}/>) : (<Redirect to={{pathname: '/login', state: { from: location }}}/>)
+                    (isAuth && isAdmin) ? (<Component {...props}/>) : (<Redirect to={{pathname: '/home/dashboard', state: { from: location }}}/>)
                 )
             }}
         />
     )
 }
 
-export default PrivateRoute
+export default AdminRoute

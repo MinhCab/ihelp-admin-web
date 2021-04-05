@@ -1,6 +1,6 @@
 import { HomeTwoTone, AccountCircleTwoTone, BallotTwoTone, Report } from '@material-ui/icons';
 
-const MenuItems = [
+const MenuItemsForAdmin = [
     {
       href: '/home/dashboard',
       icon: HomeTwoTone,
@@ -28,4 +28,22 @@ const MenuItems = [
     },
  ];
 
- export default MenuItems;
+ const MenuItemsForManager = [
+  {
+    href: '/home/dashboard',
+    icon: HomeTwoTone,
+    title: 'Dashboard'  
+  },
+  {
+    href: '/home/events',
+    icon: BallotTwoTone,
+    title: 'Events'
+  },
+  {
+    href: '/home/services',
+    icon: BallotTwoTone,
+    title: 'Services'
+  },
+];
+
+ export { MenuItemsForAdmin, MenuItemsForManager };

@@ -13,6 +13,8 @@ import noImage from '../../../../assets/images/no-image.jpg'
 import EditEvent from '../EditEvent/EditEvent';
 import TabsLayout from '../../../FullLayout/UI/TabsLayout/TabsLayout';
 import ParticipantDetails from '../../Users/Participants/ParticipantDetails/ParticipantDetails';
+import FeedbackDetails from '../../Feedbacks/FeedbackDetails/FeedbackDetails'
+import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -67,6 +69,9 @@ const EventDetail = (props) => {
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
     const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false)
     const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false)
+    const [message, setMessage] = React.useState('')
+    const [alertType, setAlertType] = React.useState('')
+    const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
 
     const [details, setDetails] = React.useState({})
     const [categories, setCategories] = React.useState([])
@@ -75,6 +80,7 @@ const EventDetail = (props) => {
     const [images, setImages] = React.useState([])
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [participantDetails, setParticipantDetails] = React.useState({})
+    const [feedbackDetails, setFeedbackDetails] = React.useState({})
 
     React.useEffect(() => {
         axios.get("/api/events/" + props.match.params.id)
@@ -172,7 +178,46 @@ const EventDetail = (props) => {
     }
 
     const handleFeedbackDetails = (details) => {
-      console.log('feedback clicked')
+      console.log(details)
+      setFeedbackDetails(details)
+      setOpenFeedbackDetails(true)
+    }
+
+    const handleCloseFeedbackDetails = () => {
+      setFeedbackDetails(null)
+      setOpenFeedbackDetails(false)
+    }
+
+    const handlevalidateFeedback = async(statusId, feedbackId) => {
+      try {
+        const response = await axios.put('/api/feedbacks/' + feedbackId + '/' + statusId)
+        console.log(response);
+        if (response.status === 200) {
+          if (statusId === 3) {
+            setMessage("Feedback: " + feedbackId + " has been approved");
+            setAlertType("success");
+            setOpenAlertSnackbar(true);
+            setOpenFeedbackDetails(false);
+          } else if (statusId === 6) {
+            setMessage("Feedback: " + feedbackId + " has been rejected");
+            setAlertType("error");
+            setOpenAlertSnackbar(true);
+            setOpenFeedbackDetails(false);
+          } 
+        } else if(response.status === 400) {
+          setMessage("Validate feedbacks: validating failed, please try again");
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        }
+      } catch (error) {
+        setMessage("Validate feedbacks: validating failed, please try again");
+        setOpenAlertSnackbar(true);
+        setAlertType("error");
+      }
+    }
+
+    const handleCloseAlertSnackbar = () => {
+      setOpenAlertSnackbar(false);
     }
 
     const getCookie = (cname) => {
@@ -204,6 +249,8 @@ const EventDetail = (props) => {
     let deleteBtn = null
     let editDialog = null
     let showParticipantDetails = null
+    let showFeedbackDetails = null
+    let showAlertSnackbar = null
     let showImages = (
         <CardMedia
             className={classes.media}
@@ -280,6 +327,26 @@ const EventDetail = (props) => {
           details={participantDetails}
         />
       )
+    }
+
+    if(openFeedbackDetails) {
+      showFeedbackDetails = (
+        <FeedbackDetails
+          isOpen={openFeedbackDetails}
+          close={handleCloseFeedbackDetails}
+          details={feedbackDetails}
+          validateFeedback={handlevalidateFeedback}
+        />
+      )
+    }
+    
+    if(openAlertSnackbar) {
+        <AlertSnackbar
+          isOpen={openAlertSnackbar}
+          close={handleCloseAlertSnackbar}
+          alertType={alertType}
+          message={message}
+        />;
     }
 
     return (
@@ -475,6 +542,8 @@ const EventDetail = (props) => {
         </Card>
         {editDialog}
         {showParticipantDetails}
+        {showFeedbackDetails}
+        {showAlertSnackbar}
       </>
     );
 }

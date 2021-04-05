@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Typography, makeStyles, Menu, MenuItem } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DefaultAva from '../../../assets/images/avatar/IMG_2478-2.jpg'
 
 import bgprofile from '../../../assets/images/avatar/user-info.png';
 import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
@@ -30,8 +31,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = (props) => {
     const classes = useStyles()
+    const { user } = useAuth('')
+
     const [anchorEl, setAnchorEl] = useState(null)
-    const { user } = useAuth()
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -40,11 +42,16 @@ const Profile = (props) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    
+    let showAva = DefaultAva
+    if(user.imageUrl !== null) {
+        showAva = user.imageUrl
+    } 
 
     return (
         <Box className={classes.profileBg} color="white">
             <Box p={3}>
-                <Avatar className={classes.piclarge} src={user.imageUrl} />
+                <Avatar className={classes.piclarge} src={showAva} />
             </Box>
             <Typography variant="h6" className={classes.profileTextBg} onClick={handleClick}>
                 {user.fullName}

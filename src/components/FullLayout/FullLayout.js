@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import { Outlet } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
@@ -18,8 +18,9 @@ import CreateService from '../ContentComponents/Services/CreateService/CreateSer
 import Profile from '../ContentComponents/Users/Profile/Profile'
 import Reports from '../ContentComponents/Reports/Reports'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
-import axios from '../../api/axios'
 import CreateUser from '../ContentComponents/Users/CreateUser/CreateUser';
+import axios from '../../api/axios'
+import AdminRoute from '../../routes/AdminRoute/AdminRoute';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,31 +58,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FullLayout = () => {
+  const { setUser, setAccessToken, setRole } = useAuth()
   const { url } = useRouteMatch()
-  const history = useHistory()
   const classes = useStyles();
-  const { setUser, setAccessToken} = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  React.useEffect(() => {
-    axios.get('/accounts/' + getCookie('userEmail').trim())
-      .then(res => {
-        setUser(res.data)
-      }).catch(err => {
-        console.log('Error from get account info - FullLayout.js: ' + err.message)
-      })
-  }, [])
-
-  const logoutHandler = () => {
-    setCookie('accessToken', '', 0)
-    setCookie('userEmail', '', 0)
-    setUser(null)
-    setAccessToken(null)
-    console.log('logout token: ' + getCookie('accessToken'))
-    history.replace('/login')
-  }
-
+  
   const getCookie = (cname) => {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -102,19 +84,33 @@ const FullLayout = () => {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=localhost:3000/login";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=localhost";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=localhost";
   }
 
-  return (
+  const logoutHandler = () => {
+    setCookie('accessToken', '', 0)
+    setCookie('userEmail', '', 0)
+    setRole(null)
+    setUser(null)
+    setAccessToken(null)
+    console.log('logout token: ' + getCookie('accessToken'))
+  }
 
-    <div className={classes.root}>
-      <Header toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
-      <Sidebar
+  let showSideBar = (
+    <Sidebar
         isSidebarOpen={isSidebarOpen}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
         logoutClicked={logoutHandler}
       />
+  )
+
+  return (
+
+    <div className={classes.root}>
+      <Header toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+      {showSideBar}
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
           <div className={classes.content}>
@@ -129,11 +125,11 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
 
-              <PrivateRoute exact path={`${url}/users`} component={Users} />
-              <PrivateRoute exact path={`${url}/users/create`} component={CreateUser} />
-              <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
+              <AdminRoute exact path={`${url}/users`} component={Users} />
+              <AdminRoute exact path={`${url}/users/create`} component={CreateUser} />
+              <AdminRoute exact path={`${url}/users/:email`} component={Profile} />
 
-              <PrivateRoute exact path={`${url}/reports`} component={Reports} />
+              <AdminRoute exact path={`${url}/reports`} component={Reports} />
               
               <Redirect from='/' to={`${url}/dashboard`} />
             </Switch>
