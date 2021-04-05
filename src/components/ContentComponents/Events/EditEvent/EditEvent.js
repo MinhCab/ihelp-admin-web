@@ -16,14 +16,9 @@ import {
   DialogActions,
   Select,
   Input,
-  createMuiTheme,
-  Grid,
-  Card,
-  CardHeader,
-  CardContent,
-  Box
 } from "@material-ui/core";
 import { enGB } from "date-fns/locale";
+import moment from "moment";
 import React, { useEffect } from "react";
 import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
 import PlacesAutocomplete from "react-places-autocomplete";
@@ -59,7 +54,7 @@ const EditEvent = (props) => {
   const classes = useStyles();
   const info = props.infor;
   const [categories, setCategories] = React.useState([]);
-  const [openPhotoDialog, setOpenPhotoDialog] = React.useState(false)
+  // const [openPhotoDialog, setOpenPhotoDialog] = React.useState(false)
 
   const [title, setTitle] = React.useState(info.title);
   const [startDate, setStartDate] = React.useState(new Date(info.startDate));
@@ -69,8 +64,8 @@ const EditEvent = (props) => {
   const [point, setPoint] = React.useState(info.point);
   const [onSite, setOnSite] = React.useState(info.onsite);
   const [location, setLocation] = React.useState(info.location);
-  const [images, setImages] = React.useState(info.images)
-  const [image, setImage] = React.useState(null)
+  // const [images, setImages] = React.useState(info.images)
+  // const [image, setImage] = React.useState(null)
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
     lng: null,
@@ -109,30 +104,41 @@ const EditEvent = (props) => {
     setDescription(event.target.value);
   };
 
-  const handleUploadPhoto = () => {
-    setOpenPhotoDialog(true)
-  }
+  // const handleUploadPhoto = () => {
+  //   setOpenPhotoDialog(true)
+  // }
 
-  const handleClosePhotoDialog = () => {
-    setOpenPhotoDialog(false);
-  }
+  // const handleClosePhotoDialog = () => {
+  //   setOpenPhotoDialog(false);
+  // }
 
-  const handleConfirmPhotoDialog = () => {
-    console.log('confirm clicked')
-  }
+  // const handleConfirmPhotoDialog = () => {
+  //   console.log('confirm clicked')
+  // }
 
-  const updateProcess = () => {
-    // const updateDetails = {
-    //   description: "string",
-    //   endDate: "yyyy-MM-dd HH:mm:ss",
-    //   id: "string",
-    //   location: "string",
-    //   onsite: true,
-    //   point: 0,
-    //   quota: 0,
-    //   startDate: "yyyy-MM-dd HH:mm:ss",
-    //   title: "string"
-    // }
+  const updateProcess = (event) => {
+    event.preventDefault()
+    let cateIDs = [];
+
+    category.map((cate) => {
+      return cateIDs.push(cate.id);
+    });
+    const updateDetails = {
+      categoryIds: cateIDs,
+      description: description,
+      endDate: moment(endDate).format("yyyy-MM-DD HH:mm:ss"),
+      id: info.id,
+      latitude: coordinates.lat,
+      location: location,
+      longitude: coordinates.lng,
+      onsite: onSite,
+      point: point,
+      quota: quota,
+      startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
+      title: title,
+    };
+    console.log(updateDetails)
+    props.update(updateDetails)
     };
 
   
@@ -163,6 +169,9 @@ const EditEvent = (props) => {
               variant="outlined"
               {...getInputProps({ placeholder: "Type location" })}
               fullWidth
+              label="Location"
+              required
+              style={{ marginBottom: 20 }}
             />
             <List className={classes.locationSuggest}>
               {loading ? <div>...loading</div> : null}
@@ -193,39 +202,34 @@ const EditEvent = (props) => {
     showLocationField = null;
   }
 
-  if(openPhotoDialog) {
-    showUploadPhotoDialog = (
-      <PhotoUploadDialog
-        isOpen={openPhotoDialog}
-        cancel={handleClosePhotoDialog}
-        confirm={handleConfirmPhotoDialog}
-        image={image}
-      />
-    )
-  }
+  // if(openPhotoDialog) {
+  //   showUploadPhotoDialog = (
+  //     <PhotoUploadDialog
+  //       isOpen={openPhotoDialog}
+  //       cancel={handleClosePhotoDialog}
+  //       confirm={handleConfirmPhotoDialog}
+  //       image={image}
+  //     />
+  //   )
+  // }
 
   return (
     <>
-      {/* <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
+      <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
         <DialogTitle>
           <strong style={{ fontSize: 20 }}>Edit Events</strong>
         </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {images.map((img) => {
-              return <img className={classes.imagePreview} alt="cover photo" src={img.url} />;
-            })}
-          </DialogContentText>
-          <DialogContentText>
+        <form onSubmit={updateProcess}>
+          <DialogContent>
             <TextField
+              required
               variant="outlined"
               value={title}
               onChange={handleTitleInput}
               label="Title"
               fullWidth
+              style={{ marginBottom: 20 }}
             />
-          </DialogContentText>
-          <DialogContentText>
             <DateRangePicker
               startDate={startDate}
               endDate={endDate}
@@ -239,6 +243,7 @@ const EditEvent = (props) => {
               {({ startDateInputProps, endDateInputProps, focus }) => (
                 <>
                   <TextField
+                    style={{ marginBottom: 20 }}
                     required
                     className={
                       "input" + (focus === START_DATE ? " -focused" : "")
@@ -248,6 +253,7 @@ const EditEvent = (props) => {
                     variant="outlined"
                   />
                   <TextField
+                    style={{ marginBottom: 20 }}
                     required
                     className={
                       "input" + (focus === END_DATE ? " -focused" : "")
@@ -259,19 +265,8 @@ const EditEvent = (props) => {
                 </>
               )}
             </DateRangePicker>
-          </DialogContentText>
-          <DialogContentText>
-            <Button
-              variant="contained"
-              component="label"
-              color="primary"
-              onClick={handleUploadPhoto}
-            >
-              Upload Cover Photo
-            </Button>
-          </DialogContentText>
-          <DialogContentText>
             <Select
+              style={{ marginBottom: 20 }}
               required
               id="txtCategory"
               select="true"
@@ -297,24 +292,29 @@ const EditEvent = (props) => {
                 );
               })}
             </Select>
-          </DialogContentText>
-          <DialogContentText>
+            <br />
             <TextField
+              style={{ marginBottom: 20 }}
+              required
               variant="outlined"
               value={quota}
               onChange={handleQuotaInput}
               label="Number of participants"
+              type="number"
+              InputProps={{ inputProps: { min: 0, max: 100 } }}
             />
-          </DialogContentText>
-          <DialogContentText>
+            <br />
             <TextField
+              style={{ marginBottom: 20 }}
+              required
               variant="outlined"
               value={point}
               onChange={handlePointInput}
               label="Points per participant"
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
             />
-          </DialogContentText>
-          <DialogContentText>
+            <br />
             <FormControlLabel
               control={
                 <Switch
@@ -327,37 +327,26 @@ const EditEvent = (props) => {
               label={showType}
               labelPlacement="end"
             />
-          </DialogContentText>
-          {showLocationField}
-          <DialogContentText>
+            {showLocationField}
             <TextArea
+              style={{ marginBottom: 20 }}
               required
               placeholder="Description"
               value={description}
               className={classes.descriptionField}
               onChange={(event) => handleDescriptionInput(event)}
             />
-          </DialogContentText>
+          </DialogContent>
           <DialogActions>
-            <Button
-              fullWidth
-              onClick={updateProcess}
-              variant="contained"
-              color="primary"
-            >
+            <Button type="submit" variant="contained" color="primary">
               Update
             </Button>
           </DialogActions>
-        </DialogContent>
-      </Dialog> */}
-      <Dialog open={props.isOpen} onClose={props.close}>
-        <Card elevation={1}>
-          <CardHeader
-            titleTypographyProps={{ variant: "h4" }}
-            title="Edit Event"
-            subheader="Change the information for this event"
-          />
-          <CardContent>
+        </form>
+      </Dialog>
+      {/* <Dialog open={props.isOpen} onClose={props.close}>
+        <DialogTitle></DialogTitle>
+          
             <form autoComplete="off">
               <Grid container spacing={3}>
                 <Grid item md={12} xs={12}>
@@ -465,9 +454,7 @@ const EditEvent = (props) => {
                 </Button>
               </Box>
             </form>
-          </CardContent>
-        </Card>
-      </Dialog>
+      </Dialog> */}
       {showUploadPhotoDialog}
     </>
   );

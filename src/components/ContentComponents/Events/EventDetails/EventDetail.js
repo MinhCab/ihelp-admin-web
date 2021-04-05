@@ -162,8 +162,27 @@ const EventDetail = (props) => {
             })
     }
 
-    const handleUpdateProcess = (updateDetails) => {
-      
+    const handleUpdateProcess = async(updateDetails) => {
+      try {
+        const response = await axios.put("/api/events", updateDetails);
+        console.log(response)
+        if (response.status === 200) {
+          setOpenEditDialog(false)
+          setOpenAlertSnackbar(true);
+          setMessage("Edit events successful");
+          setAlertType("success");
+          setDetails(response.data);
+          setCategories(response.data.categories)
+          setStatus(response.data.status)
+          setOnsite(response.data.onsite)
+          setImages(response.data.images);
+          setAnchorEl(null)
+        }
+      } catch {
+        setMessage("Edit events failed, please try again");
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+      }
     }
 
     const handleParticipantDetails = (details) => {
@@ -341,12 +360,14 @@ const EventDetail = (props) => {
     }
     
     if(openAlertSnackbar) {
-        <AlertSnackbar
-          isOpen={openAlertSnackbar}
-          close={handleCloseAlertSnackbar}
-          alertType={alertType}
-          message={message}
-        />;
+        showAlertSnackbar = (
+          <AlertSnackbar
+            isOpen={openAlertSnackbar}
+            close={handleCloseAlertSnackbar}
+            alertType={alertType}
+            message={message}
+          />
+        );
     }
 
     return (
