@@ -8,7 +8,7 @@ import axios from '../../../api/axios'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const columns = [
-    { field: 'createdDate', headerName: 'Create date', type: 'dateTime', width: 180,
+    { field: 'createdDate', headerName: 'Create date', type: 'dateTime', width: 160,
         renderCell: (params) => {
             return <p>{moment(params.value).format("MMM Do YYYY")}</p>
         }

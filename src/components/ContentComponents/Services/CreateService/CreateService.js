@@ -1,63 +1,63 @@
 import {
-    Button,
-    Card,
-    CardContent,
-    CardHeader,
-    Grid,
-    makeStyles,
-    Typography,
-    TextField,
-    MenuItem,
-    Select,
-    Input,  
-    ListItem,
-    ListItemText,
-    List,
-    Chip,
-    Dialog,
-    DialogContent,
-  } from "@material-ui/core";
-  import moment from "moment";
-  import React, { useEffect } from "react";
-  import { enGB } from "date-fns/locale";
-  import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
-  import "react-nice-dates/build/style.css";
-  import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-  import { TextArea } from "semantic-ui-react";
-  
-  import { ServiceConfirmationDialog } from "../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog";
-  import { storage } from "../../../../api/config/firebase/FirebaseStorage/firebase-storage";
-  import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
-  import axios from "../../../../api/axios";
-  import PlacesAutocomplete, {
-    geocodeByAddress,
-    getLatLng,
-  } from "react-places-autocomplete";
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Grid,
+  makeStyles,
+  Typography,
+  TextField,
+  MenuItem,
+  Select,
+  Input,
+  ListItem,
+  ListItemText,
+  List,
+  Chip,
+  Dialog,
+  DialogContent,
+} from "@material-ui/core";
+import moment from "moment";
+import React, { useEffect } from "react";
+import { enGB } from "date-fns/locale";
+import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
+import "react-nice-dates/build/style.css";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import { TextArea } from "semantic-ui-react";
 
-  const useStyles = makeStyles((theme) => ({
-    finalButton: {
-      margin: theme.spacing(0.5),
-    },
+import { ServiceConfirmationDialog } from "../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog";
+import { storage } from "../../../../api/config/firebase/FirebaseStorage/firebase-storage";
+import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
+import axios from "../../../../api/axios";
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-places-autocomplete";
 
-    titleField: {
-      fontSize: 60,
-    },
+const useStyles = makeStyles((theme) => ({
+  finalButton: {
+    margin: theme.spacing(0.5),
+  },
 
-    descriptionField: {
-      width: "100%",
-      height: "400px",
-      padding: theme.spacing(0.5),
-      fontSize: 25,
-    },
-    locationSuggest: {
-      width: "100%",
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-      overflow: "auto",
-      maxHeight: 300,
-      position: "absolute",
-    },
-  }));
+  titleField: {
+    fontSize: 60,
+  },
+
+  descriptionField: {
+    width: "100%",
+    height: "400px",
+    padding: theme.spacing(0.5),
+    fontSize: 25,
+  },
+  locationSuggest: {
+    width: "100%",
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+    overflow: "auto",
+    maxHeight: 300,
+    position: "absolute",
+  },
+}));
 
 const CreateService = (props) => {
   const classes = useStyles();
@@ -115,20 +115,20 @@ const CreateService = (props) => {
   const handleProceedConfirmation = async () => {
     console.log("Procced clicked");
 
-    let images = []
+    let images = [];
     let imageURL = await uploadImageToFirebase();
 
-    if(imageURL) {
+    if (imageURL) {
       images = [
         {
           type: "cover",
           url: imageURL,
         },
-      ]
+      ];
     }
 
     let cateIDs = [];
-    
+
     category.map((cate) => {
       return cateIDs.push(cate.id);
     });
@@ -147,13 +147,13 @@ const CreateService = (props) => {
       startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
       statusId: 3,
       title: title,
-      images: images
+      images: images,
     };
 
     console.log(service);
 
-    props.submit(service)
-    
+    props.submit(service);
+
     setOpenConfirmation(false);
   };
 
@@ -231,11 +231,9 @@ const CreateService = (props) => {
   };
 
   useEffect(() => {
-    axios.get('/api/service-categories')
-    .then(res => {
+    axios.get("/api/service-categories").then((res) => {
       setCategories(res.data);
-    }
-    )
+    });
   }, []);
 
   const author = getCookie("userEmail");
@@ -318,236 +316,243 @@ const CreateService = (props) => {
       <Dialog fullWidth maxWidth="lg" open={props.isOpen} onClose={props.close}>
         <DialogContent>
           <Card>
-            <CardHeader
-              title={
-                <Grid
-                  container
-                  item
-                  xs
-                  spacing={2}
-                  style={{ paddingBottom: 10 }}
-                >
-                  <Grid item xs>
-                    <Typography variant="h1" color="textPrimary" component="h2">
-                      <Input
-                        required
-                        className={classes.titleField}
-                        placeholder="Title"
-                        id="txtEventTitle"
-                        value={title}
-                        onChange={(event) => handleTitleInput(event)}
-                      />
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Button
-                      className={classes.finalButton}
-                      color="primary"
-                      variant="contained"
-                      onClick={handleCreateServiceButton}
-                    >
-                      Create
-                    </Button>
-                    <Button
-                      className={classes.finalButton}
-                      color="secondary"
-                      variant="contained"
-                      onClick={props.close}
-                    >
-                      Discard
-                    </Button>
-                  </Grid>
-                </Grid>
-              }
-              subheader={
-                <Grid container item xs spacing={2}>
-                  <Grid item xs>
-                    <strong>Created on: </strong>{" "}
-                    {moment(createdDate).format("MMM Do YYYY")}
-                  </Grid>
-                  <Grid item>
-                    <strong>by: </strong> {author}
-                  </Grid>
-                </Grid>
-              }
-            />
-
-            <CardContent>
-              <DateRangePicker
-                startDate={startDate}
-                endDate={endDate}
-                onStartDateChange={setStartDate}
-                onEndDateChange={setEndDate}
-                minimumDate={new Date()}
-                minimumLength={1}
-                format="dd MMM yyyy"
-                locale={enGB}
-              >
-                {({ startDateInputProps, endDateInputProps, focus }) => (
+            <form onSubmit={handleCreateServiceButton}>
+              <CardHeader
+                title={
                   <Grid
-                    item
                     container
+                    item
                     xs
-                    spacing={3}
-                    style={{ marginBottom: 20 }}
+                    spacing={2}
+                    style={{ paddingBottom: 10 }}
                   >
                     <Grid item xs>
                       <Typography
-                        variant="body1"
+                        variant="h1"
                         color="textPrimary"
-                        component="span"
+                        component="h2"
                       >
-                        <strong>This service will start on: </strong>
-                        <TextField
+                        <Input
                           required
-                          className={
-                            "input" + (focus === START_DATE ? " -focused" : "")
-                          }
-                          {...startDateInputProps}
-                          placeholder="from"
-                          variant="outlined"
-                        />
-
-                        <ArrowForwardIcon style={{ margin: "10 10 auto" }} />
-
-                        <TextField
-                          required
-                          className={
-                            "input" + (focus === END_DATE ? " -focused" : "")
-                          }
-                          {...endDateInputProps}
-                          placeholder="to"
-                          variant="outlined"
+                          className={classes.titleField}
+                          placeholder="Title"
+                          id="txtEventTitle"
+                          value={title}
+                          onChange={(event) => handleTitleInput(event)}
                         />
                       </Typography>
                     </Grid>
                     <Grid item>
-                      <Typography
-                        variant="body1"
-                        color="textPrimary"
-                        component="span"
-                        style={{ marginRight: 10 }}
-                      >
-                        <strong>Cover photo: </strong>
-                      </Typography>
                       <Button
-                        variant="contained"
-                        component="label"
+                        className={classes.finalButton}
                         color="primary"
-                        onClick={handleOpenPhotoUploadDialog}
+                        variant="contained"
+                        type="submit"
                       >
-                        Upload File
+                        Create
+                      </Button>
+                      <Button
+                        className={classes.finalButton}
+                        color="secondary"
+                        variant="contained"
+                        onClick={props.close}
+                      >
+                        Discard
                       </Button>
                     </Grid>
                   </Grid>
-                )}
-              </DateRangePicker>
-              <Grid item container xs spacing={3}>
-                <Grid item xs>
-                  <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    component="span"
-                    style={{ marginRight: 10 }}
-                  >
-                    <strong>Category: </strong>
-                  </Typography>
+                }
+                subheader={
+                  <Grid container item xs spacing={2}>
+                    <Grid item xs>
+                      <strong>Created on: </strong>{" "}
+                      {moment(createdDate).format("MMM Do YYYY")}
+                    </Grid>
+                    <Grid item>
+                      <strong>by: </strong> {author}
+                    </Grid>
+                  </Grid>
+                }
+              />
 
-                  <Select
-                    required
-                    id="txtCategory"
-                    select="true"
-                    value={category}
-                    multiple
-                    onChange={handleCategoryInput}
-                    input={<Input id="select-multiple-chip" />}
-                    renderValue={(selected) => {
-                      return (
-                        <div>
-                          {selected.map((value) => {
-                            return <Chip key={value.id} label={value.name} />;
-                          })}
-                        </div>
-                      );
-                    }}
-                  >
-                    {categories.map((cate) => {
-                      return (
-                        <MenuItem key={cate.id} value={cate}>
-                          {cate.name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
+              <CardContent>
+                <DateRangePicker
+                  startDate={startDate}
+                  endDate={endDate}
+                  onStartDateChange={setStartDate}
+                  onEndDateChange={setEndDate}
+                  minimumDate={new Date()}
+                  minimumLength={1}
+                  format="dd MMM yyyy"
+                  locale={enGB}
+                >
+                  {({ startDateInputProps, endDateInputProps, focus }) => (
+                    <Grid
+                      item
+                      container
+                      xs
+                      spacing={3}
+                      style={{ marginBottom: 20 }}
+                    >
+                      <Grid item xs>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          component="span"
+                        >
+                          <strong>This service will start on: </strong>
+                          <TextField
+                            required
+                            className={
+                              "input" +
+                              (focus === START_DATE ? " -focused" : "")
+                            }
+                            {...startDateInputProps}
+                            placeholder="from"
+                            variant="outlined"
+                          />
+
+                          <ArrowForwardIcon style={{ margin: "10 10 auto" }} />
+
+                          <TextField
+                            required
+                            className={
+                              "input" + (focus === END_DATE ? " -focused" : "")
+                            }
+                            {...endDateInputProps}
+                            placeholder="to"
+                            variant="outlined"
+                          />
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          component="span"
+                          style={{ marginRight: 10 }}
+                        >
+                          <strong>Cover photo: </strong>
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          component="label"
+                          color="primary"
+                          onClick={handleOpenPhotoUploadDialog}
+                        >
+                          Upload File
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  )}
+                </DateRangePicker>
+                <Grid item container xs spacing={3}>
+                  <Grid item xs>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                      style={{ marginRight: 10 }}
+                    >
+                      <strong>Category: </strong>
+                    </Typography>
+
+                    <Select
+                      required
+                      id="txtCategory"
+                      select="true"
+                      value={category}
+                      multiple
+                      onChange={handleCategoryInput}
+                      input={<Input id="select-multiple-chip" />}
+                      renderValue={(selected) => {
+                        return (
+                          <div>
+                            {selected.map((value) => {
+                              return <Chip key={value.id} label={value.name} />;
+                            })}
+                          </div>
+                        );
+                      }}
+                    >
+                      {categories.map((cate) => {
+                        return (
+                          <MenuItem key={cate.id} value={cate}>
+                            {cate.name}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                      style={{ marginRight: 10 }}
+                    >
+                      {showImageName}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    component="span"
-                    style={{ marginRight: 10 }}
-                  >
-                    {showImageName}
-                  </Typography>
+                <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
+                  <Grid item xs>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                      style={{ marginRight: 10 }}
+                    >
+                      <strong>Number of participants: </strong>
+                    </Typography>
+                    <TextField
+                      required
+                      id="txtQuota"
+                      variant="outlined"
+                      type="number"
+                      InputProps={{ inputProps: { min: 1 } }}
+                      style={{ maxWidth: 100 }}
+                      onChange={(event) => handleQuotaInput(event)}
+                      value={quota}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography
+                      variant="body1"
+                      color="textPrimary"
+                      component="span"
+                      style={{ marginRight: 10 }}
+                    >
+                      <strong>Points per participant: </strong>
+                    </Typography>
+                    <TextField
+                      required
+                      id="txtPoint"
+                      variant="outlined"
+                      type="number"
+                      InputProps={{ inputProps: { min: 0 } }}
+                      style={{ maxWidth: 100 }}
+                      onChange={(event) => handlePointInput(event)}
+                      value={point}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
-                <Grid item xs>
-                  <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    component="span"
-                    style={{ marginRight: 10 }}
-                  >
-                    <strong>Number of participants: </strong>
-                  </Typography>
-                  <TextField
-                    required
-                    id="txtQuota"
-                    variant="outlined"
-                    type="number"
-                    InputProps={{ inputProps: { min: 1 } }}
-                    style={{ maxWidth: 100 }}
-                    onChange={(event) => handleQuotaInput(event)}
-                    value={quota}
-                  />
+                <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
+                  {showLocationField}
                 </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body1"
-                    color="textPrimary"
-                    component="span"
-                    style={{ marginRight: 10 }}
-                  >
-                    <strong>Points per participant: </strong>
-                  </Typography>
-                  <TextField
-                    required
-                    id="txtPoint"
-                    variant="outlined"
-                    type="number"
-                    InputProps={{ inputProps: { min: 0 } }}
-                    style={{ maxWidth: 100 }}
-                    onChange={(event) => handlePointInput(event)}
-                    value={point}
-                  />
+                <Grid item container spacing={3} style={{ marginTop: 20 }}>
+                  <Grid item xs={12}>
+                    <TextArea
+                      required
+                      placeholder="Description"
+                      value={description}
+                      className={classes.descriptionField}
+                      onChange={(event) => handleDescriptionInput(event)}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
-                {showLocationField}
-              </Grid>
-              <Grid item container spacing={3} style={{ marginTop: 20 }}>
-                <Grid item xs={12}>
-                  <TextArea
-                    required
-                    placeholder="Description"
-                    value={description}
-                    className={classes.descriptionField}
-                    onChange={(event) => handleDescriptionInput(event)}
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
+              </CardContent>
+            </form>
           </Card>
         </DialogContent>
       </Dialog>
@@ -555,6 +560,6 @@ const CreateService = (props) => {
       {showImageUploadDialog}
     </>
   );
-}
+};
 
-export default CreateService
+export default CreateService;

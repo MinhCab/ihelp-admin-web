@@ -429,7 +429,7 @@ const EventDetail = (props) => {
                     color="textSecondary"
                     component="span"
                   >
-                    <strong>by: </strong> {details.accountEmail}
+                    <strong>by: </strong> <a href={`/home/users/${details.accountEmail}`}>{details.accountEmail}</a>
                   </Typography>
                 </Grid>
                 <Grid item className={classes.side}>
