@@ -1,8 +1,9 @@
-import { Button, Card, CardContent, CardHeader, createMuiTheme, Grid, TextField, ThemeProvider } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, createMuiTheme, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, ThemeProvider } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
+import ClearIcon from '@material-ui/icons/Clear';
 
 import axios from '../../../api/axios'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
@@ -19,6 +20,15 @@ const additionalButtonTheme = createMuiTheme({
     },
   },
 });
+
+const additionalButtonTheme2 = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#4aedc4",
+    },
+  },
+});
+
 
 const columns = [
   {
@@ -44,7 +54,7 @@ const columns = [
   },
   { field: 'spot', headerName: 'Slots', width: 90 },
   {
-    field: 'onsite', headerName: 'Type', width: 100,
+    field: 'isOnsite', headerName: 'Type', width: 100,
     renderCell: (params) => {
       let showOnSite = params.value
       if (showOnSite === true) {
@@ -96,11 +106,19 @@ const columns = [
             {type.name}
           </Button>
         );
-      } else {
+      } else if (type.id === 6) {
         return (
           <Button variant="contained" color='secondary' size="small">
             {type.name}
           </Button>
+        )
+      } else {
+        return (
+          <ThemeProvider theme={additionalButtonTheme2}>
+          <Button variant="contained" color='primary' size="small">
+            {type.name}
+          </Button>
+          </ThemeProvider>
         )
       }
     }
@@ -112,8 +130,8 @@ const Events = () => {
   const [events, setEvents] = useState([])
   const [page, setPage] = useState(0)
   const [totalItems, setTotalItems] = useState(0)
-  const [cateList, setCateList] = useState([])
-  // const [search, setSearch] = useState(null)
+  // const [cateList, setCateList] = useState([])
+  const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [alertType, setAlertType] = useState('')
@@ -138,7 +156,6 @@ const Events = () => {
     axios
       .post("/api/events", event)
       .then((res) => {
-        console.log(res);
         setMessage(res.data)
         setAlertType('success')
         setOpenAlertSnackbar(true)
@@ -147,8 +164,8 @@ const Events = () => {
         setTotalItems(0)
       })
       .catch((err) => {
-        console.log(err);
-        setMessage("Cannot create event, please try again later")
+        console.log(err.response);
+        setMessage(err.response.data.message)
         setAlertType('error')
         setOpenAlertSnackbar(true)
       });
@@ -166,42 +183,65 @@ const Events = () => {
     setPage(params.page)
   }
 
-  // const handleSearchRequest = () => {
-  //     setPage(0)
-  //     axios.get('/api/events/title/' + search + '?page=' + page)
-  //         .then(res => {
-  //             setEvents(null)
-  //             setSearchE
-  //             setTotalItems(res.data.totalItems)
-  //         }).catch(err => {
-  //             console.log(err.message)
-  //         })
-  // }
+  const searchHandler = (event) => {
+    setSearch(event.target.value)
+  }
 
   const handleCloseAlertSnackbar = () => {
     setOpenAlertSnackbar(false)
   }
 
+  const searchAPI = () => {
+    axios.get('/api/events/title/' + search + "?page=" + page)
+    .then((res) => {
+      console.log(res.data);
+      setTotalItems(res.data.totalItems);
+      setEvents(res.data.events);
+      setLoading(false)
+    })
+    .catch((error) => {
+      console.log(error.message);
+      setMessage('Cannot get information from server, please try again')
+      setAlertType('error')
+      setOpenAlertSnackbar(true)
+      setLoading(false)
+    });
+  }
+
+  const confirmSearchHandler = (event) => {
+    event.preventDefault()
+    setPage(0)
+    searchAPI()
+  }
+
+  const clearSearchHandler = () => {
+    setSearch('')
+  }
+
   useEffect(() => {
     if (!loading) {
-      setLoading(true)
-      axios
-        .get("/api/events?page=" + page)
-        .then((res) => {
-          console.log(res.data);
-          setTotalItems(res.data.totalItems);
-          setEvents(res.data.events);
-          setLoading(false)
-        })
-        .catch((error) => {
-          console.log(error.message);
-          setMessage('Cannot get information from server, please try again')
-          setAlertType('error')
-          setOpenAlertSnackbar(true)
-          setLoading(false)
-        });
+      if (search.length <= 0) {
+        setLoading(true)
+        axios
+          .get("/api/events?page=" + page)
+          .then((res) => {
+            console.log(res.data);
+            setTotalItems(res.data.totalItems);
+            setEvents(res.data.events);
+            setLoading(false)
+          })
+          .catch((error) => {
+            console.log(error.message);
+            setMessage('Cannot get information from server, please try again')
+            setAlertType('error')
+            setOpenAlertSnackbar(true)
+            setLoading(false)
+          });
+      } else {
+        searchAPI()
+      }
     }
-  }, [page, totalItems]);
+  }, [page, totalItems, search]);
 
   let alertSnackbar = null
   let showCreateEventDialog = null
@@ -218,9 +258,9 @@ const Events = () => {
     )
   }
 
-  if(openCreateEventDialog) {
+  if (openCreateEventDialog) {
     showCreateEventDialog = (
-      <CreateEvent 
+      <CreateEvent
         isOpen={openCreateEventDialog}
         close={closeCreateEventDialogHandler}
         submit={submitCreateEventHandler}
@@ -238,10 +278,6 @@ const Events = () => {
     );
   }
 
-  // if(events.length !== 0) {
-  //   showEvent = events
-  // }
-
   return (
     <>
       <Card>
@@ -258,12 +294,33 @@ const Events = () => {
                   </Button>
               </Grid>
               <Grid item>
-                <form>
-                  <TextField
+                <form onSubmit={confirmSearchHandler}>
+                  <FormControl variant='outlined'>
+                  {/* <TextField
                     id="search-bar"
                     label="Search"
                     variant="outlined"
+                    value={search}
+                    onChange={searchHandler}
+                  /> */}
+
+                  <InputLabel>Search</InputLabel>
+                  <OutlinedInput
+                    value={search}
+                    onChange={searchHandler}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={clearSearchHandler}
+                          edge="end"
+                        >
+                        {(search.length > 0) ? <ClearIcon /> : null}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    labelWidth={70}
                   />
+                  </FormControl>
                 </form>
               </Grid>
             </Grid>

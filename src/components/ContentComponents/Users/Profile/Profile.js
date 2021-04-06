@@ -186,7 +186,7 @@ const Profile = (props) => {
     try {
       const response = await axios.put("/accounts/" + details.email + "/role/" + newRole);
       if (response.status === 200) {
-        setMessage("Change Role: Update account: " + details.email + " to " + newRole + " completed");
+        setMessage("Change Role: Update account " + details.email + " to " + newRole + " completed");
         setAlertType("success");
         setOpenAlertSnackbar(true);
         setDetails(response.data);

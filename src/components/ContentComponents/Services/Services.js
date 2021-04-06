@@ -28,6 +28,25 @@ const buttonTheme = createMuiTheme({
     }
 })
 
+const additionalButtonTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#008c3a",
+    },
+    secondary: {
+      main: "#039be5",
+    },
+  },
+});
+
+const additionalButtonTheme2 = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#4aedc4",
+    },
+  },
+});
+
 const columns = [
     {
         field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 180,
@@ -42,8 +61,8 @@ const columns = [
     //     return <p>{params.value.name}</p>
     //   }
     // },
-    { field: 'accountEmail', headerName: 'Host email', width: 230 },
-    { field: 'fullName', headerName: 'Host name', width: 200 },
+    { field: 'accountEmail', headerName: 'Host email', width: 250 },
+    { field: 'fullName', headerName: 'Host name', width: 250 },
     {
         field: 'startDate', headerName: 'Start date', width: 180,
         renderCell: (params) => {
@@ -58,26 +77,53 @@ const columns = [
     },
     { field: 'spot', headerName: 'Slots', width: 100 },
     {
-        field: 'status', headerName: 'Status', width: 120,
-        renderCell: (params) => {
-            let stats = params.value;
-            let color = 'default'
-            if (stats.id === 1) {
-                color = 'secondary'
-            } else if (stats.id === 2) {
-                color = 'inherit'
-            } else if (stats.id === 3) {
-                color = 'primary'
-            }
-            return (
-                <ThemeProvider theme={buttonTheme}>
-                    <Button variant="contained" color={color} size="small">
-                        {stats.name}
-                    </Button>
-                </ThemeProvider>
-
-            );
+      field: 'status', headerName: 'Status', width: 120,
+      renderCell: (params) => {
+        let type = params.value;
+        if (type.id === 3) {
+          return (
+            <ThemeProvider theme={additionalButtonTheme}>
+              <Button variant="contained" color='primary' size="small">
+                {type.name}
+              </Button>
+            </ThemeProvider>
+          );
+        } else if (type.id === 2) {
+          return (
+            <ThemeProvider theme={additionalButtonTheme}>
+              <Button variant="contained" color="secondary" size="small">
+                {type.name}
+              </Button>
+            </ThemeProvider>
+          );
+        } else if (type.id === 4) {
+          return (
+            <Button variant="contained" color='primary' size="small">
+              {type.name}
+            </Button>
+          )
+        } else if (type.id === 5) {
+          return (
+            <Button variant="contained" color="inherit" size="small">
+              {type.name}
+            </Button>
+          );
+        } else if (type.id === 6) {
+          return (
+            <Button variant="contained" color='secondary' size="small">
+              {type.name}
+            </Button>
+          )
+        } else {
+          return (
+            <ThemeProvider theme={additionalButtonTheme2}>
+            <Button variant="contained" color='primary' size="small">
+              {type.name}
+            </Button>
+            </ThemeProvider>
+          )
         }
+      }
     }
 ]
 

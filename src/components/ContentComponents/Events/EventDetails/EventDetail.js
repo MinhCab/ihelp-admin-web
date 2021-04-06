@@ -15,6 +15,7 @@ import TabsLayout from '../../../FullLayout/UI/TabsLayout/TabsLayout';
 import ParticipantDetails from '../../Users/Participants/ParticipantDetails/ParticipantDetails';
 import FeedbackDetails from '../../Feedbacks/FeedbackDetails/FeedbackDetails'
 import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
+import { useAuth } from '../../../../hoc/StoringAuth/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -65,7 +66,8 @@ const useStyles = makeStyles((theme) => ({
 const EventDetail = (props) => {
 
     const classes = useStyles();
-    const history = useHistory()
+    const history = useHistory();
+    const { user } = useAuth()
     const [openEditDialog, setOpenEditDialog] = React.useState(false)
     const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false)
     const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false)
@@ -88,7 +90,7 @@ const EventDetail = (props) => {
                 setDetails(res.data)
                 setCategories(res.data.categories)
                 setStatus(res.data.status)
-                setOnsite(res.data.onsite)
+                setOnsite(res.data.isOnsite)
                 setImages(res.data.images)
                 console.log(res.data)
             }).catch(error => {
@@ -98,7 +100,7 @@ const EventDetail = (props) => {
 
     const approveEventHandler = () => {
         console.log('Approve event clicked')
-        axios.put('/api/events/' + props.match.params.id + '/3')
+        axios.put('/api/events/' + user.email + "/approve/" + props.match.params.id)
             .then(res => {
                 window.location.reload();
             }).catch(error => {
@@ -174,7 +176,7 @@ const EventDetail = (props) => {
           setDetails(response.data);
           setCategories(response.data.categories)
           setStatus(response.data.status)
-          setOnsite(response.data.onsite)
+          setOnsite(response.data.isOnsite)
           setImages(response.data.images);
           setAnchorEl(null)
         }

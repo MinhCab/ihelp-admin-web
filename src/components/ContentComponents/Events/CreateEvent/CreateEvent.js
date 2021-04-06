@@ -35,6 +35,7 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
+import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
 
 const useStyles = makeStyles((theme) => ({
   finalButton: {
@@ -63,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateEvent = (props) => {
   const classes = useStyles();
+  const { role } = useAuth()
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
   const [confirmInfo, setConfirmInfo] = React.useState(null);
   const [categories, setCategories] = React.useState([]);
@@ -146,6 +148,9 @@ const CreateEvent = (props) => {
       return cateIDs.push(cate.id);
     });
 
+    let status
+    role.id === 'admin' ? status = 3 : status = 2
+
     const eventDetails = {
       authorEmail: author,
       categoryIds: cateIDs,
@@ -159,7 +164,7 @@ const CreateEvent = (props) => {
       point: point,
       quota: quota,
       startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
-      statusId: 3,
+      statusId: status,
       title: title,
       images: images,
     };
@@ -540,7 +545,7 @@ const CreateEvent = (props) => {
                       id="txtQuota"
                       variant="outlined"
                       type="number"
-                      InputProps={{ inputProps: { min: 1 } }}
+                      InputProps={{ inputProps: { min: 1, max: 100 } }}
                       style={{ maxWidth: 100 }}
                       onChange={(event) => handleQuotaInput(event)}
                       value={quota}

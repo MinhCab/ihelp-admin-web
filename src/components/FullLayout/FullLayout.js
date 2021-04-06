@@ -127,7 +127,7 @@ const FullLayout = () => {
 
               <AdminRoute exact path={`${url}/users`} component={Users} />
               <AdminRoute exact path={`${url}/users/create`} component={CreateUser} />
-              <AdminRoute exact path={`${url}/users/:email`} component={Profile} />
+              <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
 
               <AdminRoute exact path={`${url}/reports`} component={Reports} />
               

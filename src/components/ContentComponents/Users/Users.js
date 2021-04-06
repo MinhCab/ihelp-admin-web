@@ -13,7 +13,7 @@ const columns = [
             return <p>{moment(params.value).format("MMM Do YYYY")}</p>
         }
     },
-    { field: 'email', headerName: 'Email', width: 200 },
+    { field: 'email', headerName: 'Email', width: 230 },
     { field: 'fullname', headerName: 'Name', width: 250 },
     { field: 'gender', headerName: 'Gender', width: 120, 
       renderCell: (params) => {
