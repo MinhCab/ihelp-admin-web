@@ -1,9 +1,9 @@
-import { Button, Card, CardContent, CardHeader, createMuiTheme, Grid, ThemeProvider } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, createMuiTheme, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, ThemeProvider } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React from 'react'
 import { useHistory } from 'react-router'
-// import SearchBar from "material-ui-search-bar";
+import ClearIcon from '@material-ui/icons/Clear';
 
 import axios from '../../../api/axios'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
@@ -55,12 +55,6 @@ const columns = [
         }
     },
     { field: 'title', headerName: 'Title', width: 300 },
-    // {
-    //   field: 'serviceType', headerName: 'Service Type', width: 150,
-    //   renderCell: (params) => {
-    //     return <p>{params.value.name}</p>
-    //   }
-    // },
     { field: 'accountEmail', headerName: 'Host email', width: 250 },
     { field: 'fullName', headerName: 'Host name', width: 250 },
     {
@@ -132,6 +126,7 @@ const Services = () => {
   const [services, setServices] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [totalItems, setTotalItems] = React.useState(0);
+  const [search, setSearch] = React.useState('')
 
   const [loading, setLoading] = React.useState(false);
   const [openDiscard, setOpenDiscard] = React.useState(false)
@@ -139,25 +134,28 @@ const Services = () => {
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
   const [message, setMessage] = React.useState('')
   const [alertType, setAlertType] = React.useState('')
-  
 
   React.useEffect(() => {
     if (!loading) {
-      setLoading(true);
-      axios
-        .get("/api/services?page=" + page)
-        .then((res) => {
-          setServices(res.data.services);
-          setTotalItems(res.data.totalItems);
-          console.log(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err.message);
-          setLoading(false);
-        });
+      setLoading(true)
+      if (search.length <= 0) {
+        axios
+          .get("/api/services?page=" + page)
+          .then((res) => {
+            setServices(res.data.services);
+            setTotalItems(res.data.totalItems);
+            console.log(res.data);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err.message);
+            setLoading(false);
+          });
+      } else {
+        searchAPI()
+      }
     }
-  }, [page, totalItems]);
+  }, [page, totalItems, search]);
 
   const showServiceDetails = (event) => {
     history.push("/home/services/" + event.row.id);
@@ -166,6 +164,10 @@ const Services = () => {
   const pagingHandler = (params) => {
     setPage(params.page);
   };
+
+  const searchHandler = (event) => {
+    setSearch(event.target.value)
+  }
 
   const createServiceHandler = () => {
     setOpenCreateServiceDialog(true);
@@ -186,6 +188,29 @@ const Services = () => {
 
   const handleCloseAlertSnackbar = () => {
       setOpenAlertSnackbar(false)
+  }
+
+  const searchAPI = () => {
+    axios.get('/api/services/title/' + search + "?page=" + page)
+    .then((res) => {
+      console.log(res.data);
+      setTotalItems(res.data.totalItems);
+      setServices(res.data.services);
+      setLoading(false)
+    }).catch(err => {
+      setServices([])
+      setLoading(false)
+    });
+  }
+
+  const confirmSearchHandler = (event) => {
+    event.preventDefault()
+    setPage(0)
+    searchAPI()
+  }
+
+  const clearSearchHandler = () => {
+    setSearch('')
   }
 
   const submitCreateServiceHandler = (service) => {
@@ -259,11 +284,23 @@ const Services = () => {
                 </Button>
               </Grid>
               <Grid item>
-                {/* <SearchBar 
-                    value={search}
-                    onChange={(event) => setSearch(event.value)}
-                    onRequestSearch={handleSearchRequest}
-                /> */}
+                <form onSubmit={confirmSearchHandler}>
+                  <FormControl variant="outlined">
+                    <InputLabel>Search</InputLabel>
+                    <OutlinedInput
+                      value={search}
+                      onChange={searchHandler}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton onClick={clearSearchHandler} edge="end">
+                            {search.length > 0 ? <ClearIcon /> : null}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      labelWidth={70}
+                    />
+                  </FormControl>
+                </form>
               </Grid>
             </Grid>
           }

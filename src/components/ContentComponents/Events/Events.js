@@ -130,7 +130,6 @@ const Events = () => {
   const [events, setEvents] = useState([])
   const [page, setPage] = useState(0)
   const [totalItems, setTotalItems] = useState(0)
-  // const [cateList, setCateList] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -198,12 +197,8 @@ const Events = () => {
       setTotalItems(res.data.totalItems);
       setEvents(res.data.events);
       setLoading(false)
-    })
-    .catch((error) => {
-      console.log(error.message);
-      setMessage('Cannot get information from server, please try again')
-      setAlertType('error')
-      setOpenAlertSnackbar(true)
+    }).catch(err => {
+      setEvents([])
       setLoading(false)
     });
   }
@@ -220,8 +215,8 @@ const Events = () => {
 
   useEffect(() => {
     if (!loading) {
+      setLoading(true)
       if (search.length <= 0) {
-        setLoading(true)
         axios
           .get("/api/events?page=" + page)
           .then((res) => {
@@ -246,7 +241,6 @@ const Events = () => {
   let alertSnackbar = null
   let showCreateEventDialog = null
   let showDiscard = null
-  // let showEvent = null
   if (openAlertSnackbar) {
     alertSnackbar = (
       <AlertSnackbar
@@ -291,35 +285,24 @@ const Events = () => {
                   onClick={openCreateEventDialogHandler}
                 >
                   Create
-                  </Button>
+                </Button>
               </Grid>
               <Grid item>
                 <form onSubmit={confirmSearchHandler}>
-                  <FormControl variant='outlined'>
-                  {/* <TextField
-                    id="search-bar"
-                    label="Search"
-                    variant="outlined"
-                    value={search}
-                    onChange={searchHandler}
-                  /> */}
-
-                  <InputLabel>Search</InputLabel>
-                  <OutlinedInput
-                    value={search}
-                    onChange={searchHandler}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={clearSearchHandler}
-                          edge="end"
-                        >
-                        {(search.length > 0) ? <ClearIcon /> : null}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    labelWidth={70}
-                  />
+                  <FormControl variant="outlined">
+                    <InputLabel>Search</InputLabel>
+                    <OutlinedInput
+                      value={search}
+                      onChange={searchHandler}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton onClick={clearSearchHandler} edge="end">
+                            {search.length > 0 ? <ClearIcon /> : null}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      labelWidth={70}
+                    />
                   </FormControl>
                 </form>
               </Grid>
