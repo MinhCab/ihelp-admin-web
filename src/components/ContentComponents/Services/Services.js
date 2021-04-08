@@ -144,11 +144,10 @@ const Services = () => {
           .then((res) => {
             setServices(res.data.services);
             setTotalItems(res.data.totalItems);
-            console.log(res.data);
             setLoading(false);
           })
           .catch((err) => {
-            console.log(err.message);
+            // console.log(err.message);
             setLoading(false);
           });
       } else {
@@ -193,7 +192,6 @@ const Services = () => {
   const searchAPI = () => {
     axios.get('/api/services/title/' + search + "?page=" + page)
     .then((res) => {
-      console.log(res.data);
       setTotalItems(res.data.totalItems);
       setServices(res.data.services);
       setLoading(false)
@@ -217,7 +215,6 @@ const Services = () => {
     axios
       .post("/api/services", service)
       .then((res) => {
-        console.log(res);
         setMessage(res.data)
         setAlertType('success')
         setOpenAlertSnackbar(true)
@@ -226,7 +223,6 @@ const Services = () => {
         setTotalItems(0)
       })
       .catch((err) => {
-        console.log(err);
         setOpenAlertSnackbar(true)
         setMessage('Create Service: Cannot create this service, please try again')
         setAlertType('error')

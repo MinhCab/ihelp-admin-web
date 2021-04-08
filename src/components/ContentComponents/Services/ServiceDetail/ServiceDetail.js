@@ -81,49 +81,44 @@ const ServiceDetail = (props) => {
                 setCategories(res.data.categories)
                 setStatus(res.data.status)
                 setImages(res.data.images)
-                console.log(res.data)
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }, [])
 
     const approveEventHandler = () => {
-        console.log('Approve service clicked')
         axios.put('/api/services/' + props.match.params.id + '/3')
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
     const rejectEventHandler = () => {
-        console.log('Reject service clicked')
         axios.put('/api/services/' + props.match.params.id + '/6')
             .then(res => {
                 window.location.reload()
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
     const disableEventHandler = () => {
-        console.log('Disable service clicked')
         axios.put('/api/services/' + props.match.params.id + '/5')
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
     const finishEventHandler = () => {
-        console.log('Finish service clicked')
         axios.put('/api/services/' + props.match.params.id + '/4')
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
@@ -138,18 +133,15 @@ const ServiceDetail = (props) => {
 
     const editHandler = () => {
         // const { serviceDetails } = React.useContext(StoreContext) //cách lấy ra nhưng phải sử dụng reducer để thay đổi giá trị
-        console.log('Edit service clicked')
         setOpenEditDialog(true)
     }
 
     const deleteHandler = () => {
-        console.log('Delete service clicked')
         axios.delete('/api/services/' + props.match.params.id)
             .then(res => {
-                console.log(res)
                 history.goBack()
             }).catch(err => {
-                console.log(err.message)
+                // console.log(err.message)
             })
     }
 
@@ -158,7 +150,6 @@ const ServiceDetail = (props) => {
     }
 
     const handleParticipantDetails = (details) => {
-      console.log('participant ' + details.email + ' clicked')
       setParticipantDetails(details)
       setOpenParticipantDetails(true)
     }

@@ -94,7 +94,7 @@ const EventDetail = (props) => {
                 setImages(res.data.images)
                 console.log(res.data)
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }, [])
 
@@ -104,7 +104,7 @@ const EventDetail = (props) => {
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
@@ -114,7 +114,7 @@ const EventDetail = (props) => {
             .then(res => {
                 window.location.reload()
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
@@ -124,7 +124,7 @@ const EventDetail = (props) => {
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
@@ -134,7 +134,7 @@ const EventDetail = (props) => {
             .then(res => {
                 window.location.reload();
             }).catch(error => {
-                console.log(error.message)
+                // console.log(error.message)
             })
     }
 
@@ -157,10 +157,9 @@ const EventDetail = (props) => {
         console.log('Delete event clicked')
         axios.delete('/api/events/' + props.match.params.id)
             .then(res => {
-                console.log(res)
                 history.goBack()
             }).catch(err => {
-                console.log(err.message)
+                // console.log(err.message)
             })
     }
 
@@ -188,7 +187,6 @@ const EventDetail = (props) => {
     }
 
     const handleParticipantDetails = (details) => {
-      console.log('participant ' + details.email + ' clicked')
       setParticipantDetails(details)
       setOpenParticipantDetails(true)
     }
@@ -199,7 +197,6 @@ const EventDetail = (props) => {
     }
 
     const handleFeedbackDetails = (details) => {
-      console.log(details)
       setFeedbackDetails(details)
       setOpenFeedbackDetails(true)
     }
@@ -212,7 +209,6 @@ const EventDetail = (props) => {
     const handlevalidateFeedback = async(statusId, feedbackId) => {
       try {
         const response = await axios.put('/api/feedbacks/' + feedbackId + '/' + statusId)
-        console.log(response);
         if (response.status === 200) {
           if (statusId === 3) {
             setMessage("Feedback: " + feedbackId + " has been approved");

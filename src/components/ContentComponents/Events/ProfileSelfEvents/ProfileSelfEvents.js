@@ -117,7 +117,6 @@ const ProfileSelfEvents = (props) => {
       axios
         .get("/api/events/account/" + account + "?page=" + page)
         .then((res) => {
-          console.log(res.data);
           setTotalItems(res.data.totalItems);
           setEvents(res.data.events);
           setLoading(false);

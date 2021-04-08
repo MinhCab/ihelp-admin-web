@@ -88,18 +88,6 @@ const Login = () => {
     return '';
   }
 
-  // //This function is for getting the FCM token for firebase to send notification
-  // const getFCMTokenFromFirebase = () => {
-  //   requestFirebaseNotificationPermission()
-  //   .then((firebaseToken) => {
-  //     console.log('firebaseToken: ' + firebaseToken)
-  //     setFcmToken(firebaseToken)
-  //   }).catch(err => {
-  //     console.log(err)
-  //     return err
-  //   })
-  // }
-
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!loading) {
@@ -113,7 +101,6 @@ const Login = () => {
       axios.post('/login', loginInfo)
         .then((res) => {
           if (res.data) {
-            console.log(res.data)
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(res.data.accessToken);
             // getFCMTokenFromFirebase()
@@ -121,7 +108,6 @@ const Login = () => {
             setSuccess(true);
             setLoading(false);
             history.push("/home/dashboard");
-            console.log("token: " + getCookie("accessToken"));
           }
         }).catch(error => {
           if (error.message === 'Request failed with status code 400') {

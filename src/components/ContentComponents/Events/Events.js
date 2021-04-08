@@ -163,7 +163,6 @@ const Events = () => {
         setTotalItems(0)
       })
       .catch((err) => {
-        console.log(err.response);
         setMessage(err.response.data.message)
         setAlertType('error')
         setOpenAlertSnackbar(true)
@@ -220,13 +219,11 @@ const Events = () => {
         axios
           .get("/api/events?page=" + page)
           .then((res) => {
-            console.log(res.data);
             setTotalItems(res.data.totalItems);
             setEvents(res.data.events);
             setLoading(false)
           })
           .catch((error) => {
-            console.log(error.message);
             setMessage('Cannot get information from server, please try again')
             setAlertType('error')
             setOpenAlertSnackbar(true)

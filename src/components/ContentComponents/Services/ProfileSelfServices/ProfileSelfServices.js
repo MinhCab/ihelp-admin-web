@@ -87,13 +87,11 @@ const ProfileSelfServices = (props) => {
       axios
         .get("/api/services/account/" + account + "?page=" + page)
         .then((res) => {
-          console.log(res.data);
           setTotalItems(res.data.totalItems);
           setServices(res.data.services);
           setLoading(false)
         })
         .catch((err) => {
-          console.log(err.message);
           setError('Cannot get information from server, please try again')
           setOpenErrorSnackbar(true)
         });

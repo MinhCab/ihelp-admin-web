@@ -99,13 +99,11 @@ const DashboardEvents = () => {
       axios
         .get("/api/events/status/2?page=" + page)
         .then((res) => {
-          console.log(res.data);
           setTotalItems(res.data.totalItems);
           setEvents(res.data.events);
           setLoading(false)
         })
         .catch((error) => {
-          console.log(error)
           setError('Cannot get information from server, please try again');
           setLoading(false)
           setOpenErrorSnackbar(true)

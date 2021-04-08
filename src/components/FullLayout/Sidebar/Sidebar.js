@@ -51,7 +51,6 @@ const Sidebar = (props) => {
 
     useEffect(() => {
       try {
-        console.log('from sidebar: ' + (role.id === 'admin'))
         if(role.id === 'admin') {
           setMenuItems(MenuItemsForAdmin)
         } else if (role.id === 'manager') {

@@ -37,7 +37,7 @@ const useAuthProvider = () => {
           setRole(res.data.role);
         })
         .catch((err) => {
-          console.log("Error from AuthContext: " + err.message);
+          // console.log("Error from AuthContext: " + err.message);
         });
     }
 

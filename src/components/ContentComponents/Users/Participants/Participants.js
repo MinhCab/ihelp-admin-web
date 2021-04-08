@@ -30,12 +30,10 @@ const Participants = (props) => {
       axios
         .get("/accounts/" + props.type +"/" + props.id)
         .then((res) => {
-          console.log(res);
           setParticipants(res.data);
           setLoading(false);
         })
         .catch((err) => {
-          console.log(err.message);
           setError(
             "Participants error: Cannot get information from server, please try again"
           );

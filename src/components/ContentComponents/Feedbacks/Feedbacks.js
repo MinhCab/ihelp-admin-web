@@ -95,11 +95,9 @@ const Feedbacks = (props) => {
     //         setLoading(true);
     //         axios.get("/api/feedbacks/" + props.type + "/" + props.id)
     //         .then(res => {
-    //             console.log(res.data)
     //             setFeedbacks(res.data)
     //             setLoading(false)
     //         }).catch(err => {
-    //             console.log(err.message)
     //             setError('Feedbacks error: Cannot get information from server, please try again later')
     //             setOpenErrorSnackbar(true)
     //             setLoading(false)

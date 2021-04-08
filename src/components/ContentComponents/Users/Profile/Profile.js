@@ -137,7 +137,6 @@ const Profile = (props) => {
       };
       try {
         const response = await axios.put("/accounts", profile);
-        console.log(response);
         if (response.status === 200) {
           setMessage("Update profile Complete");
           setAlertType("success");
@@ -146,7 +145,6 @@ const Profile = (props) => {
           setLoading(false);
         }
       } catch (error) {
-        console.log("voo dday chwa");
         setMessage("Update profile failed, please try again");
         setOpenAlertSnackbar(true);
         setAlertType("error");
@@ -206,7 +204,6 @@ const Profile = (props) => {
       axios
         .get("/accounts/" + props.match.params.email)
         .then((res) => {
-          console.log(res.data);
           setDetails(res.data);
           setLoading(false);
           setRole(res.data.role.id)

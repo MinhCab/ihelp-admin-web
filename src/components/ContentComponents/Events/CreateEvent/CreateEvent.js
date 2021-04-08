@@ -117,13 +117,11 @@ const CreateEvent = (props) => {
   };
 
   const handleCancelConfirmation = () => {
-    console.log("Cancel clicked");
     setOpenConfirmation(false);
   };
 
   const handleProceedConfirmation = async (event) => {
     event.preventDefault();
-    console.log("Procced clicked");
     const imageURL = await uploadImageToFirebase();
 
     let images = [];
@@ -169,7 +167,6 @@ const CreateEvent = (props) => {
       images: images,
     };
 
-    console.log(eventDetails);
     props.submit(eventDetails);
     setOpenConfirmation(false);
   };
@@ -225,7 +222,6 @@ const CreateEvent = (props) => {
           "state_changed",
           (snapshot) => {},
           (error) => {
-            console.log(error);
             reject("upload image to firebase - reject: " + error);
           },
           () => {
@@ -234,7 +230,6 @@ const CreateEvent = (props) => {
               .child(image.name)
               .getDownloadURL()
               .then((url) => {
-                console.log("upload image to firebase - resolve: " + url);
                 resolve(url);
               });
           }
@@ -322,8 +317,6 @@ const CreateEvent = (props) => {
           isOpen={openConfirmation}
         />
       );
-    } else {
-      console.log("Event is null");
     }
   }
 

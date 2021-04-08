@@ -65,7 +65,6 @@ const Users = () => {
     //         .then(res => {
     //             setUsers(res.data.users)
     //             setTotalItems(res.data.totalItems)
-    //             console.log(res.data)
     //         }).catch(err => {
     //             console.log(err.message)
     //         })
@@ -74,7 +73,6 @@ const Users = () => {
     const setIdToUserList = (list) => {
         let count = 0
         const newArray = list.map(item => ({...item, id: count++}))
-        console.log(newArray)
         setUsers(newArray)
     }
 
@@ -117,13 +115,11 @@ const Users = () => {
         setOpenAlertSnackbar(true)
         setOpenCreateUserDialog(false)
       }).catch(err => {
-        console.log(err.response.data.message)
+        // console.log(err.response.data.message)
       })
     }
 
     const confirmCreateUserHandler = (newUser, isSendEmail) => {
-      console.log(newUser)
-      console.log('Send email to user: ' + isSendEmail)
       if(isSendEmail === false) {
         createNewUserAPI(newUser)
       }

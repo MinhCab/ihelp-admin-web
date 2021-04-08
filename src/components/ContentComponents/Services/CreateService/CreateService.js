@@ -108,13 +108,10 @@ const CreateService = (props) => {
   };
 
   const handleCancelConfirmation = () => {
-    console.log("Cancel clicked");
     setOpenConfirmation(false);
   };
 
   const handleProceedConfirmation = async () => {
-    console.log("Procced clicked");
-
     let images = [];
     let imageURL = await uploadImageToFirebase();
 
@@ -149,8 +146,6 @@ const CreateService = (props) => {
       title: title,
       images: images,
     };
-
-    console.log(service);
 
     props.submit(service);
 
@@ -196,7 +191,6 @@ const CreateService = (props) => {
           "state_changed",
           (snapshot) => {},
           (error) => {
-            console.log(error);
             reject("upload image to firebase - reject: " + error);
           },
           () => {
@@ -205,7 +199,6 @@ const CreateService = (props) => {
               .child(image.name)
               .getDownloadURL()
               .then((url) => {
-                console.log("upload image to firebase - resolve: " + url);
                 resolve(url);
               });
           }
@@ -288,7 +281,7 @@ const CreateService = (props) => {
         />
       );
     } else {
-      console.log("Event is null");
+      // console.log("Event is null");
     }
   }
 

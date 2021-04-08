@@ -49,7 +49,6 @@ const Reports = () => {
     // useEffect(() => {
     //   axios.get('/api/feedbacks/reports')
     //   .then(res => {
-    //     console.log(res.data)
     //     setReports(res.data)
     //   }).catch(err => {
     //     setError('Getting reports: Cannot get reports from server, please try again')

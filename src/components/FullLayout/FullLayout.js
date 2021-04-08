@@ -97,7 +97,6 @@ const FullLayout = () => {
     setRole(null)
     setUser(null)
     setAccessToken(null)
-    console.log('logout token: ' + getCookie('accessToken'))
   }
 
   let showSideBar = (

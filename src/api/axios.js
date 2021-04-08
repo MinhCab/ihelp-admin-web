@@ -42,7 +42,6 @@ const refreshAccessToken = async () => {
       isRefreshToken: 'true'
     }
   }).then(res => {
-    console.log(res.data)
     return res.data.accessToken
   })
 }
