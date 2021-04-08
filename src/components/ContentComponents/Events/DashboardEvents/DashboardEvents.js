@@ -40,7 +40,7 @@ const columns = [
   },
   { field: 'spot', headerName: 'Slots', width: 90 },
   {
-    field: 'onsite', headerName: 'Type', width: 100,
+    field: 'isOnsite', headerName: 'Type', width: 100,
     renderCell: (params) => {
       let showOnSite = params.value
       if (showOnSite === true) {
