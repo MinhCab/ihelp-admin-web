@@ -87,8 +87,8 @@ const FullLayout = () => {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=localhost";
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=localhost";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=45.77.38.165";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=45.77.38.165";
   }
 
   const logoutHandler = () => {
