@@ -9,23 +9,29 @@ import Login from '../components/ContentComponents/Login/Login'
 import FullLayout from '../components/FullLayout/FullLayout'
 import PrivateRoute from '../routes/PrivateRoute/PrivateRoute';
 import AuthProvider from '../hoc/StoringAuth/AuthContext';
-import PublicRoute from '../routes/PublicRoute/PublicRoute';
-
+import PublicRoute from '../routes/PublicRoute/PublicRoute'; 
+import { SnackbarProvider } from 'notistack';
 class App extends Component {
-
+  
   render() {
     return (
-      <ThemeProvider theme={theme} >
+      <ThemeProvider theme={theme}>
         <GlobalStyles />
         <AuthProvider>
-          <BrowserRouter>
-            <Switch>
-              <PublicRoute path="/login" restricted={true} exact component={Login} />
-              <PrivateRoute path="/home" component={FullLayout} />
-
-              <Redirect from='/' to='/home' />
-            </Switch>
-          </BrowserRouter>
+          <SnackbarProvider maxSnack={3}>
+            <BrowserRouter>
+              <Switch>
+                <PublicRoute
+                  path="/login"
+                  restricted={true}
+                  exact
+                  component={Login}
+                />
+                <PrivateRoute path="/home" component={FullLayout} />
+                <Redirect from="/" to="/home" />
+              </Switch>
+            </BrowserRouter>
+          </SnackbarProvider>
         </AuthProvider>
       </ThemeProvider>
     );

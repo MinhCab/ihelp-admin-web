@@ -8,12 +8,16 @@ const Alert = (props) => {
 
 const AlertSnackbar = (props) => {
     return (
-        <Snackbar open={props.isOpen} autoHideDuration={6000} onClose={props.close}>
-            <Alert onClose={props.close} severity={props.alertType}>
-                {props.message}
-            </Alert>
-        </Snackbar>
-    )
+      <Snackbar
+        open={props.isOpen}
+        autoHideDuration={6000}
+        onClose={props.close}
+      >
+        <Alert onClose={props.close} severity={props.alertType}>
+          {props.message}
+        </Alert>
+      </Snackbar>
+    );
 }
 
 export default AlertSnackbar

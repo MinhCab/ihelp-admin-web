@@ -19,6 +19,7 @@
     "material-ui-phone-number": "^2.2.6",
     "material-ui-search-bar": "^1.0.0",
     "moment": "^2.29.1",
+    "notistack": "^1.0.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-nice-dates": "^3.1.0",

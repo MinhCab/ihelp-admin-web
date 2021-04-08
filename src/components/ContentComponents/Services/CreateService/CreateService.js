@@ -26,7 +26,7 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import { TextArea } from "semantic-ui-react";
 
 import { ServiceConfirmationDialog } from "../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog";
-import { storage } from "../../../../api/config/firebase/FirebaseStorage/firebase-storage";
+import { storage } from "../../../../api/Firebase/firebase-config";
 import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
 import axios from "../../../../api/axios";
 import PlacesAutocomplete, {

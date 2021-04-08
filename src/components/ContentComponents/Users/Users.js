@@ -5,7 +5,9 @@ import React from 'react'
 import { useHistory } from 'react-router'
 
 import axios from '../../../api/axios'
+import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
+import CreateUser from './CreateUser/CreateUser'
 
 const columns = [
     { field: 'createdDate', headerName: 'Create date', type: 'dateTime', width: 160,
@@ -14,7 +16,7 @@ const columns = [
         }
     },
     { field: 'email', headerName: 'Email', width: 230 },
-    { field: 'fullname', headerName: 'Name', width: 250 },
+    { field: 'fullname', headerName: 'Name', width: 230 },
     { field: 'gender', headerName: 'Gender', width: 120, 
       renderCell: (params) => {
         if(params.value) {
@@ -49,8 +51,12 @@ const Users = () => {
     const history = useHistory()
     const [users, setUsers] = React.useState([])
     const [loading, setLoading] = React.useState(false)
-    const [error, setError] = React.useState('')
-    const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false)
+    const [openDiscard, setOpenDiscard] = React.useState(false)
+    const [message, setMessage] = React.useState('')
+    const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
+    const [alertType, setAlertType] = React.useState('')
+    const [openCreateUserDialog, setOpenCreateUserDialog] = React.useState(false)
+
     // const [page, setPage] = React.useState(0)
     // const [totalItems, setTotalItems] = React.useState(0)
 
@@ -76,8 +82,9 @@ const Users = () => {
         history.push('/home/users/' + event.row.email)
     }
 
-    const handleCloseErrorSnackbar = () => {
-        setOpenErrorSnackbar(false)
+    const handleCloseAlertSnackbar = () => {
+        setOpenDiscard(true)
+        setOpenAlertSnackbar(false)
     }
 
     // const pagingHandler = (params) => {
@@ -85,7 +92,41 @@ const Users = () => {
     // }
 
     const createUserHandler = () => {
-        history.push('/home/users/create')
+      setOpenCreateUserDialog(true);
+    }
+
+    const closeCreateUserHandler = () => {
+      setOpenDiscard(true)
+    }
+
+    const closeDiscardDialog = () => {
+      setOpenDiscard(false)
+    }
+
+    const proceedDiscardHandler = () => {
+      setOpenDiscard(false)
+      setOpenCreateUserDialog(false)
+    }
+
+    const createNewUserAPI = (newUser) => {
+      axios.post('/signup', newUser)
+      .then(res => {
+        setMessage(res.data)
+        setUsers([])
+        setAlertType('success')
+        setOpenAlertSnackbar(true)
+        setOpenCreateUserDialog(false)
+      }).catch(err => {
+        console.log(err.response.data.message)
+      })
+    }
+
+    const confirmCreateUserHandler = (newUser, isSendEmail) => {
+      console.log(newUser)
+      console.log('Send email to user: ' + isSendEmail)
+      if(isSendEmail === false) {
+        createNewUserAPI(newUser)
+      }
     }
 
     React.useEffect(() => {
@@ -98,15 +139,19 @@ const Users = () => {
             setLoading(false)
           })
           .catch((err) => {
-            console.log('Cannot not get information from server, please try again later');
-            setError(err.message)
-            setOpenErrorSnackbar(true)
+            setMessage(err.response.data.message)
+            setOpenAlertSnackbar(true)
+            setAlertType('error')
           });
         }
     }, [])
 
-    let showErrorSnackbar = null
-    openErrorSnackbar ? showErrorSnackbar = (<AlertSnackbar isOpen={openErrorSnackbar} close={handleCloseErrorSnackbar} message={error} alertType='error' />) : null
+    let showAlertSnackbar = null
+    let showCreateUserDialog = null
+    let showDiscardDialog = null
+    openAlertSnackbar ? showAlertSnackbar = (<AlertSnackbar isOpen={openAlertSnackbar} close={handleCloseAlertSnackbar} message={message} alertType={alertType} />) : null
+    openCreateUserDialog? showCreateUserDialog = (<CreateUser isOpen={openCreateUserDialog} close={closeCreateUserHandler} submit={confirmCreateUserHandler} />) : null
+    openDiscard ? showDiscardDialog = (<DiscardAlertDialog isOpen={openDiscard} closing={closeDiscardDialog} proceed={proceedDiscardHandler}/>) : null
 
     return (
       <>
@@ -125,15 +170,15 @@ const Users = () => {
                 </Grid>
                 <Grid item>
                   {/* <SearchBar 
-                                value={search}
-                                onChange={(event) => setSearch(event.value)}
-                                onRequestSearch={handleSearchRequest}
-                            /> */}
+                    value={search}
+                    onChange={(event) => setSearch(event.value)}
+                    onRequestSearch={handleSearchRequest}
+                  /> */}
                 </Grid>
               </Grid>
             }
           />
-          <CardHeader
+          <Card Header
             titleTypographyProps={{ variant: "h4" }}
             title="Users"
             subheader="All of the users on iHelp system"
@@ -155,7 +200,9 @@ const Users = () => {
             </div>
           </CardContent>
         </Card>
-        {showErrorSnackbar}
+        {showAlertSnackbar}
+        {showCreateUserDialog}
+        {showDiscardDialog}
       </>
     );
 }

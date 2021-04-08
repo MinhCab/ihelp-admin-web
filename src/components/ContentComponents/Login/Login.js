@@ -17,6 +17,7 @@ import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 import clsx from 'clsx';
 import { green } from '@material-ui/core/colors';
+// import { requestFirebaseNotificationPermission } from '../../../api/Firebase/firebase-config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,6 +88,18 @@ const Login = () => {
     return '';
   }
 
+  // //This function is for getting the FCM token for firebase to send notification
+  // const getFCMTokenFromFirebase = () => {
+  //   requestFirebaseNotificationPermission()
+  //   .then((firebaseToken) => {
+  //     console.log('firebaseToken: ' + firebaseToken)
+  //     setFcmToken(firebaseToken)
+  //   }).catch(err => {
+  //     console.log(err)
+  //     return err
+  //   })
+  // }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!loading) {
@@ -103,6 +116,7 @@ const Login = () => {
             console.log(res.data)
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(res.data.accessToken);
+            // getFCMTokenFromFirebase()
             loadInfo()
             setSuccess(true);
             setLoading(false);

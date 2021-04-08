@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import { Outlet } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
 import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 import { SidebarWidth } from '../../assets/jss/Theme-variable.js'
-import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import PrivateRoute from '../../routes/PrivateRoute/PrivateRoute';
 
 import Dashboard from '../ContentComponents/Dashboard/Dashboard'
@@ -19,7 +19,9 @@ import Profile from '../ContentComponents/Users/Profile/Profile'
 import Reports from '../ContentComponents/Reports/Reports'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import CreateUser from '../ContentComponents/Users/CreateUser/CreateUser';
-import axios from '../../api/axios'
+import { askForNotificationPermission, messaging } from '../../api/Firebase/firebase-config'
+import { useSnackbar } from 'notistack'
+
 import AdminRoute from '../../routes/AdminRoute/AdminRoute';
 
 const useStyles = makeStyles((theme) => ({
@@ -58,11 +60,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FullLayout = () => {
-  const { setUser, setAccessToken, setRole } = useAuth()
+  const { setUser, setAccessToken, setRole, setFcmToken, fcmToken } = useAuth()
   const { url } = useRouteMatch()
   const classes = useStyles();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
   
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -105,6 +108,17 @@ const FullLayout = () => {
         logoutClicked={logoutHandler}
       />
   )
+
+  const receiveForegroundNotification = () => {
+    messaging.onMessage((payload) => {
+      enqueueSnackbar(payload.notification.title, { variant: 'info' })
+    });
+  }
+
+  useEffect(() => {
+    receiveForegroundNotification()
+    askForNotificationPermission()
+  }, [])
 
   return (
 

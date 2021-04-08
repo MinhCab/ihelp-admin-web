@@ -56,7 +56,7 @@ const columns = [
     },
     { field: 'title', headerName: 'Title', width: 300 },
     { field: 'accountEmail', headerName: 'Host email', width: 250 },
-    { field: 'fullName', headerName: 'Host name', width: 250 },
+    { field: 'fullName', headerName: 'Host name', width: 220 },
     {
         field: 'startDate', headerName: 'Start date', width: 180,
         renderCell: (params) => {

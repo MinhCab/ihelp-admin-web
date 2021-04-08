@@ -26,6 +26,7 @@ function getCookie(cname) {
 const useAuthProvider = () => {
     const [user, setUser] = useState({})
     const [role, setRole] = useState({})
+    const [fcmToken, setFcmToken] = useState('')
     const [accessToken, setAccessToken] = useState(getCookie('accessToken'))
 
     const loadInfo = async() => {
@@ -44,7 +45,7 @@ const useAuthProvider = () => {
       loadInfo()
     }, [])
 
-    return {user, setUser, accessToken, setAccessToken, role, setRole, loadInfo}
+    return {user, setUser, accessToken, setAccessToken, role, setRole, loadInfo, fcmToken, setFcmToken }
 }
 
 function AuthProvider(props) {
