@@ -66,6 +66,9 @@ const CreateService = (props) => {
   const [categories, setCategories] = React.useState([]);
   const [image, setImage] = React.useState(null);
   const [openPhotoUpload, setOpenPhotoUpload] = React.useState(false);
+  const [message, setMessage] = React.useState('')
+  const [alertType, setAlertType] = React.useState('')
+  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
 
   const [title, setTitle] = React.useState("");
   const [startDate, setStartDate] = React.useState();
@@ -224,9 +227,16 @@ const CreateService = (props) => {
   };
 
   useEffect(() => {
-    axios.get("/api/service-categories").then((res) => {
-      setCategories(res.data);
-    });
+    axios
+      .get("/api/service-categories")
+      .then((res) => {
+        setCategories(res.data);
+      })
+      .catch((error) => {
+        setMessage(error.response.data.error);
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+      });
   }, []);
 
   const author = getCookie("userEmail");
@@ -234,6 +244,7 @@ const CreateService = (props) => {
   let showConfirmation = null;
   let showImageName = null;
   let showImageUploadDialog = null;
+  let showAlertSnackbar = null;
   let showLocationField = (
     <Grid item>
       <PlacesAutocomplete
@@ -280,8 +291,6 @@ const CreateService = (props) => {
           isOpen={openConfirmation}
         />
       );
-    } else {
-      // console.log("Event is null");
     }
   }
 
@@ -302,6 +311,17 @@ const CreateService = (props) => {
         image={image}
       />
     );
+  }
+
+  if(openAlertSnackbar) {
+    showAlertSnackbar = (
+      <AlertSnackbar
+        isOpen={openAlertSnackbar}
+        close={closeAlertSnackbarHandler}
+        alertType={alertType}
+        message={message}
+      />
+    )
   }
 
   return (
@@ -551,6 +571,7 @@ const CreateService = (props) => {
       </Dialog>
       {showConfirmation}
       {showImageUploadDialog}
+      {showAlertSnackbar}
     </>
   );
 };

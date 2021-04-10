@@ -115,7 +115,9 @@ const Users = () => {
         setOpenAlertSnackbar(true)
         setOpenCreateUserDialog(false)
       }).catch(err => {
-        // console.log(err.response.data.message)
+          setMessage(err.response.data.message)
+          setOpenAlertSnackbar(true)
+          setAlertType("error");
       })
     }
 

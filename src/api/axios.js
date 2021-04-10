@@ -77,6 +77,4 @@ instance.interceptors.response.use(
   }
 );
 
-console.log('from axios instance: ' + getToken())
-
 export default instance

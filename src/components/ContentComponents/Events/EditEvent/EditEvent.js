@@ -21,7 +21,10 @@ import { enGB } from "date-fns/locale";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
-import PlacesAutocomplete from "react-places-autocomplete";
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-places-autocomplete";
 import { TextArea } from "semantic-ui-react";
 
 import axios from '../../../../api/axios'
@@ -54,6 +57,9 @@ const EditEvent = (props) => {
   const classes = useStyles();
   const info = props.infor;
   const [categories, setCategories] = React.useState([]);
+  const [message, setMessage] = React.useState("");
+  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
+  const [alertType, setAlertType] = React.useState("");
   // const [openPhotoDialog, setOpenPhotoDialog] = React.useState(false)
 
   const [title, setTitle] = React.useState(info.title);
@@ -77,7 +83,6 @@ const EditEvent = (props) => {
   };
 
   const handleCategoryInput = (event) => {
-    console.log("lên đây r nè");
     setCategory(event.target.value)
   };
 
@@ -149,49 +154,49 @@ const EditEvent = (props) => {
         setCategories(res.data);
       })
       .catch((err) => {
-        // console.log(err.message);
+        setMessage(err.response.data.error);
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
       });
   }, []);
 
   let showType = null;
   let showUploadPhotoDialog = null
   let showLocationField = (
-    <DialogContentText>
-      <PlacesAutocomplete
-        value={location}
-        onChange={setLocation}
-        onSelect={handleSelectGoogleLocation}
-      >
-        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-          <>
-            <TextField
-              variant="outlined"
-              {...getInputProps({ placeholder: "Type location" })}
-              fullWidth
-              label="Location"
-              required
-              style={{ marginBottom: 20 }}
-            />
-            <List className={classes.locationSuggest}>
-              {loading ? <div>...loading</div> : null}
+    <PlacesAutocomplete
+      value={location}
+      onChange={setLocation}
+      onSelect={handleSelectGoogleLocation}
+    >
+      {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+        <>
+          <TextField
+            variant="outlined"
+            {...getInputProps({ placeholder: "Type location" })}
+            fullWidth
+            label="Location"
+            required
+            style={{ marginBottom: 20 }}
+          />
+          <List className={classes.locationSuggest}>
+            {loading ? <div>...loading</div> : null}
 
-              {suggestions.map((suggest) => {
-                return (
-                  <ListItem
-                    button
-                    divider
-                    {...getSuggestionItemProps(suggest)}
-                    key={suggest.index}
-                  >
-                    <ListItemText>{suggest.description}</ListItemText>
-                  </ListItem>
-                );
-              })}
-            </List>
-          </>
-        )}
-      </PlacesAutocomplete>
-    </DialogContentText>
+            {suggestions.map((suggest) => {
+              return (
+                <ListItem
+                  button
+                  divider
+                  {...getSuggestionItemProps(suggest)}
+                  key={suggest.index}
+                >
+                  <ListItemText>{suggest.description}</ListItemText>
+                </ListItem>
+              );
+            })}
+          </List>
+        </>
+      )}
+    </PlacesAutocomplete>
   );
 
   if (onSite === true) {

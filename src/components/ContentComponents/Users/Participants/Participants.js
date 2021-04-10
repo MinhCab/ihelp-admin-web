@@ -64,7 +64,6 @@ const Participants = (props) => {
     <>
       <Grid container item xs className={classes.root}>
           {showParticipants}
-          {/* <Participant viewDetails={props.participantDetails}/> */}
       </Grid>
       {showErrorSnackbar}
     </>

@@ -17,19 +17,6 @@ const Dashboard = () => {
             <Grid item md={12} xs={12}>
                 <Events />
             </Grid>
-
-            {/* <Grid item lg={3} md={12} xs={12}>
-                <BlogCard image={us1} title="So Exited to watch" />
-            </Grid>
-            <Grid item lg={3} md={12} xs={12}>
-                <BlogCard image={us2} title="So Exited to watch" />
-            </Grid>
-            <Grid item lg={3} md={12} xs={12}>
-                <BlogCard image={us3} title="So Exited to watch" />
-            </Grid>
-            <Grid item lg={3} md={12} xs={12}>
-                <BlogCard image={us4} title="So Exited to watch" />
-            </Grid> */}
         </Grid>
     );
 }

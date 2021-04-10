@@ -26,16 +26,17 @@ import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
 import "react-nice-dates/build/style.css";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import { TextArea } from "semantic-ui-react";
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from "react-places-autocomplete";
 
 import { EventConfirmationDialog } from "../../../FullLayout/UI/ConfirmationDialog/ConfirmationDialog";
 import { storage } from "../../../../api/Firebase/firebase-config";
 import PhotoUploadDialog from "../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog";
 import axios from "../../../../api/axios";
-import PlacesAutocomplete, {
-  geocodeByAddress,
-  getLatLng,
-} from "react-places-autocomplete";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
+import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 
 const useStyles = makeStyles((theme) => ({
   finalButton: {
@@ -70,6 +71,9 @@ const CreateEvent = (props) => {
   const [categories, setCategories] = React.useState([]);
   const [image, setImage] = React.useState(null);
   const [openPhotoUpload, setOpenPhotoUpload] = React.useState(false);
+  const [message, setMessage] = React.useState('')
+  const [alertType, setAlertType] = React.useState('')
+  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
 
   const [title, setTitle] = React.useState("");
   const [startDate, setStartDate] = React.useState();
@@ -84,6 +88,7 @@ const CreateEvent = (props) => {
     lng: null,
   });
   const [description, setDescription] = React.useState("");
+  
 
   const handleTitleInput = (event) => {
     setTitle(event.target.value);
@@ -210,6 +215,10 @@ const CreateEvent = (props) => {
     setOpenPhotoUpload(false);
   };
 
+  const closeAlertSnackbarHandler = () => {
+    setOpenAlertSnackbar(false)
+  }
+
   const uploadImageToFirebase = async () => {
     if (image === null) {
       return null;
@@ -255,9 +264,16 @@ const CreateEvent = (props) => {
   };
 
   useEffect(() => {
-    axios.get("/api/event-categories").then((res) => {
-      setCategories(res.data);
-    });
+    axios
+      .get("/api/event-categories")
+      .then((res) => {
+        setCategories(res.data);
+      })
+      .catch((error) => {
+        setMessage(error.response.data.error);
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+      });
   }, []);
 
   const author = getCookie("userEmail");
@@ -266,6 +282,7 @@ const CreateEvent = (props) => {
   let showConfirmation = null;
   let showImageName = null;
   let showImageUploadDialog = null;
+  let showAlertSnackbar = null;
   let showLocationField = (
     <Grid item>
       <PlacesAutocomplete
@@ -338,7 +355,17 @@ const CreateEvent = (props) => {
       />
     );
   }
-
+  
+  if(openAlertSnackbar) {
+    showAlertSnackbar = (
+      <AlertSnackbar
+        isOpen={openAlertSnackbar}
+        close={closeAlertSnackbarHandler}
+        alertType={alertType}
+        message={message}
+      />
+    )
+  }
   return (
     <>
       <Dialog fullWidth maxWidth="lg" open={props.isOpen} onClose={props.close}>
@@ -608,6 +635,7 @@ const CreateEvent = (props) => {
       </Dialog>
       {showConfirmation}
       {showImageUploadDialog}
+      {showAlertSnackbar}
     </>
   );
 };
