@@ -3,8 +3,8 @@ import { DataGrid } from '@material-ui/data-grid';
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
 import ReportDetails from './ReportDetails/ReportDetails';
-// import axios from '../../../api/axios'
-// import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
+import axios from '../../../api/axios'
+import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const columns = [
   {
@@ -19,19 +19,19 @@ const columns = [
   { field: "comment", headerName: "Comment content", width: 1000}
 ];
 
-const reports = [
-    { id: 1, createdDate: 'March 25, 2020', email: 'test2', comment: 'This is sucks' },
-    { id: 2, createdDate: 'March 25, 2020', email: 'admin@gmail.com', comment: 'This is not so sucks' },
-    { id: 3, createdDate: 'March 25, 2020', email: 'admin@gmail.com', comment: 'This is kooL' }
-]
+// const reports = [
+//     { id: 1, createdDate: 'March 25, 2020', email: 'test2', comment: 'This is sucks' },
+//     { id: 2, createdDate: 'March 25, 2020', email: 'admin@gmail.com', comment: 'This is not so sucks' },
+//     { id: 3, createdDate: 'March 25, 2020', email: 'admin@gmail.com', comment: 'This is kooL' }
+// ]
 
 const Reports = () => {
 
-    // const [reports, setReports] = useState([])
+    const [reports, setReports] = useState([])
     const [reportDetails, setReportDetails] = useState(null)
     const [openReportDetails, setOpenReportDetails] = useState(false)
-    // const [error, setError] = useState(null)
-    // const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
+    const [error, setError] = useState(null)
+    const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
 
     const showReportDetails = (event) => {
         setReportDetails(event.row)
@@ -42,33 +42,33 @@ const Reports = () => {
         setOpenReportDetails(false)
     }
 
-    // const handleCloseErrorSnackbar = () => {
-    //   setOpenErrorSnackbar(false)
-    // }
+    const handleCloseErrorSnackbar = () => {
+      setOpenErrorSnackbar(false)
+    }
 
-    // useEffect(() => {
-    //   axios.get('/api/feedbacks/reports')
-    //   .then(res => {
-    //     setReports(res.data)
-    //   }).catch(err => {
-    //     setError('Getting reports: Cannot get reports from server, please try again')
-    //     setOpenErrorSnackbar(true)
-    //   })
-    // }, [])
+    useEffect(() => {
+      axios.get('/api/feedbacks/reports')
+      .then(res => {
+        setReports(res.data)
+      }).catch(err => {
+        setError('Getting reports: Cannot get reports from server, please try again')
+        setOpenErrorSnackbar(true)
+      })
+    }, [])
 
     let showDetails = null
-    // let showErrorSnackbar = null
+    let showErrorSnackbar = null
     openReportDetails ? showDetails = (<ReportDetails isOpen={openReportDetails} close={closeReportDetailsHandler} details={reportDetails} />) : null
-    // if(openErrorSnackbar) {
-    //   showErrorSnackbar = (
-    //     <AlertSnackbar 
-    //       isOpen={openErrorSnackbar}
-    //       close={handleCloseErrorSnackbar}
-    //       message={error}
-    //       alertType='error'
-    //     />
-    //   )
-    // }
+    if(openErrorSnackbar) {
+      showErrorSnackbar = (
+        <AlertSnackbar 
+          isOpen={openErrorSnackbar}
+          close={handleCloseErrorSnackbar}
+          message={error}
+          alertType='error'
+        />
+      )
+    }
     return (
       <>
         <Card>
@@ -107,7 +107,7 @@ const Reports = () => {
           </CardContent>
         </Card>
         {showDetails}
-        {/* {showErrorSnackbar} */}
+        {showErrorSnackbar}
       </>
     );
 }
