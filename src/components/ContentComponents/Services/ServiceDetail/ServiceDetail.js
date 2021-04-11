@@ -250,34 +250,19 @@ const ServiceDetail = (props) => {
     setOpenFeedbackDetails(false);
   };
 
-  const handlevalidateFeedback = async (statusId, feedbackId) => {
-    try {
-      const response = await axios.put(
-        "/api/feedbacks/" + feedbackId + "/" + statusId
-      );
-      if (response.status === 200) {
-        if (statusId === 3) {
-          setMessage("Feedback: " + feedbackId + " has been approved");
-          setAlertType("success");
-          setOpenAlertSnackbar(true);
-          setOpenFeedbackDetails(false);
-        } else if (statusId === 6) {
-          setMessage("Feedback: " + feedbackId + " has been rejected");
-          setAlertType("error");
-          setOpenAlertSnackbar(true);
-          setOpenFeedbackDetails(false);
-        }
-      } else if (response.status === 400) {
-        setMessage("Validate feedbacks: validating failed, please try again");
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      }
-    } catch (error) {
-      setMessage("Validate feedbacks: validating failed, please try again");
-      setOpenAlertSnackbar(true);
-      setAlertType("error");
-    }
-  };
+  const handleApproveFeedback = (feedbackId) => {
+    axios.put('/api/feedbacks/' + user.email + '/approve/' + feedbackId)
+    .then(res => {
+      setMessage(res.data)
+      setAlertType('success')
+      setOpenAlertSnackbar(true)
+      setOpenFeedbackDetails(false)
+    }).catch(error => {
+      setMessage(error.data)
+      setAlertType('error')
+      setOpenAlertSnackbar(true)
+    }) 
+  }
 
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -446,7 +431,8 @@ const ServiceDetail = (props) => {
         isOpen={openFeedbackDetails}
         close={handleCloseFeedbackDetails}
         details={feedbackDetails}
-        validateFeedback={handlevalidateFeedback}
+        approveFeedback={handleApproveFeedback}
+        rejectFeedback={handleRejectFeedback}
       />
     );
   }
