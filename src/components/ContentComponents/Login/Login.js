@@ -17,7 +17,6 @@ import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 import clsx from 'clsx';
 import { green } from '@material-ui/core/colors';
-// import { requestFirebaseNotificationPermission } from '../../../api/Firebase/firebase-config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,22 +71,6 @@ const Login = () => {
     [classes.buttonSuccess]: success,
   })
 
-  const getCookie = (cname) => {
-    let name = cname + '=';
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return '';
-  }
-
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!loading) {
@@ -98,31 +81,37 @@ const Login = () => {
         password: password
       }
   
-      axios.post('/login', loginInfo)
+      axios
+        .post("/login", loginInfo)
         .then((res) => {
-          if (res.data) {
+          if (res.data.role === "ADMIN" || res.data.role === "MANAGER") {
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(res.data.accessToken);
-            // getFCMTokenFromFirebase()
-            loadInfo()
+            loadInfo();
             setSuccess(true);
             setLoading(false);
             history.push("/home/dashboard");
-          }
-        }).catch(error => {
-          if (error.message === 'Request failed with status code 400') {
-            setErrorMessage('Invalid username & password')
-            setAlertType("error");
-            setLoading(false);
-            setOpenAlertSnackbar(true)
           } else {
-            setErrorMessage('Network error, please try again later')
+            setErrorMessage("User cannot access to management system");
+            setAlertType("info");
+            setLoading(false);
+            setOpenAlertSnackbar(true);
+          }
+        })
+        .catch((error) => {
+          if (error.message === "Request failed with status code 400") {
+            setErrorMessage("Invalid username & password");
             setAlertType("error");
             setLoading(false);
-            setOpenAlertSnackbar(true)
+            setOpenAlertSnackbar(true);
+          } else {
+            setErrorMessage("Network error, please try again later");
+            setAlertType("error");
+            setLoading(false);
+            setOpenAlertSnackbar(true);
           }
-          return
-        })
+          return;
+        });
     }
 
   }

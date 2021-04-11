@@ -86,8 +86,8 @@ const ServiceDetail = (props) => {
   const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false);
   const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false);
   const [message, setMessage] = React.useState("");
-  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [alertType, setAlertType] = React.useState("");
+  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRejectDialog, setOpenRejectDialog] = React.useState(false)
 
   const [details, setDetails] = React.useState({});
@@ -98,7 +98,7 @@ const ServiceDetail = (props) => {
   const [participantDetails, setParticipantDetails] = React.useState({});
   const [feedbackDetails, setFeedbackDetails] = React.useState({})
 
-  React.useEffect(() => {
+  const loadInfoAPI = () => {
     axios
       .get("/api/services/" + props.match.params.id)
       .then((res) => {
@@ -112,13 +112,20 @@ const ServiceDetail = (props) => {
         setAlertType("error");
         setOpenAlertSnackbar(true);
       });
+  }
+
+  React.useEffect(() => {
+    loadInfoAPI()
   }, []);
 
   const approveServiceHandler = () => {
     axios
       .put("/api/services/" + user.email + '/approve/' + props.match.params.id)
       .then((res) => {
-        window.location.reload();
+        setMessage(res.data)
+        setAlertType('success')
+        setOpenAlertSnackbar(true)
+        loadInfoAPI()
       })
       .catch((error) => {
         setMessage(error.response.data.error)
@@ -144,7 +151,10 @@ const ServiceDetail = (props) => {
     axios
       .put("/api/services/reject", rejectObject)
       .then((res) => {
-        window.location.reload();
+        setMessage(res.data)
+        setAlertType('success')
+        setOpenAlertSnackbar(true)
+        loadInfoAPI()
       })
       .catch((error) => {
         setMessage(error.response.data.error);
@@ -153,11 +163,14 @@ const ServiceDetail = (props) => {
       });
   }; 
 
-  const changeStatusHandler = (statusId) => {
+  const changeStatusHandler = async(statusId) => {
     axios
       .put("/api/services/" + props.match.params.id + "/" + statusId)
       .then((res) => {
-        window.location.reload();
+        setMessage(res.data)
+        setAlertType('success')
+        setOpenAlertSnackbar(true)
+        loadInfoAPI()
       })
       .catch((error) => {
         setMessage(error.response.data.error);
@@ -296,6 +309,7 @@ const ServiceDetail = (props) => {
       Approve
     </Button>
   );
+
   let rejectBtn = (
     <Button
       startIcon={<ThumbDownIcon />}
@@ -306,26 +320,29 @@ const ServiceDetail = (props) => {
       Reject
     </Button>
   );
+
   let finishBtn = (
     <Button
       startIcon={<CheckCircleIcon />}
       color="primary"
       variant="contained"
-      onClick={changeStatusHandler(4)}
+      onClick={() => changeStatusHandler(4)}
     >
       Finish this service
     </Button>
   );
+
   let disableBtn = (
     <Button
       startIcon={<CancelIcon />}
       color="secondary"
       variant="contained"
-      onClick={changeStatusHandler(5)}
+      onClick={() => changeStatusHandler(5)}
     >
       Disable this service
     </Button>
   );
+  
   let showActionBtns = null;
   let deleteBtn = null;
   let editDialog = null;

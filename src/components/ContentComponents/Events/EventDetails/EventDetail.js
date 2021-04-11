@@ -84,9 +84,7 @@ const EventDetail = (props) => {
   const { user } = useAuth();
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
   const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false);
-  const [openParticipantDetails, setOpenParticipantDetails] = React.useState(
-    false
-  );
+  const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
@@ -101,7 +99,7 @@ const EventDetail = (props) => {
   const [participantDetails, setParticipantDetails] = React.useState({});
   const [feedbackDetails, setFeedbackDetails] = React.useState({});
 
-  React.useEffect(() => {
+  const loadInfoAPI = () => {
     axios
       .get("/api/events/" + props.match.params.id)
       .then((res) => {
@@ -110,20 +108,26 @@ const EventDetail = (props) => {
         setStatus(res.data.status);
         setOnsite(res.data.isOnsite);
         setImages(res.data.images);
-        console.log(res.data);
       })
       .catch((err) => {
         setMessage(err.response.data.error);
         setAlertType("error");
         setOpenAlertSnackbar(true);
       });
+  }
+
+  React.useEffect(() => {
+    loadInfoAPI()
   }, []);
 
   const approveEventHandler = () => {
     axios
       .put("/api/events/" + user.email + "/approve/" + props.match.params.id)
       .then((res) => {
-        window.location.reload();
+        setMessage(res.data);
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        loadInfoAPI()
       })
       .catch((error) => {
         setMessage(error.response.data.error);
@@ -149,7 +153,10 @@ const EventDetail = (props) => {
     axios
       .put("/api/events/reject", rejectObject)
       .then((res) => {
-        window.location.reload();
+        setMessage(res.data);
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        loadInfoAPI()
       })
       .catch((error) => {
         setMessage(error.response.data.error);
@@ -158,11 +165,14 @@ const EventDetail = (props) => {
       });
   };
 
-  const changeStatusHandler = (statusId) => {
+  const changeStatusHandler = async(statusId) => {
     axios
       .put("/api/events/" + props.match.params.id + "/" + statusId)
       .then((res) => {
-        window.location.reload();
+        setMessage(res.data);
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        loadInfoAPI()
       })
       .catch((error) => {
         setMessage(error.response.data.error);
@@ -297,6 +307,7 @@ const EventDetail = (props) => {
       Online
     </Button>
   );
+
   let approveBtn = (
     <Button
       startIcon={<ThumbUpIcon />}
@@ -307,6 +318,7 @@ const EventDetail = (props) => {
       Approve
     </Button>
   );
+  
   let rejectBtn = (
     <Button
       startIcon={<ThumbDownIcon />}
@@ -317,26 +329,29 @@ const EventDetail = (props) => {
       Reject
     </Button>
   );
+
   let finishBtn = (
     <Button
       startIcon={<CheckCircleIcon />}
       color="primary"
       variant="contained"
-      onClick={changeStatusHandler(4)}
+      onClick={() => changeStatusHandler(4)}
     >
       Finish this event
     </Button>
   );
+
   let disableBtn = (
     <Button
       startIcon={<CancelIcon />}
       color="secondary"
       variant="contained"
-      onClick={changeStatusHandler(5)}
+      onClick={() =>changeStatusHandler(5)}
     >
       Disable this event
     </Button>
   );
+  
   let showActionBtns = null;
   let deleteBtn = null;
   let editDialog = null;

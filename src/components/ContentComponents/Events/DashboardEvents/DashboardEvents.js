@@ -104,9 +104,7 @@ const DashboardEvents = () => {
           setLoading(false)
         })
         .catch((error) => {
-          setError('Cannot get information from server, please try again');
           setLoading(false)
-          setOpenErrorSnackbar(true)
         }); 
     }
   }, [page, totalItems])

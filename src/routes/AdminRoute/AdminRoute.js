@@ -7,14 +7,14 @@ function AdminRoute({ component: Component, ...rest }) {
     const location = useLocation()
 
     let isAuth = accessToken ? true : false
-    let isAdmin = (role.id == 'admin') ? true : false
+    let isAdmin = (role.id === 'admin') ? true : false
 
     return (
         <Route 
             {...rest}
             render={(props) => {
                 return(
-                    (isAuth && isAdmin) ? (<Component {...props}/>) : (<Redirect to={{pathname: '/home/dashboard', state: { from: location }}}/>)
+                    (isAuth && isAdmin) ? (<Component {...props}/>) : (<Redirect to={{pathname: '/', state: { from: location }}}/>)
                 )
             }}
         />

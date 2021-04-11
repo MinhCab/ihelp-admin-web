@@ -176,7 +176,7 @@ const Users = () => {
               </Grid>
             }
           />
-          <Card Header
+          <CardHeader
             titleTypographyProps={{ variant: "h4" }}
             title="Users"
             subheader="All of the users on iHelp system"

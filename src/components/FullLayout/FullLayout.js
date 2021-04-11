@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FullLayout = () => {
-  const { setUser, setAccessToken, setRole, setFcmToken, fcmToken } = useAuth()
+  const { setUser, setAccessToken, setRole, loadInfo } = useAuth()
   const { url } = useRouteMatch()
   const classes = useStyles();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -99,6 +99,7 @@ const FullLayout = () => {
   }
 
   useEffect(() => {
+    loadInfo()
     receiveForegroundNotification()
     askForNotificationPermission()
   }, [])
@@ -118,12 +119,9 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/events/details/:id`} component={EventDetail} />
 
               <PrivateRoute exact path={`${url}/services`} component={Services} />
-              <PrivateRoute exact path={`${url}/services/create`} component={CreateService} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
-
               <AdminRoute exact path={`${url}/users`} component={Users} />
-              <AdminRoute exact path={`${url}/users/create`} component={CreateUser} />
               <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
 
               <AdminRoute exact path={`${url}/reports`} component={Reports} />

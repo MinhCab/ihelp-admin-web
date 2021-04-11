@@ -31,7 +31,6 @@ const getToken = () => {
 
 const instance = axios.create({
   baseURL: 'https://ihelp-capstone.online/ihelp',
-  // httpsAgent: httpsAgentCert
 })
 
 instance.defaults.headers.post['Content-Type'] = 'application/json'

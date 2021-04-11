@@ -5,7 +5,6 @@ import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 function PrivateRoute({ component: Component, ...rest }) {
     const { accessToken } = useAuth()
     const location = useLocation()
-    console.log('from private route: ' + accessToken)
 
     let isAuth = accessToken ? true : false
 

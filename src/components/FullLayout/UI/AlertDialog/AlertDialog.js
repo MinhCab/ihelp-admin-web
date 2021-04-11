@@ -49,7 +49,7 @@ const RejectReasonDialog = (props) => {
             <DialogTitle>Can you give us a reason why this will be rejected</DialogTitle>
             <form onSubmit={submitReason}>
             <DialogContent>
-                <TextArea value={reason} onChange={reasonHandler} />
+                <TextArea fullWidth value={reason} onChange={reasonHandler} />
             </DialogContent>
             <DialogActions>
                 <Button color="primary" variant="contained" onClick={props.closing}>Cancel</Button>

@@ -74,12 +74,8 @@ const ProfileSelfServices = (props) => {
   const [page, setPage] = React.useState(0)
   const [totalItems, setTotalItems] = React.useState(0)
   const [loading, setLoading] = React.useState(false)
-  const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false)
-  const [error, setError] = React.useState('')
-
-  const handleCloseErrorSnackbar = () => {
-    setOpenErrorSnackbar(false)
-  }
+  // const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false)
+  // const [error, setError] = React.useState('')
 
   React.useEffect(() => {
     if(!loading) {
@@ -92,8 +88,9 @@ const ProfileSelfServices = (props) => {
           setLoading(false)
         })
         .catch((err) => {
-          setError('Cannot get information from server, please try again')
-          setOpenErrorSnackbar(true)
+          // setError('Cannot get information from server, please try again')
+          // setOpenErrorSnackbar(true)
+          setLoading(false)
         });
     }
   }, [page, totalItems])
@@ -102,19 +99,23 @@ const ProfileSelfServices = (props) => {
     history.push('/home/services/' + event.row.id)
   }
 
+  // const handleCloseErrorSnackbar = () => {
+  //   setOpenErrorSnackbar(false)
+  // }
+
   const pagingHandler = (params) => {
     setPage(params.page)
   }
 
-  let showErrorSnackbar = null
-  if(openErrorSnackbar) {
-    <AlertSnackbar 
-      isOpen={openErrorSnackbar}
-      close={handleCloseErrorSnackbar}
-      alertType='error'
-      message={error}
-    />
-  }
+  // let showErrorSnackbar = null
+  // if(openErrorSnackbar) {
+  //   <AlertSnackbar 
+  //     isOpen={openErrorSnackbar}
+  //     close={handleCloseErrorSnackbar}
+  //     alertType='error'
+  //     message={error}
+  //   />
+  // }
 
   return (
     <>
@@ -140,7 +141,7 @@ const ProfileSelfServices = (props) => {
           </div>
         </CardContent>
       </Card>
-      {showErrorSnackbar}
+      {/* {showErrorSnackbar} */}
     </>
   );
 }

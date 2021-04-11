@@ -96,8 +96,8 @@ const ProfileSelfEvents = (props) => {
   const [page, setPage] = React.useState(0);
   const [totalItems, setTotalItems] = React.useState(0);
   const [loading, setLoading] = React.useState(false);
-  const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
-  const [error, setError] = React.useState("");
+  // const [openErrorSnackbar, setOpenErrorSnackbar] = React.useState(false);
+  // const [error, setError] = React.useState("");
 
   const showEventDetails = (event) => {
     history.push("/home/events/details/" + event.row.id);
@@ -107,9 +107,9 @@ const ProfileSelfEvents = (props) => {
     setPage(params.page);
   };
 
-  const handleCloseErrorSnackbar = () => {
-    setOpenErrorSnackbar(false);
-  };
+  // const handleCloseErrorSnackbar = () => {
+  //   setOpenErrorSnackbar(false);
+  // };
 
   React.useEffect(() => {
     if (!loading) {
@@ -122,25 +122,25 @@ const ProfileSelfEvents = (props) => {
           setLoading(false);
         })
         .catch((error) => {
-          console.log(error);
-          setError("Cannot get information from server, please try again");
+          // console.log(error);
+          // setError("Cannot get information from server, please try again");
+          // setOpenErrorSnackbar(true);
           setLoading(false);
-          setOpenErrorSnackbar(true);
         });
     }
   }, [page, totalItems]);
 
-  let showErrorSnackbar = null;
-  if (openErrorSnackbar) {
-    showErrorSnackbar = (
-      <AlertSnackbar
-        isOpen={openErrorSnackbar}
-        close={handleCloseErrorSnackbar}
-        alertType="error"
-        message={error}
-      />
-    );
-  }
+  // let showErrorSnackbar = null;
+  // if (openErrorSnackbar) {
+  //   showErrorSnackbar = (
+  //     <AlertSnackbar
+  //       isOpen={openErrorSnackbar}
+  //       close={handleCloseErrorSnackbar}
+  //       alertType="error"
+  //       message={error}
+  //     />
+  //   );
+  // }
 
   return (
     <>
@@ -167,7 +167,7 @@ const ProfileSelfEvents = (props) => {
           </div>
         </CardContent>
       </Card>
-      {showErrorSnackbar}
+      {/* {showErrorSnackbar} */}
     </>
   );
 };

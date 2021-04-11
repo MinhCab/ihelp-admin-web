@@ -38,11 +38,7 @@ const useAuthProvider = () => {
         })
     }
 
-    useEffect(() => {
-      loadInfo()
-    }, [])
-
-    return {user, setUser, accessToken, setAccessToken, role, setRole, loadInfo, fcmToken, setFcmToken }
+    return { user, setUser, accessToken, setAccessToken, role, setRole, loadInfo, fcmToken, setFcmToken, loadInfo }
 }
 
 function AuthProvider(props) {

@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
 const CreateService = (props) => {
   const classes = useStyles();
   const [openConfirmation, setOpenConfirmation] = React.useState(false);
-  const [confirmInfo, setConfirmInfo] = React.useState(null);
+  const [confirmInfo, setConfirmInfo] = React.useState({});
   const [categories, setCategories] = React.useState([]);
   const [image, setImage] = React.useState(null);
   const [openPhotoUpload, setOpenPhotoUpload] = React.useState(false);
@@ -155,7 +155,8 @@ const CreateService = (props) => {
     setOpenConfirmation(false);
   };
 
-  const handleCreateServiceButton = () => {
+  const handleCreateServiceButton = (event) => {
+    event.preventDefault()
     setConfirmInfo({
       title: title.toUpperCase(),
       startDate: startDate.toString(),

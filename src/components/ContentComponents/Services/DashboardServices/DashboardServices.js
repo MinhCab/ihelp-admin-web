@@ -91,8 +91,6 @@ const DashboardServices = () => {
           setLoading(false)
         })
         .catch((err) => {
-          setError('Cannot get information from server, please try again')
-          setOpenErrorSnackbar(true)
           setLoading(false)
         });
     }
