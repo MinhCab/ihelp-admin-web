@@ -28,4 +28,4 @@ const askForNotificationPermission = () => {
     })
 }
 
-export { storage, askForNotificationPermission, messaging, firebase as default }
+export { storage, askForNotificationPermission, messaging, firebase }

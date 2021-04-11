@@ -31,6 +31,8 @@ import ChangePassword from "./ChangePassword/ChangePassword";
 import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents";
 import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext"
+import { firebase } from '../../../../api/Firebase/firebase-config'
+import OTP from "./ChangePassword/OTP/OTP";
 
 const useStyles = makeStyles({
   avatar: {
@@ -72,6 +74,8 @@ const Profile = (props) => {
   const [openPhotoUploadDialog, setOpenPhotoUploadDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false);
+  const [firebaseOTPTrigger, setFirebaseOTPTrigger] = useState()
+  const [openOTPDialog, setOpenOTPDialog] = useState(false)
 
   const editFullnameHandler = (event) => {
     setFullname(event.target.value);
@@ -174,7 +178,20 @@ const Profile = (props) => {
     setOpenChangePasswordDialog(true);
   };
   
-  const confirmChangePassword = () => {};
+  const changePassword = () => {
+    // setFirebaseOTPTrigger(firebase.auth().signInWithPhoneNumber(phone))
+    // setOpenOTPDialog(true)
+  };
+
+  const confirmChangePassword = (otp) => {
+    // firebaseOTPTrigger.then(e => {
+    //   e.confirm(otp).then(result => {
+    //     console.log(result.user)
+    //   }).catch(error => {
+    //     console.log(error)
+    //   })
+    // })
+  }
   
   const closeChangePasswordHandler = () => {
     setOpenChangePasswordDialog(false);
@@ -196,6 +213,10 @@ const Profile = (props) => {
       setAlertType("error");
       setLoading(false);
     }
+  }
+
+  const closeOTPHandler = () => {
+    openOTPDialog(false)
   }
 
   useEffect(() => {
@@ -222,7 +243,7 @@ const Profile = (props) => {
   let showImageUploadDialog = null;
   let showChangePasswordDialog = null;
   let showChangeRoleButton = null;
-
+  let showOTPDialog = null;
   if (openAlertSnackbar) {
     showErrorSnackbar = (
       <AlertSnackbar
@@ -292,6 +313,7 @@ const Profile = (props) => {
       <ChangePassword
         isOpen={openChangePasswordDialog}
         close={closeChangePasswordHandler}
+        confirm={changePassword}
       />
     );
   }
@@ -477,6 +499,17 @@ const Profile = (props) => {
     );
   }
 
+  if(openOTPDialog) {
+    showOTPDialog = (
+      <OTP
+        isOpen={openOTPDialog}
+        close={closeOTPHandler}
+        phone={phone}
+        confirm={confirmChangePassword}
+      />
+    )
+  }
+
   return (
     <>
       <Grid container spacing={3}>
@@ -494,6 +527,7 @@ const Profile = (props) => {
       {showDiscardDialog}
       {showImageUploadDialog}
       {showChangePasswordDialog}
+      {showOTPDialog}
       {loading && (
         <CircularProgress size={60} className={classes.buttonProgress} />
       )}
