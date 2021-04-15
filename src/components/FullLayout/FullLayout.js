@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// import { Outlet } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
 
 import Header from './Header/Header';
@@ -14,15 +13,14 @@ import Services from '../ContentComponents/Services/Services'
 import Users from '../ContentComponents/Users/Users'
 import EventDetail from '../ContentComponents/Events/EventDetails/EventDetail';
 import ServiceDetail from '../ContentComponents/Services/ServiceDetail/ServiceDetail';
-import CreateService from '../ContentComponents/Services/CreateService/CreateService';
 import Profile from '../ContentComponents/Users/Profile/Profile'
 import Reports from '../ContentComponents/Reports/Reports'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
-import CreateUser from '../ContentComponents/Users/CreateUser/CreateUser';
-import { askForNotificationPermission, messaging } from '../../api/Firebase/firebase-config'
+import { messaging } from '../../api/Firebase/firebase-config'
 import { useSnackbar } from 'notistack'
 
 import AdminRoute from '../../routes/AdminRoute/AdminRoute';
+import axios from '../../api/axios';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,26 +58,43 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FullLayout = () => {
-  const { setUser, setAccessToken, setRole, loadInfo } = useAuth()
-  const { url } = useRouteMatch()
   const classes = useStyles();
+  const { url } = useRouteMatch()
+  const { enqueueSnackbar } = useSnackbar();
+  const { fcmToken, user, setUser, setAccessToken, setRole, setFcmToken, loadInfo } = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const [notiList, setNotiList] = useState([])
 
   function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=ihelp-admin.online";
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=ihelp-admin.online";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=localhost";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=localhost";
+  }
+
+  const deleteDeviceToken = () => {
+    const deviceTokenInfo = {
+      deviceToken: fcmToken,
+      email: user.email,
+    };
+    axios.delete('/accounts/logout', deviceTokenInfo)
+    .then(res => {
+      console.log(res)
+    }).catch(err => {
+      console.log(err)
+    })
   }
 
   const logoutHandler = () => {
+    deleteDeviceToken()
     setCookie('accessToken', '', 0)
     setCookie('userEmail', '', 0)
+    setCookie('deviceToken', '', 0)
     setRole(null)
     setUser(null)
+    setFcmToken(null)
     setAccessToken(null)
   }
 
@@ -98,16 +113,27 @@ const FullLayout = () => {
     });
   }
 
+  const loadNotification = () => {
+    axios.get('/notifications/' + user.email)
+    .then(res => {
+      setNotiList(res.data)
+    })
+  }
+
   useEffect(() => {
     loadInfo()
+    loadNotification()
     receiveForegroundNotification()
-    askForNotificationPermission()
   }, [])
+
+  useEffect(() => {
+    loadNotification()
+  }, [enqueueSnackbar])
 
   return (
 
     <div className={classes.root}>
-      <Header toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+      <Header notiList={notiList} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
       {showSideBar}
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>

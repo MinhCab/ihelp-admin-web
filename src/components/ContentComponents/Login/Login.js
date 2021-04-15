@@ -17,6 +17,7 @@ import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 import clsx from 'clsx';
 import { green } from '@material-ui/core/colors';
+import { askForNotificationPermission } from '../../../api/Firebase/firebase-config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory()
-  const { setAccessToken, loadInfo } = useAuth()
+  const { setFcmToken, setAccessToken, loadInfo } = useAuth()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
@@ -70,6 +71,21 @@ const Login = () => {
   const buttonClassname = clsx({
     [classes.buttonSuccess]: success,
   })
+
+  const pushDeviceToken = () => {
+    const fcmToken = askForNotificationPermission()
+    const deviceTokenInfo = ({
+      deviceToken: fcmToken,
+      email: email,
+    });
+
+    setFcmToken(fcmToken)
+    
+    axios.post('/accounts/device_token', deviceTokenInfo)
+    .then(res => {
+      console.log(res)
+    })
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -89,6 +105,7 @@ const Login = () => {
             setAccessToken(res.data.accessToken);
             loadInfo();
             setSuccess(true);
+            pushDeviceToken();
             setLoading(false);
             history.push("/home/dashboard");
           } else {

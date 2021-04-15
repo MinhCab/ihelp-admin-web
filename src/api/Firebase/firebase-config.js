@@ -23,8 +23,11 @@ const askForNotificationPermission = () => {
         return messaging.getToken()
     }).then(token => {
         console.log('Firebase Token: ' + token)
+        document.cookie = 'deviceToken=' + token
+        return token
     }).catch(err => {
         console.log(err)
+        return err
     })
 }
 

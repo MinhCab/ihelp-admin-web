@@ -71,7 +71,7 @@ const Header = (props) => {
                         <NotificationsNoneIcon />
                     </Badge>
                 </IconButton>
-                <Notifications showNoti={anchorEl} opening={open} closing={handleClose} />
+                <Notifications list={props.notiList} showNoti={anchorEl} opening={open} closing={handleClose} />
             </Toolbar>
         </AppBar>
     );
