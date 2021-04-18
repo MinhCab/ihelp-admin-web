@@ -12,14 +12,14 @@ const FeedbackDetails = (props) => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => props.validateFeedback('approve', details.id)}
+              onClick={() => props.approveFeedback(details.id)}
             >
               Approve
             </Button>
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => props.validateFeedback('reject', details.id)}
+              onClick={() => props.rejectFeedback()}
             >
               Reject
             </Button>

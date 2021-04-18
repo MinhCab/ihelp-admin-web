@@ -83,7 +83,6 @@ const EventDetail = (props) => {
   const history = useHistory();
   const { user } = useAuth();
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
-  const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false);
   const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
@@ -97,7 +96,6 @@ const EventDetail = (props) => {
   const [images, setImages] = React.useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [participantDetails, setParticipantDetails] = React.useState({});
-  const [feedbackDetails, setFeedbackDetails] = React.useState({});
 
   const loadInfoAPI = () => {
     axios
@@ -144,9 +142,9 @@ const EventDetail = (props) => {
     setOpenRejectDialog(false);
   };
 
-  const rejectEventHandler = (reason) => {
+  const rejectEventHandler = (reason, eventId) => {
     const rejectObject = {
-      eventId: props.match.params.id,
+      eventId: eventId,
       managerEmail: user.email,
       reason: reason,
     };
@@ -156,6 +154,7 @@ const EventDetail = (props) => {
         setMessage(res.data);
         setAlertType("success");
         setOpenAlertSnackbar(true);
+        setOpenRejectDialog(false)
         loadInfoAPI()
       })
       .catch((error) => {
@@ -229,6 +228,8 @@ const EventDetail = (props) => {
     }
   };
 
+
+  //change to participants.js
   const handleParticipantDetails = (details) => {
     setParticipantDetails(details);
     setOpenParticipantDetails(true);
@@ -238,30 +239,7 @@ const EventDetail = (props) => {
     setParticipantDetails(null);
     setOpenParticipantDetails(false);
   };
-
-  const handleFeedbackDetails = (details) => {
-    setFeedbackDetails(details);
-    setOpenFeedbackDetails(true);
-  };
-
-  const handleCloseFeedbackDetails = () => {
-    setFeedbackDetails(null);
-    setOpenFeedbackDetails(false);
-  };
-
-  const handleApproveFeedback = (feedbackId) => {
-    axios.put('/api/feedbacks/' + user.email + '/approve/' + feedbackId)
-    .then(res => {
-      setMessage(res.data)
-      setAlertType('success')
-      setOpenAlertSnackbar(true)
-      setOpenFeedbackDetails(false)
-    }).catch(error => {
-      setMessage(error.data)
-      setAlertType('error')
-      setOpenAlertSnackbar(true)
-    }) 
-  }
+//change to participants.js
 
   const handleCloseAlertSnackbar = () => {
     setOpenAlertSnackbar(false);
@@ -431,18 +409,6 @@ const EventDetail = (props) => {
     );
   }
 
-  if (openFeedbackDetails) {
-    showFeedbackDetails = (
-      <FeedbackDetails
-        isOpen={openFeedbackDetails}
-        close={handleCloseFeedbackDetails}
-        details={feedbackDetails}
-        approveFeedback={handleApproveFeedback}
-        rejectFeedback={handleRejectFeedback}
-      />
-    );
-  }
-
   if (openAlertSnackbar) {
     showAlertSnackbar = (
       <AlertSnackbar
@@ -460,6 +426,7 @@ const EventDetail = (props) => {
         isOpen={openRejectDialog}
         closing={closeRejectDialogHandler}
         rejected={rejectEventHandler}
+        id={props.match.params.id}
       />
     );
   }
@@ -630,7 +597,6 @@ const EventDetail = (props) => {
           type="event"
           id={props.match.params.id}
           participantDetails={handleParticipantDetails}
-          feedbackDetails={handleFeedbackDetails}
         />
         <Popover
           id={id}

@@ -1,6 +1,15 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core'
 import React from 'react'
 import { TextArea } from 'semantic-ui-react'
+
+const useStyles = makeStyles((theme) => ({
+    descriptionField: {
+        width: "100%",
+        height: "100px",
+        padding: theme.spacing(0.5),
+        fontSize: 20,
+    },
+}))
 
 const DiscardAlertDialog = (props) => {
     return (
@@ -33,6 +42,7 @@ const StatusAlertDialog = (props) => {
 }
 
 const RejectReasonDialog = (props) => {
+    const classes = useStyles()
     const [reason, setReason] = React.useState('')
 
     const reasonHandler = (event) => {
@@ -41,15 +51,15 @@ const RejectReasonDialog = (props) => {
 
     const submitReason = (event) => {
         event.preventDefault()
-        props.rejected(reason)
+        props.rejected(reason, props.id)
     }
 
     return (
-        <Dialog fullWidth maxWidth='md' open={props.isOpen} onClose={props.closing}>
+        <Dialog fullWidth='true' maxWidth='md' open={props.isOpen} onClose={props.closing}>
             <DialogTitle>Can you give us a reason why this will be rejected</DialogTitle>
             <form onSubmit={submitReason}>
             <DialogContent>
-                <TextArea fullWidth value={reason} onChange={reasonHandler} />
+                <TextArea className={classes.descriptionField} fullWidth value={reason} onChange={reasonHandler} />
             </DialogContent>
             <DialogActions>
                 <Button color="primary" variant="contained" onClick={props.closing}>Cancel</Button>

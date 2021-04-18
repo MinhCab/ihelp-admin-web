@@ -83,7 +83,6 @@ const ServiceDetail = (props) => {
   const history = useHistory();
   const { user } = useAuth();
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
-  const [openFeedbackDetails, setOpenFeedbackDetails] = React.useState(false);
   const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
@@ -96,7 +95,6 @@ const ServiceDetail = (props) => {
   const [images, setImages] = React.useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [participantDetails, setParticipantDetails] = React.useState({});
-  const [feedbackDetails, setFeedbackDetails] = React.useState({})
 
   const loadInfoAPI = () => {
     axios
@@ -142,9 +140,9 @@ const ServiceDetail = (props) => {
     setOpenRejectDialog(false)
   }
 
-  const rejectServiceHandler = (reason) => {
+  const rejectServiceHandler = (reason, serviceId) => {
     const rejectObject = {
-      serviceId: props.match.params.id,
+      serviceId: serviceId,
       managerEmail: user.email,
       reason: reason,
     };
@@ -154,6 +152,7 @@ const ServiceDetail = (props) => {
         setMessage(res.data)
         setAlertType('success')
         setOpenAlertSnackbar(true)
+        setOpenRejectDialog(false)
         loadInfoAPI()
       })
       .catch((error) => {
@@ -239,30 +238,6 @@ const ServiceDetail = (props) => {
     setParticipantDetails(null);
     setOpenParticipantDetails(false);
   };
-
-  const handleFeedbackDetails = (details) => {
-    setFeedbackDetails(details)
-    setOpenFeedbackDetails(true)
-  };
-
-  const handleCloseFeedbackDetails = () => {
-    setFeedbackDetails(null);
-    setOpenFeedbackDetails(false);
-  };
-
-  const handleApproveFeedback = (feedbackId) => {
-    axios.put('/api/feedbacks/' + user.email + '/approve/' + feedbackId)
-    .then(res => {
-      setMessage(res.data)
-      setAlertType('success')
-      setOpenAlertSnackbar(true)
-      setOpenFeedbackDetails(false)
-    }).catch(error => {
-      setMessage(error.data)
-      setAlertType('error')
-      setOpenAlertSnackbar(true)
-    }) 
-  }
 
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -425,24 +400,13 @@ const ServiceDetail = (props) => {
     );
   }
 
-  if (openFeedbackDetails) {
-    showFeedbackDetails = (
-      <FeedbackDetails
-        isOpen={openFeedbackDetails}
-        close={handleCloseFeedbackDetails}
-        details={feedbackDetails}
-        approveFeedback={handleApproveFeedback}
-        rejectFeedback={handleRejectFeedback}
-      />
-    );
-  }
-
   if (openRejectDialog) {
     showRejectDialog = (
       <RejectReasonDialog
         isOpen={openRejectDialog}
         closing={closeRejectDialogHandler}
         rejected={rejectServiceHandler}
+        id={props.match.params.id}
       />
     );
   }
@@ -603,7 +567,6 @@ const ServiceDetail = (props) => {
           type="service"
           id={props.match.params.id}
           participantDetails={handleParticipantDetails}
-          feedbackDetails={handleFeedbackDetails}
         />
         <Popover
           id={id}

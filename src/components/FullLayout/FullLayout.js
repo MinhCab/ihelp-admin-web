@@ -21,7 +21,6 @@ import { useSnackbar } from 'notistack'
 
 import AdminRoute from '../../routes/AdminRoute/AdminRoute';
 import axios from '../../api/axios';
-import { askForNotificationPermission } from '../../api/Firebase/firebase-config'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,8 +70,8 @@ const FullLayout = () => {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=localhost";
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=localhost";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=ihelp-admin.online";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=ihelp-admin.online";
   }
 
   const deleteDeviceToken = () => {
