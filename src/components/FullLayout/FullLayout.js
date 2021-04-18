@@ -82,13 +82,7 @@ const FullLayout = () => {
     console.log('before delete: '+ JSON.stringify(deviceTokenInfo))
     await axios.delete('/signout', { data: deviceTokenInfo } )
     .then(res => {
-      setCookie('accessToken', '', 0)
-      setCookie('userEmail', '', 0)
-      setCookie('deviceToken', '', 0)
-      setRole(null)
-      setUser(null)
-      setFcmToken(null)
-      setAccessToken(null)
+      console.log(res)
     }).catch(err => {
       console.log(err)
     })
@@ -96,6 +90,13 @@ const FullLayout = () => {
 
   const logoutHandler = async() => {
       await deleteDeviceToken()
+      setCookie('accessToken', '', 0)
+      setCookie('userEmail', '', 0)
+      setCookie('deviceToken', '', 0)
+      setRole(null)
+      setUser(null)
+      setFcmToken(null)
+      setAccessToken(null)
   }
 
   let showSideBar = (
