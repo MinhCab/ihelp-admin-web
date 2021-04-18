@@ -74,29 +74,28 @@ const FullLayout = () => {
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=ihelp-admin.online";
   }
 
-  const deleteDeviceToken = () => {
-    console.log('before delete: '+ fcmToken)
+  const deleteDeviceToken = async() => {
     const deviceTokenInfo = {
       deviceToken: fcmToken,
       email: user.email,
     };
-    axios.delete('/accounts/logout', deviceTokenInfo)
+    console.log('before delete: '+ JSON.stringify(deviceTokenInfo))
+    await axios.delete('/signout', { data: deviceTokenInfo } )
     .then(res => {
-      console.log(res)
+      setCookie('accessToken', '', 0)
+      setCookie('userEmail', '', 0)
+      setCookie('deviceToken', '', 0)
+      setRole(null)
+      setUser(null)
+      setFcmToken(null)
+      setAccessToken(null)
     }).catch(err => {
       console.log(err)
     })
   }
 
-  const logoutHandler = () => {
-    deleteDeviceToken()
-    setCookie('accessToken', '', 0)
-    setCookie('userEmail', '', 0)
-    setCookie('deviceToken', '', 0)
-    setRole(null)
-    setUser(null)
-    setFcmToken(null)
-    setAccessToken(null)
+  const logoutHandler = async() => {
+      await deleteDeviceToken()
   }
 
   let showSideBar = (
@@ -126,7 +125,7 @@ const FullLayout = () => {
     loadNotification()
     receiveForegroundNotification()
     console.log(fcmToken)
-  }, [])
+  }, [fcmToken])
 
   useEffect(() => {
     loadNotification()
