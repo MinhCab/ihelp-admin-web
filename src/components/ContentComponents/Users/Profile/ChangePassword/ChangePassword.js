@@ -19,7 +19,7 @@ const ChangePassword = (props) => {
     }
 
     return (
-      <Dialog open={props.isOpen} onClose={props.close} fullWidth="true" maxWidth="sm">
+      <Dialog open={props.isOpen} onClose={props.close} fullWidth maxWidth="sm">
         <DialogTitle > <strong style={{fontSize: 20}}>Change Password</strong></DialogTitle>
         <DialogContent>
           <Box textAlign="flex-start">

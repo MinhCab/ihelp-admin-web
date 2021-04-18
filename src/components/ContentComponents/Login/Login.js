@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import Logo from '../../FullLayout/Logo/LogoIcon'
-import axios from '../../../api/axios';
+import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory()
-  const { setFcmToken, setAccessToken, loadInfo } = useAuth()
+  const { fcmToken, setAccessToken, loadInfo } = useAuth()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
@@ -72,19 +72,20 @@ const Login = () => {
     [classes.buttonSuccess]: success,
   })
 
-  const pushDeviceToken = () => {
-    const fcmToken = askForNotificationPermission()
-    const deviceTokenInfo = ({
-      deviceToken: fcmToken,
-      email: email,
-    });
-
-    setFcmToken(fcmToken)
-    
-    axios.post('/accounts/device_token', deviceTokenInfo)
-    .then(res => {
-      console.log(res)
-    })
+  function getCookie(cname) {
+    let name = cname + '=';
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
   }
 
   const handleSubmit = (event) => {
@@ -98,14 +99,14 @@ const Login = () => {
       }
   
       axios
-        .post("/login", loginInfo)
+        .post("https://ihelp-capstone.online/ihelp/login", loginInfo)
         .then((res) => {
           if (res.data.role === "ADMIN" || res.data.role === "MANAGER") {
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(res.data.accessToken);
             loadInfo();
             setSuccess(true);
-            pushDeviceToken();
+            pushDeviceToken(res.data.accessToken);
             setLoading(false);
             history.push("/home/dashboard");
           } else {

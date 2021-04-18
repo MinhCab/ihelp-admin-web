@@ -26,7 +26,7 @@ function getCookie(cname) {
 const useAuthProvider = () => {
     const [user, setUser] = useState({})
     const [role, setRole] = useState({})
-    const [fcmToken, setFcmToken] = useState('')
+    const [fcmToken, setFcmToken] = useState(getCookie('deviceToken'))
     const [accessToken, setAccessToken] = useState(getCookie('accessToken'))
 
     const loadInfo = async() => {

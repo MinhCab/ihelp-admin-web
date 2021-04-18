@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import 'firebase/storage'
 import '@firebase/messaging'
+import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDBoLp2pjwAX_TZ8ELvX8TimsRZNr1wgn8",
@@ -18,16 +19,15 @@ const storage = firebase.storage()
 
 const messaging = firebase.messaging()
 
-const askForNotificationPermission = () => {
-    messaging.requestPermission().then(firebaseToken => {
+const askForNotificationPermission = async() => {
+    await messaging.requestPermission().then(firebaseToken => {
         return messaging.getToken()
     }).then(token => {
         console.log('Firebase Token: ' + token)
         document.cookie = 'deviceToken=' + token
         return token
     }).catch(err => {
-        console.log(err)
-        return err
+        console.log('is there any error: ' + err)
     })
 }
 
