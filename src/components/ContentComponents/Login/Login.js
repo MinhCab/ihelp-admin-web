@@ -17,7 +17,7 @@ import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 import clsx from 'clsx';
 import { green } from '@material-ui/core/colors';
-import { askForNotificationPermission } from '../../../api/Firebase/firebase-config';
+import { messaging } from '../../../api/Firebase/firebase-config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
   const classes = useStyles();
   const history = useHistory()
-  const { fcmToken, setAccessToken, loadInfo } = useAuth()
+  const { setFcmToken, setAccessToken, loadInfo } = useAuth()
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [errorMessage, setErrorMessage] = React.useState('')
@@ -88,6 +88,42 @@ const Login = () => {
     return '';
   }
 
+  const pushDeviceToken = async(accessToken) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`
+    }
+
+    await messaging.requestPermission().then(firebaseToken => {
+        return messaging.getToken()
+    }).then(async token => {
+        console.log('Firebase Token: ' + token)
+        document.cookie = 'deviceToken=' + token
+        setFcmToken(token)
+
+        const deviceTokenInfo = {
+          deviceToken: token,
+          email: email,
+        };
+
+        console.log('before send to db: ' + token)
+    
+    await axios
+      .post("https://ihelp-capstone.online/ihelp/accounts/device_token", deviceTokenInfo, {
+        headers: headers
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    }).catch(err => {
+        console.log('is there any error: ' + err)
+    })
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!loading) {
@@ -100,13 +136,13 @@ const Login = () => {
   
       axios
         .post("https://ihelp-capstone.online/ihelp/login", loginInfo)
-        .then((res) => {
+        .then(async(res) => {
           if (res.data.role === "ADMIN" || res.data.role === "MANAGER") {
+            await pushDeviceToken(res.data.accessToken);
             saveTokenAndEmailToCookies(res.data.accessToken, email);
             setAccessToken(res.data.accessToken);
             loadInfo();
             setSuccess(true);
-            pushDeviceToken(res.data.accessToken);
             setLoading(false);
             history.push("/home/dashboard");
           } else {

@@ -76,6 +76,7 @@ const FullLayout = () => {
   }
 
   const deleteDeviceToken = () => {
+    console.log('before delete: '+ fcmToken)
     const deviceTokenInfo = {
       deviceToken: fcmToken,
       email: user.email,
@@ -121,45 +122,10 @@ const FullLayout = () => {
     })
   }
 
-  const pushDeviceToken = async () => {
-    const deviceToken = ''
-
-    await messaging.requestPermission().then(firebaseToken => {
-        return messaging.getToken()
-    }).then(token => {
-        console.log('Firebase Token: ' + token)
-        document.cookie = 'deviceToken=' + token
-        setFcmToken(token)
-        deviceToken = token
-    }).catch(err => {
-        console.log('is there any error: ' + err)
-    })
-
-    const deviceTokenInfo = {
-      deviceToken: deviceToken,
-      email: user.email,
-    };
-
-    console.log('before send to db: ' + deviceToken)
-    
-    axios
-      .post(
-        "/accounts/device_token",
-        deviceTokenInfo
-      )
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   useEffect(() => {
     loadInfo()
     loadNotification()
     receiveForegroundNotification()
-    pushDeviceToken()
     console.log(fcmToken)
   }, [])
 
