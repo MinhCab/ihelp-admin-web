@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { Avatar, Box, Typography, makeStyles, Menu, MenuItem } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import DefaultAva from '../../../assets/images/avatar/IMG_2478-2.jpg'
 
-import bgprofile from '../../../assets/images/avatar/user-info.png';
+import bgprofile from '../../../assets/images/avatar/profile_background.png';
 import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,7 +42,7 @@ const Profile = (props) => {
         setAnchorEl(null);
     };
     
-    let showAva = DefaultAva
+    let showAva
     if(user.imageUrl !== null) {
         showAva = user.imageUrl
     } 

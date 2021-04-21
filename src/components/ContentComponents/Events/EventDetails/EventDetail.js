@@ -6,11 +6,13 @@ import {
   CardHeader,
   CardMedia,
   Chip,
+  createMuiTheme,
   Grid,
   IconButton,
   makeStyles,
   Paper,
   Popover,
+  ThemeProvider,
   Typography,
 } from "@material-ui/core";
 import { MoreVert } from "@material-ui/icons";
@@ -27,7 +29,6 @@ import noImage from "../../../../assets/images/no-image.jpg";
 import EditEvent from "../EditEvent/EditEvent";
 import TabsLayout from "../../../FullLayout/UI/TabsLayout/TabsLayout";
 import ParticipantDetails from "../../Users/Participants/ParticipantDetails/ParticipantDetails";
-import FeedbackDetails from "../../Feedbacks/FeedbackDetails/FeedbackDetails";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
 import { RejectReasonDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
@@ -77,6 +78,25 @@ const useStyles = makeStyles((theme) => ({
     margin: 2,
   },
 }));
+
+const additionalButtonTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#008c3a",
+    },
+    secondary: {
+      main: "#039be5",
+    },
+  },
+});
+
+const additionalButtonTheme2 = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#4aedc4",
+    },
+  },
+});
 
 const EventDetail = (props) => {
   const classes = useStyles();
@@ -431,6 +451,34 @@ const EventDetail = (props) => {
     );
   }
 
+  let showStatus = null 
+  switch(status.id) {
+    case 3: showStatus = (
+      <ThemeProvider theme={additionalButtonTheme}>
+        <Chip color="primary" label={status.name} />
+      </ThemeProvider>
+    ); 
+    case 2: showStatus = (
+      <ThemeProvider theme={additionalButtonTheme}>
+        <Chip color="secondary" label={status.name} />
+      </ThemeProvider>
+    ); 
+    case 4: showStatus = (
+        <Chip color="primary" label={status.name} />
+    ); 
+    case 5: showStatus = (
+        <Chip color="inherit" label={status.name} />
+    ); 
+    case 6: showStatus = (
+        <Chip color="secondary" label={status.name} />
+    ); 
+    default: showStatus = (
+      <ThemeProvider theme={additionalButtonTheme2}>
+        <Chip color="primary" label={status.name} />
+      </ThemeProvider>
+    ); 
+  }
+
   return (
     <>
       <Card className={classes.root}>
@@ -521,11 +569,7 @@ const EventDetail = (props) => {
                     component="span"
                   >
                     <strong>Status: </strong>
-                    <Chip
-                      color="primary"
-                      variant="outlined"
-                      label={status.name}
-                    />
+                    {showStatus}
                   </Typography>
                 </Grid>
                 <Grid item container xs className={classes.Typography}>

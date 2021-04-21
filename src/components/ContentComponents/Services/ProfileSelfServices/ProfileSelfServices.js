@@ -6,24 +6,25 @@ import Button from '@material-ui/core/Button'
 
 import axios from '../../../../api/axios'
 import { useHistory } from 'react-router';
-import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
 
-const buttonTheme = createMuiTheme({
+const additionalButtonTheme = createMuiTheme({
   palette: {
     primary: {
-      main: '#76ff03',
-    },
-    inherit: {
-      main: '#7c4dff',
+      main: "#008c3a",
     },
     secondary: {
-      main: '#2979ff',
+      main: "#039be5",
     },
-    default: {
-      main: '#ff1744',
-    }
-  }
-})
+  },
+});
+
+const additionalButtonTheme2 = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#4aedc4",
+    },
+  },
+});
 
 const columns = [
   {
@@ -45,23 +46,50 @@ const columns = [
   {
     field: 'status', headerName: 'Status', width: 120,
     renderCell: (params) => {
-      let stats = params.value;
-      let color = 'default'
-      if (stats.id === 1) {
-        color = 'secondary'
-      } else if (stats.id === 2) {
-        color = 'inherit'
-      } else if (stats.id === 3) {
-        color = 'primary'
-      }
-      return (
-        <ThemeProvider theme={buttonTheme}>
-          <Button variant="contained" color={color} size="small">
-            {stats.name}
+      let type = params.value;
+      if (type.id === 3) {
+        return (
+          <ThemeProvider theme={additionalButtonTheme}>
+            <Button variant="contained" color='primary' size="small">
+              {type.name}
+            </Button>
+          </ThemeProvider>
+        );
+      } else if (type.id === 2) {
+        return (
+          <ThemeProvider theme={additionalButtonTheme}>
+            <Button variant="contained" color="secondary" size="small">
+              {type.name}
+            </Button>
+          </ThemeProvider>
+        );
+      } else if (type.id === 4) {
+        return (
+          <Button variant="contained" color='primary' size="small">
+            {type.name}
           </Button>
-        </ThemeProvider>
-
-      );
+        )
+      } else if (type.id === 5) {
+        return (
+          <Button variant="contained" color="inherit" size="small">
+            {type.name}
+          </Button>
+        );
+      } else if (type.id === 6) {
+        return (
+          <Button variant="contained" color='secondary' size="small">
+            {type.name}
+          </Button>
+        )
+      } else {
+        return (
+          <ThemeProvider theme={additionalButtonTheme2}>
+          <Button variant="contained" color='primary' size="small">
+            {type.name}
+          </Button>
+          </ThemeProvider>
+        )
+      }
     }
   }
 ];
