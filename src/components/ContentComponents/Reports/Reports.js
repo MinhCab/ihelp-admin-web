@@ -32,6 +32,9 @@ const Reports = () => {
     const [openReportDetails, setOpenReportDetails] = useState(false)
     const [error, setError] = useState(null)
     const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false)
+    const [page, setPage] = useState(0)
+    const [totalItems, setTotalItems] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     const showReportDetails = (event) => {
         setReportDetails(event.row)
@@ -46,15 +49,25 @@ const Reports = () => {
       setOpenErrorSnackbar(false)
     }
 
+    const pagingHandler = (params) => {
+      setPage(params.page)
+  }
+
     useEffect(() => {
-      axios.get('/api/feedbacks/reports')
-      .then(res => {
-        setReports(res.data)
-      }).catch(err => {
-        setError('Getting reports: Cannot get reports from server, please try again')
-        setOpenErrorSnackbar(true)
-      })
-    }, [])
+      if (!loading) {
+        setLoading(true);
+        axios
+          .get("/api/feedbacks/reports?page=" + page)
+          .then((res) => {
+            setReports(res.data.feedbacks);
+            setTotalItems(res.data.totalItems);
+            setLoading(false);
+          })
+          .catch((err) => {
+            setLoading(false);
+          });
+      }
+    }, [page, totalItems])
 
     let showDetails = null
     let showErrorSnackbar = null
@@ -98,10 +111,12 @@ const Reports = () => {
                 columns={columns}
                 pageSize={10}
                 onRowClick={(rows) => showReportDetails(rows)}
-                // pagination
-                // paginationMode='server'
-                // onPageChange={pagingHandler}
-                // rowCount={totalItems}
+                pagination
+                paginationMode='server'
+                onPageChange={pagingHandler}
+                rowCount={totalItems}
+                loading={loading}
+                autoHeight
               />
             </div>
           </CardContent>

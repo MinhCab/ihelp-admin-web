@@ -173,7 +173,7 @@ const Feedbacks = (props) => {
 
     useEffect(() => {
         loadAllFeedback()
-    }, [])
+    }, [page, totalItems])
 
     let showErrorSnackbar = null
     if (openAlertSnackbar) {

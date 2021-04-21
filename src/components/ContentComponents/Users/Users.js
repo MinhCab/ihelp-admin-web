@@ -1,10 +1,11 @@
-import { Card, CardHeader, Grid, CardContent, Button } from '@material-ui/core'
+import { Card, CardHeader, Grid, CardContent, Button, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React from 'react'
 import { useHistory } from 'react-router'
 
 import axios from '../../../api/axios'
+import { useAuth } from '../../../hoc/StoringAuth/AuthContext'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import CreateUser from './CreateUser/CreateUser'
@@ -49,6 +50,7 @@ const columns = [
 
 const Users = () => {
     const history = useHistory()
+    const { user } = useAuth()
     const [users, setUsers] = React.useState([])
     const [loading, setLoading] = React.useState(false)
     const [openDiscard, setOpenDiscard] = React.useState(false)
@@ -56,19 +58,9 @@ const Users = () => {
     const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
     const [alertType, setAlertType] = React.useState('')
     const [openCreateUserDialog, setOpenCreateUserDialog] = React.useState(false)
-
-    // const [page, setPage] = React.useState(0)
-    // const [totalItems, setTotalItems] = React.useState(0)
-
-    // React.useEffect(() => {
-    //     axios.get('/api/services?page=' + page)
-    //         .then(res => {
-    //             setUsers(res.data.users)
-    //             setTotalItems(res.data.totalItems)
-    //         }).catch(err => {
-    //             console.log(err.message)
-    //         })
-    // }, [page, totalItems])
+    const [page, setPage] = React.useState(0)
+    const [totalItems, setTotalItems] = React.useState(0)
+    const [search, setSearch] = React.useState('')
   
     const setIdToUserList = (list) => {
         let count = 0
@@ -85,9 +77,17 @@ const Users = () => {
         setOpenAlertSnackbar(false)
     }
 
-    // const pagingHandler = (params) => {
-    //     setPage(params.page)
-    // }
+    const pagingHandler = (params) => {
+        setPage(params.page)
+    }
+
+    const searchHandler = (event) => {
+      setSearch(event.target.value)
+    }
+
+    const clearSearchHandler = () => {
+      setSearch('')
+    }
 
     const createUserHandler = () => {
       setOpenCreateUserDialog(true);
@@ -127,22 +127,37 @@ const Users = () => {
       }
     }
 
+    const searchAPI = () => {
+      // axios.get('/accounts/' + user.email)
+      // .then((res) => {
+      //   setTotalItems(res.data.totalItems);
+      //   setServices(res.data.services);
+      //   setLoading(false)
+      // }).catch(err => {
+      //   setServices([])
+      //   setLoading(false)
+      // });
+    }
+
+    const confirmSearchHandler = (event) => {
+      event.preventDefault()
+      setPage(0)
+      searchAPI()
+    }
+    
     React.useEffect(() => {
-        if(!loading) {
+      if(!loading) {
         setLoading(true)
-        axios
-          .get("/accounts")
-          .then((res) => {
-            setIdToUserList(res.data);
+      axios.get('/accounts?page=' + page)
+          .then(res => {
+            setIdToUserList(res.data.accounts);
+            setTotalItems(res.data.totalItems)
             setLoading(false)
+          }).catch(err => {
+              console.log(err.message)
           })
-          .catch((err) => {
-            setMessage(err.response.data.message)
-            setOpenAlertSnackbar(true)
-            setAlertType('error')
-          });
         }
-    }, [])
+  }, [page, totalItems])
 
     let showAlertSnackbar = null
     let showCreateUserDialog = null
@@ -167,11 +182,23 @@ const Users = () => {
                   </Button>
                 </Grid>
                 <Grid item>
-                  {/* <SearchBar 
-                    value={search}
-                    onChange={(event) => setSearch(event.value)}
-                    onRequestSearch={handleSearchRequest}
-                  /> */}
+                <form onSubmit={confirmSearchHandler}>
+                  <FormControl variant="outlined">
+                    <InputLabel>Search</InputLabel>
+                    <OutlinedInput
+                      value={search}
+                      onChange={searchHandler}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton onClick={clearSearchHandler} edge="end">
+                            {search.length > 0 ? <ClearIcon /> : null}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      labelWidth={70}
+                    />
+                  </FormControl>
+                </form>
                 </Grid>
               </Grid>
             }
@@ -188,10 +215,10 @@ const Users = () => {
                 columns={columns}
                 pageSize={10}
                 onRowClick={(rows) => showUserDetails(rows)}
-                // pagination
-                // paginationMode='server'
-                // onPageChange={pagingHandler}
-                // rowCount={totalItems}
+                pagination
+                paginationMode='server'
+                onPageChange={pagingHandler}
+                rowCount={totalItems}
                 autoHeight
                 loading={loading}
               />
