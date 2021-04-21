@@ -90,6 +90,8 @@ const Feedbacks = (props) => {
     const [openFeedbackDetails, setOpenFeedbackDetails] = useState(false)
     const [feedbackDetails, setFeedbackDetails] = useState({})
     const [openRejectReasonDialog, setOpenRejectReasonDialog] = useState(false)
+    const [page, setPage] = useState(0)
+    const [totalItems, setTotalItems] = React.useState(0);
 
     const handleFeedbackClicked = (event) => {
         setFeedbackDetails(event.row)
@@ -105,17 +107,19 @@ const Feedbacks = (props) => {
         setOpenAlertSnackbar(false)
     }
 
+    const pagingHandler = (params) => {
+      setPage(params.page);
+    };
+
     const loadAllFeedback = () => {
         if (!loading) {
             setLoading(true);
-            axios.get("/api/feedbacks/" + props.type + "/" + props.id)
+            axios.get("/api/feedbacks/" + props.type + "/" + props.id + "?page=" + page)
                 .then(res => {
-                    setFeedbacks(res.data)
+                    setFeedbacks(res.data.feedbacks)
+                    setTotalItems(res.data.totalItems)
                     setLoading(false)
                 }).catch(err => {
-                    setMessage('Feedbacks error: Cannot get information from server, please try again later')
-                    setOpenAlertSnackbar(true)
-                    setAlertType('error')
                     setLoading(false)
                 })
         }
@@ -210,9 +214,13 @@ const Feedbacks = (props) => {
                 rows={feedbacks}
                 columns={columns}
                 pageSize={10}
+                onRowClick={(rows) => handleFeedbackClicked(rows)}
+                pagination
+                paginationMode="server"
+                onPageChange={pagingHandler}
+                rowCount={totalItems}
                 autoHeight
                 loading={loading}
-                onRowClick={(rows) => handleFeedbackClicked(rows)}
             />
             {showErrorSnackbar}
             {showFeedbackDetails}

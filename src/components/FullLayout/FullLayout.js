@@ -21,6 +21,7 @@ import { useSnackbar } from 'notistack'
 
 import AdminRoute from '../../routes/AdminRoute/AdminRoute';
 import axios from '../../api/axios';
+import AlertSnackbar from './UI/AlertSnackbar/AlertSnackbar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,47 +67,40 @@ const FullLayout = () => {
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [notiList, setNotiList] = useState([])
 
+  const [openAlertSnackbar, setOpenAlertSnackbar] = useState(false)
+  const [message, setMessage] = useState('')
+  const [alertType, setAlertType] = useState('')
+
   function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=ihelp-admin.online";
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=ihelp-admin.online";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=localhost";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=localhost";
   }
 
-  const deleteDeviceToken = async() => {
+  const logoutHandler = () => {
     const deviceTokenInfo = {
       deviceToken: fcmToken,
       email: user.email,
     };
     console.log('before delete: '+ JSON.stringify(deviceTokenInfo))
-    await axios.delete('/signout', { data: deviceTokenInfo } )
+    axios.delete('/signout', { data: deviceTokenInfo } )
     .then(res => {
-      console.log(res)
-    }).catch(err => {
-      console.log(err)
-    })
-  }
-
-  const logoutHandler = async() => {
-      await deleteDeviceToken()
-      setCookie('accessToken', '', 0)
+      setCookie("accessToken", "", 0);
       setCookie('userEmail', '', 0)
       setCookie('deviceToken', '', 0)
       setRole(null)
       setUser(null)
       setFcmToken(null)
       setAccessToken(null)
+    }).catch(err => {
+      console.log(err)
+      setMessage(err.data.message)
+      setAlertType('error')
+      setOpenAlertSnackbar(true)
+    })  
   }
-
-  let showSideBar = (
-    <Sidebar
-        isSidebarOpen={isSidebarOpen}
-        isMobileSidebarOpen={isMobileSidebarOpen}
-        onSidebarClose={() => setMobileSidebarOpen(false)}
-        logoutClicked={logoutHandler}
-      />
-  )
 
   const receiveForegroundNotification = () => {
     messaging.onMessage((payload) => {
@@ -121,6 +115,10 @@ const FullLayout = () => {
     })
   }
 
+  const handleCloseAlertSnackbar = () => {
+    setOpenAlertSnackbar(false)
+  }
+
   useEffect(() => {
     loadInfo()
     loadNotification()
@@ -131,6 +129,27 @@ const FullLayout = () => {
   useEffect(() => {
     loadNotification()
   }, [enqueueSnackbar])
+
+  let showSideBar = (
+    <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        isMobileSidebarOpen={isMobileSidebarOpen}
+        onSidebarClose={() => setMobileSidebarOpen(false)}
+        logoutClicked={logoutHandler}
+      />
+  )
+
+  let showAlertSnackbar = null
+  if(openAlertSnackbar) {
+    showAlertSnackbar = (
+      <AlertSnackbar
+        isOpen={openAlertSnackbar}
+        close={handleCloseAlertSnackbar}
+        message={message}
+        alertType={alertType}
+      />
+    )
+  }
 
   return (
 
@@ -159,6 +178,7 @@ const FullLayout = () => {
           </div>
         </div>
       </div>
+      {showAlertSnackbar}
     </div>
   );
 }
