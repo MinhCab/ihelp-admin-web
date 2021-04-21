@@ -28,7 +28,6 @@ import TabsLayout from "../../../FullLayout/UI/TabsLayout/TabsLayout";
 import ParticipantDetails from "../../Users/Participants/ParticipantDetails/ParticipantDetails";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
-import FeedbackDetails from "../../Feedbacks/FeedbackDetails/FeedbackDetails";
 import { RejectReasonDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import EditService from "../EditService/EditService";
 
@@ -493,7 +492,6 @@ const ServiceDetail = (props) => {
                     <strong>Status: </strong>
                     <Chip
                       color="primary"
-                      variant="outlined"
                       label={status.name}
                     />
                   </Typography>

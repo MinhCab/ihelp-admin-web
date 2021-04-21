@@ -10,24 +10,6 @@ import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import CreateService from './CreateService/CreateService'
 
-
-const buttonTheme = createMuiTheme({
-    palette: {
-        primary: {
-            main: '#76ff03',
-        },
-        inherit: {
-            main: '#7c4dff',
-        },
-        secondary: {
-            main: '#2979ff',
-        },
-        default: {
-            main: '#ff1744',
-        }
-    }
-})
-
 const additionalButtonTheme = createMuiTheme({
   palette: {
     primary: {
