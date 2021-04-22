@@ -81,10 +81,18 @@ const FullLayout = () => {
     
   // }
 
-  function removeCookie(cname) {
-    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.ihelp-admin.online/"
-    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/home; domain=.ihelp-admin.online/"
-  }
+ 
+  function deleteAllCookies() {
+    var cookies = document.cookie.split(";");
+
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/home";
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+}
 
   const logoutHandler = () => {
     const deviceTokenInfo = {
@@ -97,9 +105,7 @@ const FullLayout = () => {
       // setCookie("accessToken", "", 0);
       // setCookie('userEmail', '', 0)
       // setCookie('deviceToken', '', 0)
-      removeCookie("accessToken")
-      removeCookie("userEmail")
-      removeCookie("deviceToken")
+      deleteAllCookies()
       setRole(null)
       setUser(null)
       setFcmToken(null)
