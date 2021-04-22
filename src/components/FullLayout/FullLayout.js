@@ -72,12 +72,18 @@ const FullLayout = () => {
   const [message, setMessage] = useState('')
   const [alertType, setAlertType] = useState('')
 
-  function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=.ihelp-admin.online";
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=.ihelp-admin.online";
+  // function setCookie(cname, cvalue, exdays) {
+  //   var d = new Date();
+  //   d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  //   var expires = "expires="+ d.toUTCString();
+    // document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=.ihelp-admin.online";
+    // document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=.ihelp-admin.online";
+    
+  // }
+
+  function removeCookie(cname) {
+    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.ihelp-admin.online/"
+    document.cookie = cname + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/home; domain=.ihelp-admin.online/"
   }
 
   const logoutHandler = () => {
@@ -88,9 +94,12 @@ const FullLayout = () => {
     console.log('before delete: '+ JSON.stringify(deviceTokenInfo))
     axios.delete('/signout', { data: deviceTokenInfo } )
     .then(res => {
-      setCookie("accessToken", "", 0);
-      setCookie('userEmail', '', 0)
-      setCookie('deviceToken', '', 0)
+      // setCookie("accessToken", "", 0);
+      // setCookie('userEmail', '', 0)
+      // setCookie('deviceToken', '', 0)
+      removeCookie("accessToken")
+      removeCookie("userEmail")
+      removeCookie("deviceToken")
       setRole(null)
       setUser(null)
       setFcmToken(null)
