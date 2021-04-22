@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 import { SidebarWidth } from '../../assets/jss/Theme-variable.js'
-import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
+import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import PrivateRoute from '../../routes/PrivateRoute/PrivateRoute';
 
 import Dashboard from '../ContentComponents/Dashboard/Dashboard'
@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FullLayout = () => {
   const classes = useStyles();
+  const history = useHistory()
   const { url } = useRouteMatch()
   const { enqueueSnackbar } = useSnackbar();
   const { fcmToken, user, setUser, setAccessToken, setRole, setFcmToken, loadInfo } = useAuth()
@@ -75,8 +76,8 @@ const FullLayout = () => {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires="+ d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=ihelp-admin.online";
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=ihelp-admin.online";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=.ihelp-admin.online";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=.ihelp-admin.online";
   }
 
   const logoutHandler = () => {
