@@ -63,7 +63,7 @@ const RejectReasonDialog = (props) => {
             </DialogContent>
             <DialogActions>
                 <Button color="primary" variant="contained" onClick={props.closing}>Cancel</Button>
-                <Button color="secondary" variant="outlined" type='submit'>Rejected</Button>
+                <Button color="secondary" variant="outlined" type='submit'>Reject</Button>
             </DialogActions>
             </form>
         </Dialog>
