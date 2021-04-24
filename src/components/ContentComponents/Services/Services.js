@@ -117,21 +117,25 @@ const Services = () => {
   const [message, setMessage] = React.useState('')
   const [alertType, setAlertType] = React.useState('')
 
+  const loadServices = () => {
+    axios
+      .get("/api/services?page=" + page)
+      .then((res) => {
+        setTotalItems(res.data.totalItems);
+        setServices(res.data.services);
+        console.log(res)
+        setLoading(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
+  }
+
   React.useEffect(() => {
     if (!loading) {
       setLoading(true)
       if (search.length <= 0) {
-        axios
-          .get("/api/services?page=" + page)
-          .then((res) => {
-            setServices(res.data.services);
-            setTotalItems(res.data.totalItems);
-            setLoading(false);
-          })
-          .catch((err) => {
-            // console.log(err.message);
-            setLoading(false);
-          });
+        loadServices()
       } else {
         searchAPI()
       }
@@ -203,6 +207,7 @@ const Services = () => {
         setOpenCreateServiceDialog(false)
         setPage(0)
         setTotalItems(0)
+        loadServices()
       })
       .catch((err) => {
         setOpenAlertSnackbar(true)
@@ -296,18 +301,18 @@ const Services = () => {
               pageSize={10}
               onRowClick={(rows) => showServiceDetails(rows)}
               pagination
-              paginationMode="server"
               onPageChange={pagingHandler}
+              paginationMode="server"
               rowCount={totalItems}
-              autoHeight
               loading={loading}
+              autoHeight
             />
           </div>
         </CardContent>
       </Card>
+      {alertSnackbar}
       {showCreateServiceDialog}
       {showDiscard}
-      {alertSnackbar}
     </>
   );
 }

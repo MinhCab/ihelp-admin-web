@@ -149,8 +149,8 @@ const Users = () => {
       axios
           .get("/accounts?page=" + page)
           .then((res) => {
-            setIdToUserList(res.data.accounts);
             setTotalItems(res.data.totalItems);
+            setIdToUserList(res.data.accounts);
             setLoading(false);
           })
           .catch((err) => {

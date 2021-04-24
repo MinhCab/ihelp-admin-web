@@ -161,6 +161,7 @@ const Events = () => {
         setOpenCreateEventDialog(false)
         setPage(0)
         setTotalItems(0)
+        loadEvents()
       })
       .catch((err) => {
         setMessage(err.response.data.message)
@@ -212,23 +213,27 @@ const Events = () => {
     setSearch('')
   }
 
+  const loadEvents = () => {
+    axios
+      .get("/api/events?page=" + page)
+      .then((res) => {
+        setTotalItems(res.data.totalItems);
+        setEvents(res.data.events);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setMessage("Cannot get information from server, please try again");
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+        setLoading(false);
+      });
+  }
+
   useEffect(() => {
     if (!loading) {
       setLoading(true)
       if (search.length <= 0) {
-        axios
-          .get("/api/events?page=" + page)
-          .then((res) => {
-            setTotalItems(res.data.totalItems);
-            setEvents(res.data.events);
-            setLoading(false)
-          })
-          .catch((error) => {
-            setMessage('Cannot get information from server, please try again')
-            setAlertType('error')
-            setOpenAlertSnackbar(true)
-            setLoading(false)
-          });
+        loadEvents()
       } else {
         searchAPI()
       }
@@ -322,7 +327,7 @@ const Events = () => {
               onPageChange={pagingHandler}
               paginationMode="server"
               rowCount={totalItems}
-              autoHeight="true"
+              autoHeight
               loading={loading}
             />
           </div>
