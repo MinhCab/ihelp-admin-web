@@ -25,8 +25,8 @@ const CreateUser = (props) => {
         setGender(event.target.value)
     }
 
-    const birthDateHandler = (event) => {
-        setBirthDate(event.target.value)
+    const birthDateHandler = (date) => {
+        setBirthDate(date)
     }
 
     const phoneHandler = (value) => {
@@ -42,7 +42,7 @@ const CreateUser = (props) => {
         const newUser = {
           dateOfBirth: moment(birthDate).format("yyyy-MM-DD"),
           email: email,
-          fullname: fullname,
+          fullName: fullname,
           gender: gender,
           password: "123",
           phone: phone,

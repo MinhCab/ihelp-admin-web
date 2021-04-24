@@ -135,7 +135,7 @@ const Profile = (props) => {
       const profile = {
         dateOfBirth: moment(birthDate).format("yyyy-MM-DD"),
         email: email,
-        fullname: fullname,
+        fullName: fullname,
         gender: gender,
         phone: phone,
       };

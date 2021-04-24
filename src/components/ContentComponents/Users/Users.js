@@ -17,7 +17,7 @@ const columns = [
         }
     },
     { field: 'email', headerName: 'Email', width: 230 },
-    { field: 'fullname', headerName: 'Name', width: 230 },
+    { field: 'fullName', headerName: 'Name', width: 230 },
     { field: 'gender', headerName: 'Gender', width: 120, 
       renderCell: (params) => {
         if(params.value) {
@@ -110,7 +110,7 @@ const Users = () => {
       axios.post('/signup', newUser)
       .then(res => {
         setMessage(res.data)
-        setUsers([])
+        loadUserList()
         setAlertType('success')
         setOpenAlertSnackbar(true)
         setOpenCreateUserDialog(false)
@@ -144,19 +144,25 @@ const Users = () => {
       setPage(0)
       searchAPI()
     }
+
+    const loadUserList = () => {
+      axios
+          .get("/accounts?page=" + page)
+          .then((res) => {
+            setIdToUserList(res.data.accounts);
+            setTotalItems(res.data.totalItems);
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err.message);
+          });
+    }
     
     React.useEffect(() => {
-      if(!loading) {
-        setLoading(true)
-      axios.get('/accounts?page=' + page)
-          .then(res => {
-            setIdToUserList(res.data.accounts);
-            setTotalItems(res.data.totalItems)
-            setLoading(false)
-          }).catch(err => {
-              console.log(err.message)
-          })
-        }
+      if (!loading) {
+        setLoading(true);
+        loadUserList()
+      }
   }, [page, totalItems])
 
     let showAlertSnackbar = null
