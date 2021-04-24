@@ -5,7 +5,6 @@ import React from 'react'
 import { useHistory } from 'react-router'
 
 import axios from '../../../api/axios'
-import { useAuth } from '../../../hoc/StoringAuth/AuthContext'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import CreateUser from './CreateUser/CreateUser'
@@ -50,7 +49,6 @@ const columns = [
 
 const Users = () => {
     const history = useHistory()
-    const { user } = useAuth()
     const [users, setUsers] = React.useState([])
     const [loading, setLoading] = React.useState(false)
     const [openDiscard, setOpenDiscard] = React.useState(false)

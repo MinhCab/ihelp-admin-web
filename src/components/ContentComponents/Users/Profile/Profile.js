@@ -334,7 +334,7 @@ const Profile = (props) => {
             <Grid item xs>
               <Paper
                 className={classes.paper}
-                style={{ padding: 5, color: "white", background: "#0066ff" }}
+                style={{ padding: 5, color: "white", background:'#9ed5fc'  }}
               >
                 <Typography>
                   <strong>Balance Point</strong>
@@ -345,7 +345,7 @@ const Profile = (props) => {
             <Grid item xs>
               <Paper
                 className={classes.paper}
-                style={{ padding: 5, background: "#00ff99" }}
+                style={{ padding: 5, background: '#93e6f7'  }}
               >
                 <Typography>
                   <strong>Contribution Point</strong>
@@ -356,7 +356,7 @@ const Profile = (props) => {
             <Grid item xs>
               <Paper
                 className={classes.paper}
-                style={{ padding: 5, height: 75, background: "#ff99ff" }}
+                style={{ padding: 5, height: 75, background: '#4293ec' }}
               >
                 <Typography>
                   <strong>Role</strong>
