@@ -182,7 +182,7 @@ const ServiceDetail = (props) => {
       });
   }; 
 
-  const changeStatusHandler = async(statusId) => {
+  const changeStatusHandler = (statusId) => {
     axios
       .put("/api/services/" + props.match.params.id + "/" + statusId)
       .then((res) => {

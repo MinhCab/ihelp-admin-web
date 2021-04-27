@@ -109,6 +109,7 @@ const FullLayout = () => {
   const receiveForegroundNotification = () => {
     messaging.onMessage((payload) => {
       enqueueSnackbar(payload.notification.title, { variant: 'info' })
+      loadNotification()
     });
   }
 
@@ -145,6 +146,8 @@ const FullLayout = () => {
       console.log(res)
       setTotalNotiPages(res.data.totalPages)
       addToNotiList(res.data.notifications)
+    }).catch(err => {
+      console.log(err.message)
     })
   }
 
@@ -153,14 +156,13 @@ const FullLayout = () => {
   }
 
   useEffect(() => {
-    loadNotification()
-    receiveForegroundNotification()
-  }, [enqueueSnackbar])
-
-  useEffect(() => {
     loadInfo()
     loadNotification()
   }, [notiPage])
+
+  useEffect(() => {
+    receiveForegroundNotification()
+  }, [])
 
   let showSideBar = (
     <Sidebar
@@ -186,7 +188,7 @@ const FullLayout = () => {
   return (
 
     <div className={classes.root}>
-      <Header notiList={notiList} totalPages={totalNotiPages} pagingAction={showMoreHandler} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+      <Header notiList={notiList} currPage={notiPage} totalNotiPages={totalNotiPages} notiPagingAction={showMoreHandler} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
       {showSideBar}
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>

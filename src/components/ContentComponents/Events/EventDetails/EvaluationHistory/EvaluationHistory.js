@@ -53,7 +53,7 @@ const EvaluationHistory = (props) => {
     }, [page, setTotalPages])
 
     let showShowMoreButton = null
-    if(totalPages >> 1) {
+    if((totalPages - 1) !== page ) {
         showShowMoreButton = (
             <Button fullWidth onClick={pagingHandler}>Show more</Button>
         )
