@@ -6,11 +6,13 @@ import {
   CardHeader,
   CardMedia,
   Chip,
+  createMuiTheme,
   Grid,
   IconButton,
   makeStyles,
   Paper,
   Popover,
+  ThemeProvider,
   Typography,
 } from "@material-ui/core";
 import { MoreVert } from "@material-ui/icons";
@@ -76,6 +78,25 @@ const useStyles = makeStyles((theme) => ({
     margin: 2,
   },
 }));
+
+const additionalButtonTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#008c3a",
+    },
+    secondary: {
+      main: "#039be5",
+    },
+  },
+});
+
+const additionalButtonTheme2 = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#4aedc4",
+    },
+  },
+});
 
 const ServiceDetail = (props) => {
   const classes = useStyles();
@@ -309,6 +330,7 @@ const ServiceDetail = (props) => {
   let showAlertSnackbar = null;
   let showFeedbackDetails = null;
   let showRejectDialog = null;
+  let showStatus = null
   let showImages = (
     <CardMedia
       className={classes.media}
@@ -410,6 +432,32 @@ const ServiceDetail = (props) => {
     );
   }
 
+  if(status.id === 3) {
+    showStatus = (
+      <ThemeProvider theme={additionalButtonTheme}>
+        <Chip color="primary" label={status.name} />
+      </ThemeProvider>
+    ); 
+  } else if(status.id === 2) {
+    showStatus = (
+      <ThemeProvider theme={additionalButtonTheme}>
+        <Chip color="secondary" label={status.name} />
+      </ThemeProvider>
+    ); 
+  } else if(status.id === 4) {
+    showStatus = <Chip color="primary" label={status.name} />;  
+  } else if(status.id === 5) {
+    showStatus = <Chip color="inherit" label={status.name} />; 
+  } else if(status.id === 6) {
+    showStatus = <Chip color="secondary" label={status.name} />; 
+  } else {
+    showStatus = (
+      <ThemeProvider theme={additionalButtonTheme2}>
+        <Chip color="primary" label={status.name} />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <>
       <Card className={classes.root}>
@@ -490,10 +538,7 @@ const ServiceDetail = (props) => {
                     component="span"
                   >
                     <strong>Status: </strong>
-                    <Chip
-                      color="primary"
-                      label={status.name}
-                    />
+                    {showStatus}
                   </Typography>
                 </Grid>
                 <Grid item container xs className={classes.Typography}>

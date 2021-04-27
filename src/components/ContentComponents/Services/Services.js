@@ -123,7 +123,6 @@ const Services = () => {
       .then((res) => {
         setTotalItems(res.data.totalItems);
         setServices(res.data.services);
-        console.log(res)
         setLoading(false);
       })
       .catch((err) => {

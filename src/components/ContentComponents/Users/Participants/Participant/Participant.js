@@ -1,4 +1,5 @@
 import { Card, CardActionArea, CardContent, CardMedia, Divider, makeStyles, Typography } from '@material-ui/core';
+import moment from 'moment';
 import React from 'react'
 
 const useStyles = makeStyles((theme) => ({
@@ -26,15 +27,15 @@ const Participant = (props) => {
     return (
       <Card className={classes.root} onClick={() => props.viewDetails(details)}>
         <CardMedia
-          className={classes.cover}
           image={details.imageUrl}
+          className={classes.cover}
           title="Live from space album cover"
         />
         <CardActionArea>
           <div className={classes.details}>
             <CardContent className={classes.content}>
               <Typography component="h5" variant="h5">
-                <strong>{details.fullname}</strong>
+                <strong>{details.fullName}</strong>
               </Typography>
               <Typography
                 style={{ marginBottom: "10px" }}  
@@ -49,14 +50,14 @@ const Participant = (props) => {
                 component="p"
                 variant="body2"
               >
-                <strong>Gender: </strong>Male
+                <strong>Gender: </strong> {details.gender ? <>Male</> : <>Female</>}
               </Typography>
               <Typography
                 style={{ marginBottom: "10px" }}
                 component="p"
                 variant="body2"
               >
-                <strong>Join date: </strong>20-10-2022
+                <strong>Join date: </strong>{moment(details.joinDate).format('MMMM DD, YYYY')}
               </Typography>
               <Typography
                 style={{ marginBottom: "10px" }}
@@ -72,7 +73,7 @@ const Participant = (props) => {
                 component="p"
                 variant="body2"
               >
-                <strong>Remaining points: </strong>4241
+                <strong>Remaining points: </strong>{details.balancePoint}
               </Typography>
             </CardContent>
           </div>

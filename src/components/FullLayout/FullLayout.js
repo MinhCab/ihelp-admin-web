@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core';
 import Header from './Header/Header';
 import Sidebar from './Sidebar/Sidebar';
 import { SidebarWidth } from '../../assets/jss/Theme-variable.js'
-import { Redirect, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import PrivateRoute from '../../routes/PrivateRoute/PrivateRoute';
 
 import Dashboard from '../ContentComponents/Dashboard/Dashboard'
@@ -60,27 +60,19 @@ const useStyles = makeStyles((theme) => ({
 
 const FullLayout = () => {
   const classes = useStyles();
-  const history = useHistory()
   const { url } = useRouteMatch()
   const { enqueueSnackbar } = useSnackbar();
   const { fcmToken, user, setUser, setAccessToken, setRole, setFcmToken, loadInfo } = useAuth()
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const [totalNotiPages, setTotalNotiPages] = useState(0)
   const [notiList, setNotiList] = useState([])
+  const [notiPage, setNotiPage] = useState(0)
 
   const [openAlertSnackbar, setOpenAlertSnackbar] = useState(false)
   const [message, setMessage] = useState('')
   const [alertType, setAlertType] = useState('')
-
-  // function setCookie(cname, cvalue, exdays) {
-  //   var d = new Date();
-  //   d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  //   var expires = "expires="+ d.toUTCString();
-    // document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/home;domain=.ihelp-admin.online";
-    // document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;domain=.ihelp-admin.online";
-    
-  // }
-
  
   function deleteAllCookies() {
     var cookies = document.cookie.split(";");
@@ -88,8 +80,8 @@ const FullLayout = () => {
         var cookie = cookies[i];
         var eqPos = cookie.indexOf("=");
         var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/home";
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/home";
     }
 }
 
@@ -101,9 +93,6 @@ const FullLayout = () => {
     console.log('before delete: '+ JSON.stringify(deviceTokenInfo))
     axios.delete('/signout', { data: deviceTokenInfo } )
     .then(res => {
-      // setCookie("accessToken", "", 0);
-      // setCookie('userEmail', '', 0)
-      // setCookie('deviceToken', '', 0)
       deleteAllCookies()
       setRole(null)
       setUser(null)
@@ -123,10 +112,39 @@ const FullLayout = () => {
     });
   }
 
+  const showMoreHandler = () => {
+    setNotiPage(notiPage + 1)
+  }
+
+  const addToNotiList = (listing) => {
+    let newList = []
+    newList = notiList
+    newList.push(...listing)
+    setNotiList(newList)
+  } 
+
+  const getCookie = (cname) => {
+    let name = cname + '=';
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
+  }
+
   const loadNotification = () => {
-    axios.get('/notifications/' + user.email)
+    axios.get('/notifications/' + getCookie('userEmail') + '?page=' + notiPage)
     .then(res => {
-      setNotiList(res.data)
+      console.log(res)
+      setTotalNotiPages(res.data.totalPages)
+      addToNotiList(res.data.notifications)
     })
   }
 
@@ -135,15 +153,14 @@ const FullLayout = () => {
   }
 
   useEffect(() => {
-    loadInfo()
     loadNotification()
     receiveForegroundNotification()
-    console.log(fcmToken)
-  }, [fcmToken])
+  }, [enqueueSnackbar])
 
   useEffect(() => {
+    loadInfo()
     loadNotification()
-  }, [enqueueSnackbar])
+  }, [notiPage])
 
   let showSideBar = (
     <Sidebar
@@ -169,7 +186,7 @@ const FullLayout = () => {
   return (
 
     <div className={classes.root}>
-      <Header notiList={notiList} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
+      <Header notiList={notiList} totalPages={totalNotiPages} pagingAction={showMoreHandler} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
       {showSideBar}
       <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
         <div className={classes.contentContainer}>
@@ -183,8 +200,8 @@ const FullLayout = () => {
               <PrivateRoute exact path={`${url}/services`} component={Services} />
               <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
 
-              <AdminRoute exact path={`${url}/users`} component={Users} />
               <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
+              <AdminRoute exact path={`${url}/users`} component={Users} />
 
               <AdminRoute exact path={`${url}/reports`} component={Reports} />
               

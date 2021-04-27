@@ -31,7 +31,6 @@ const DiscardAlertDialog = (props) => {
 }
 
 const StatusAlertDialog = (props) => {
-
     return (
       <Dialog open={props.isOpen} onClose={props.closing}>
         <DialogTitle>

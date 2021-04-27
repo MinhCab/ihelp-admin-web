@@ -452,27 +452,26 @@ const EventDetail = (props) => {
   }
 
   let showStatus = null 
-  switch(status.id) {
-    case 3: showStatus = (
+  if(status.id === 3) {
+    showStatus = (
       <ThemeProvider theme={additionalButtonTheme}>
         <Chip color="primary" label={status.name} />
       </ThemeProvider>
     ); 
-    case 2: showStatus = (
+  } else if(status.id === 2) {
+    showStatus = (
       <ThemeProvider theme={additionalButtonTheme}>
         <Chip color="secondary" label={status.name} />
       </ThemeProvider>
     ); 
-    case 4: showStatus = (
-        <Chip color="primary" label={status.name} />
-    ); 
-    case 5: showStatus = (
-        <Chip color="inherit" label={status.name} />
-    ); 
-    case 6: showStatus = (
-        <Chip color="secondary" label={status.name} />
-    ); 
-    default: showStatus = (
+  } else if(status.id === 4) {
+    showStatus = <Chip color="primary" label={status.name} />;  
+  } else if(status.id === 5) {
+    showStatus = <Chip color="inherit" label={status.name} />; 
+  } else if(status.id === 6) {
+    showStatus = <Chip color="secondary" label={status.name} />; 
+  } else {
+    showStatus = (
       <ThemeProvider theme={additionalButtonTheme2}>
         <Chip color="primary" label={status.name} />
       </ThemeProvider>

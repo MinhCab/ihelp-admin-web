@@ -5,6 +5,7 @@ import PhoneIcon from '@material-ui/icons/Phone';
 import BalancePointsIcon from '@material-ui/icons/SettingsInputSvideo';
 import React from 'react'
 import { useHistory } from 'react-router';
+import moment from 'moment';
 
 const useStyles = makeStyles((theme) => ({
     avatarLabel: {
@@ -45,7 +46,7 @@ const ParticipantDetails = (props) => {
                 variant="h4"
                 color="textPrimary"
               >
-                <strong>{details.fullname}</strong>
+                <strong>{details.fullName}</strong>
               </Typography>
 
               <Typography
@@ -62,7 +63,7 @@ const ParticipantDetails = (props) => {
                   variant="body1"
                   color="textPrimary"
                 >
-                  <WcIcon style={{ marginRight: 10 }} /> Male
+                  <WcIcon style={{ marginRight: 10 }} /> {details.gender ? <>Male</> : <>Female</>}
                 </Typography>
 
                 <br />
@@ -73,7 +74,7 @@ const ParticipantDetails = (props) => {
                   color="textPrimary"
                 >
                   <AlarmOnIcon style={{ marginRight: 10 }} /> Joint this event
-                  on 20-10-2022
+                  on {moment(details.joinDate).format('MMMM DD, YYYY')}
                 </Typography>
 
                 <br />
@@ -93,7 +94,7 @@ const ParticipantDetails = (props) => {
                   variant="body1"
                   color="primary"
                 >
-                  <strong><BalancePointsIcon style={{ marginRight: 10 }} />Balance points: 4241</strong>
+                  <strong><BalancePointsIcon style={{ marginRight: 10 }} />Balance points: {details.balancePoint}</strong>
                 </Typography>
               </div>
             </Grid>

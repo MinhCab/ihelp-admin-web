@@ -14,7 +14,7 @@ function AdminRoute({ component: Component, ...rest }) {
             {...rest}
             render={(props) => {
                 return(
-                    (isAuth && isAdmin) ? (<Component {...props}/>) : (<Redirect to={{pathname: '/', state: { from: location }}}/>)
+                    (isAuth && isAdmin) ? (<Component {...props}/>) : (<Redirect to={{pathname: '/home', state: { from: location }}}/>)
                 )
             }}
         />

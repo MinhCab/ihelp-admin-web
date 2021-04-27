@@ -25,9 +25,7 @@ import {
   } from "react-places-autocomplete";
   import { TextArea } from "semantic-ui-react";
   
-  import axios from '../../../../api/axios'
-  import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'
-  
+  import axios from '../../../../api/axios'  
   const useStyles = makeStyles((theme) => ({
   
     descriptionField: {
