@@ -105,8 +105,12 @@ const Profile = (props) => {
     setOpenPhotoUploadDialog(false);
   };
 
-  const handleUploadImage = async (file) => {
-    setImage(file);
+  const finishUpload = (file) => {
+    setImage(file)
+    handleUploadImage()
+  }
+
+  const handleUploadImage = async () => {
     const imageLink = await uploadImageToFirebase()
     if(imageLink) {
       if(details.imageUrl) {
@@ -350,7 +354,7 @@ const Profile = (props) => {
       <PhotoUploadDialog
         isOpen={openPhotoUploadDialog}
         cancel={handleClosePhotoUploadDialog}
-        confirm={handleUploadImage}
+        confirm={finishUpload}
         image={image}
       />
     );

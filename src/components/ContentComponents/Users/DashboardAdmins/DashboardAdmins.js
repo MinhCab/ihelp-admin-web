@@ -17,22 +17,7 @@ const DashboardAdmins = () => {
     return (
         <Card>
             <CardHeader titleTypographyProps={{ variant: 'h4' }} title="Admins" subheader="List all Admins here" />
-            <List>
-                {
-                    Admins.map((admin) => {
-                        return (
-                            <ListItem key={admin.id} style={style} button>
-                                <ListItemAvatar>
-                                    <Avatar style={{ background: '#89c9f3' }}>
-                                        {admin.avatar}
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText primary={admin.name} secondary={admin.role} />
-                            </ListItem>
-                        )
-                    })
-                }
-            </List>
+            
         </Card>
     );
 }
