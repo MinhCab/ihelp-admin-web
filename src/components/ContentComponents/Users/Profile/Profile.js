@@ -31,7 +31,6 @@ import ChangePassword from "./ChangePassword/ChangePassword";
 import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents";
 import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext"
-import { firebase } from '../../../../api/Firebase/firebase-config'
 import OTP from "./ChangePassword/OTP/OTP";
 
 const useStyles = makeStyles({
@@ -178,9 +177,22 @@ const Profile = (props) => {
     setOpenChangePasswordDialog(true);
   };
   
-  const changePassword = () => {
+  const changePassword = (changePassInfo) => {
     // setFirebaseOTPTrigger(firebase.auth().signInWithPhoneNumber(phone))
     // setOpenOTPDialog(true)
+    axios.put('/accounts/update_password', changePassInfo)
+    .then(res => {
+      console.log(res)
+      setMessage(res.data)
+      setAlertType('success')
+      setOpenAlertSnackbar(true)
+      setOpenChangePasswordDialog(false)
+      loadUserInfo()
+    }).catch(error => {
+      setMessage(error.response.data.message)
+      setAlertType('error')
+      setOpenAlertSnackbar(true)
+    })
   };
 
   const confirmChangePassword = (otp) => {
@@ -219,24 +231,30 @@ const Profile = (props) => {
     openOTPDialog(false)
   }
 
+  const loadUserInfo = () => {
+    axios
+      .get("/accounts/" + props.match.params.email)
+      .then((res) => {
+        setDetails(res.data);
+        setLoading(false);
+        setRole(res.data.role.id);
+      })
+      .catch((err) => {
+        setMessage(err.message);
+        setOpenAlertSnackbar(true);
+        setAlertType("error");
+        setLoading(false);
+      });
+  }
+
   useEffect(() => {
     if (!loading) {
       setLoading(true);
-      axios
-        .get("/accounts/" + props.match.params.email)
-        .then((res) => {
-          setDetails(res.data);
-          setLoading(false);
-          setRole(res.data.role.id)
-        })
-        .catch((err) => {
-          setMessage(err.message);
-          setOpenAlertSnackbar(true);
-          setAlertType("error");
-          setLoading(false);
-        });
+      loadUserInfo()
     }
   }, [details, role]);
+
+  
 
   let showErrorSnackbar = null;
   let showDiscardDialog = null;
@@ -311,6 +329,7 @@ const Profile = (props) => {
   if (openChangePasswordDialog) {
     showChangePasswordDialog = (
       <ChangePassword
+        userEmail={details.email}
         isOpen={openChangePasswordDialog}
         close={closeChangePasswordHandler}
         confirm={changePassword}
