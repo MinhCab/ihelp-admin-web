@@ -158,11 +158,8 @@ const FullLayout = () => {
   useEffect(() => {
     loadInfo()
     loadNotification()
-  }, [notiPage])
-
-  useEffect(() => {
     receiveForegroundNotification()
-  }, [])
+  }, [notiPage])
 
   let showSideBar = (
     <Sidebar
