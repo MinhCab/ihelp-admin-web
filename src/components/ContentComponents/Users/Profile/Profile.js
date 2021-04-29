@@ -31,6 +31,7 @@ import ChangePassword from "./ChangePassword/ChangePassword";
 import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents";
 import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext"
+import { storage } from "../../../../api/Firebase/firebase-config";
 import OTP from "./ChangePassword/OTP/OTP";
 
 const useStyles = makeStyles({
@@ -53,7 +54,7 @@ const useStyles = makeStyles({
 
 const Profile = (props) => {
   const classes = useStyles();
-  const { user } = useAuth();
+  const { user, loadInfo } = useAuth();
   const [details, setDetails] = useState({});
   const [role, setRole] = useState(null);
 
@@ -62,7 +63,7 @@ const Profile = (props) => {
   const [birthDate, setBirthDate] = useState(null);
   const [phone, setPhone] = useState(0);
   const [gender, setGender] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState();
@@ -104,9 +105,70 @@ const Profile = (props) => {
     setOpenPhotoUploadDialog(false);
   };
 
-  const handleUploadImage = (file) => {
+  const handleUploadImage = async (file) => {
     setImage(file);
-    setOpenPhotoUploadDialog(false);
+    const imageLink = await uploadImageToFirebase()
+    if(imageLink) {
+      if(details.imageUrl) {
+        axios.put('/accounts/' + details.email + '/avatar', imageLink)
+        .then(res => {
+          setMessage(res.data)
+          setAlertType('success')
+          setOpenAlertSnackbar(true)
+          setOpenPhotoUploadDialog(false);
+        }).catch(err => {
+          setMessage(err.response.data.message)
+          setAlertType('error')
+          setOpenAlertSnackbar(true)
+          setOpenPhotoUploadDialog(false)
+        })
+      } else {
+        axios
+          .post("/accounts/" + details.email + "/avatar", imageLink)
+          .then((res) => {
+            setMessage(res.data);
+            setAlertType("success");
+            setOpenAlertSnackbar(true);
+            setOpenPhotoUploadDialog(false);
+            loadUserInfo()
+            loadInfo()
+          })
+          .catch((err) => {
+            setMessage(err.response.data.message);
+            setAlertType("error");
+            setOpenAlertSnackbar(true);
+            setOpenPhotoUploadDialog(false);
+          });
+      }
+    }
+  };
+
+  const uploadImageToFirebase = async () => {
+    if (image === null) {
+      return null;
+    } else {
+      return new Promise((resolve, reject) => {
+        const uploadImageTask = storage
+          .ref(`images/avatars/${image.name}`)
+          .put(image);
+        uploadImageTask.on(
+          "state_changed",
+          (snapshot) => {},
+          (error) => {
+            reject("upload image to firebase - reject: " + error);
+          },
+          () => {
+            storage
+              .ref("images/avatars/")
+              .child(image.name)
+              .getDownloadURL()
+              .then((url) => {
+                resolve(url);
+              });
+          }
+        );
+      });
+    }
   };
 
   const handleCloseErrorSnackbar = () => {
@@ -343,7 +405,7 @@ const Profile = (props) => {
         <Box textAlign="center">
           <IconButton onClick={editAvatarHandler}>
             <Avatar
-              alt="Travis Howard"
+              alt="Avatar"
               className={classes.avatar}
               src={details.imageUrl}
             />

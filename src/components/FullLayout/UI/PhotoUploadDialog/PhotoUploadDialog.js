@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, makeStyles } from '@material-ui/core'
-import React, { useEffect } from 'react'
+import React from 'react'
 
 const useStyles = makeStyles(theme => ({
     previewRoot: {
@@ -47,10 +47,10 @@ const PhotoUploadDialog = (props) => {
     let showImage = null;
     let clearImage = null
     if (props.image !== null) {
-        useEffect(() => {
-            loadImageFromFile(props.image)
-        }, [])
-        showImage = (<img className={classes.imagePreview} src={imgURL} alt="Preview"/>)
+        loadImageFromFile(props.image);
+        showImage = (
+          <img className={classes.imagePreview} src={imgURL} alt="Preview" />
+        );
         clearImage = (<Button color="secondary" variant="contained" onClick={clearImageHandler}>Clear Image</Button>)
     }
     if (imageFile !== null) {
