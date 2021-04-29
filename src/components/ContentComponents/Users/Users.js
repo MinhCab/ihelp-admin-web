@@ -3,6 +3,7 @@ import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React from 'react'
 import { useHistory } from 'react-router'
+import ClearIcon from '@material-ui/icons/Clear';
 
 import axios from '../../../api/axios'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
@@ -126,15 +127,15 @@ const Users = () => {
     }
 
     const searchAPI = () => {
-      // axios.get('/accounts/' + user.email)
-      // .then((res) => {
-      //   setTotalItems(res.data.totalItems);
-      //   setServices(res.data.services);
-      //   setLoading(false)
-      // }).catch(err => {
-      //   setServices([])
-      //   setLoading(false)
-      // });
+      axios.get('/accounts/full_name/' + search + '?page=' + page)
+      .then((res) => {
+        setTotalItems(res.data.totalItems);
+        setIdToUserList(res.data.accounts);
+        setLoading(false)
+      }).catch(err => {
+        setUsers([])
+        setLoading(false)
+      });
     }
 
     const confirmSearchHandler = (event) => {
@@ -159,9 +160,13 @@ const Users = () => {
     React.useEffect(() => {
       if (!loading) {
         setLoading(true);
-        loadUserList()
+        if(search.length <= 0) {
+          loadUserList()
+        } else {
+          searchAPI()
+        }
       }
-  }, [page, totalItems])
+  }, [page, totalItems, search])
 
     let showAlertSnackbar = null
     let showCreateUserDialog = null
