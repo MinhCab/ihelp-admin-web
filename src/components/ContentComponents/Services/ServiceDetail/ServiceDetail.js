@@ -406,6 +406,8 @@ const ServiceDetail = (props) => {
         isOpen={openParticipantDetails}
         close={handleCloseParticipantDetails}
         details={participantDetails}
+        basePoint={details.point}
+        type='service'
       />
     );
   }

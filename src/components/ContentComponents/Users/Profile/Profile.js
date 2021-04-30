@@ -113,37 +113,22 @@ const Profile = (props) => {
   const handleUploadImage = async () => {
     const imageLink = await uploadImageToFirebase()
     if(imageLink) {
-      if(details.imageUrl) {
-        axios.put('/accounts/' + details.email + '/avatar', imageLink)
-        .then(res => {
-          setMessage(res.data)
-          setAlertType('success')
-          setOpenAlertSnackbar(true)
+      axios
+        .post("/accounts/" + details.email + "/avatar", imageLink)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
           setOpenPhotoUploadDialog(false);
-        }).catch(err => {
-          setMessage(err.response.data.message)
-          setAlertType('error')
-          setOpenAlertSnackbar(true)
-          setOpenPhotoUploadDialog(false)
+          loadUserInfo();
+          loadInfo();
         })
-      } else {
-        axios
-          .post("/accounts/" + details.email + "/avatar", imageLink)
-          .then((res) => {
-            setMessage(res.data);
-            setAlertType("success");
-            setOpenAlertSnackbar(true);
-            setOpenPhotoUploadDialog(false);
-            loadUserInfo()
-            loadInfo()
-          })
-          .catch((err) => {
-            setMessage(err.response.data.message);
-            setAlertType("error");
-            setOpenAlertSnackbar(true);
-            setOpenPhotoUploadDialog(false);
-          });
-      }
+        .catch((err) => {
+          setMessage(err.response.data.message);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setOpenPhotoUploadDialog(false);
+        });
     }
   };
 

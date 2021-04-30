@@ -1,6 +1,18 @@
-import { Card, CardActionArea, CardContent, CardMedia, Divider, makeStyles, Typography } from '@material-ui/core';
+import { Card, CardActionArea, CardContent, CardMedia, createMuiTheme, Divider, Grid, makeStyles, ThemeProvider, Typography } from '@material-ui/core';
 import moment from 'moment';
+import StarIcon from '@material-ui/icons/Star';
 import React from 'react'
+
+const additionalTheme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#00bf00',
+    },
+    secondary: {
+      main: '#d700d7'
+    }
+  },
+})
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -19,11 +31,83 @@ const useStyles = makeStyles((theme) => ({
       width: 300,
       height: 170
     },
+    rating: {
+      verticalAlign: 'middle'
+    }
   }));
 
 const Participant = (props) => {
     const classes = useStyles()
     const details = props.infor
+
+    let showRating = []
+    if(details.rating) {
+        for(let i=0; i<details.rating; i++) {
+          showRating.push(<StarIcon key={i} color='primary' />)
+        }
+    }
+
+    let showPointsInformation = (
+      <>
+        <Divider style={{ marginBottom: "10px" }} />
+        <ThemeProvider theme={additionalTheme}>
+          <Typography
+            style={{ marginBottom: "10px" }}
+            color="secondary"
+            component="p"
+            variant="body2"
+          >
+            <Grid container direction="row" alignItems="center">
+              <Grid item>Contribution points earned:</Grid>
+              <Grid item>{details.contributionPoint}</Grid>
+            </Grid>
+          </Typography>
+        </ThemeProvider>
+      </>
+    );
+
+    if(props.type === 'event') {
+      showPointsInformation = details.rating ? (
+        <>
+          <Divider style={{ marginBottom: "10px" }} />
+          <Typography component="span" variant="body1" color="primary">
+            <Grid container direction="row" alignItems="center">
+              <Grid item>Rating:</Grid>
+              <Grid item>{showRating}</Grid>
+            </Grid>
+          </Typography>
+          <ThemeProvider theme={additionalTheme}>
+            <Typography
+              style={{ marginBottom: "10px" }}
+              color="primary"
+              component="p"
+              variant="body2"
+            >
+              <Grid container direction="row" alignItems="center">
+                <Grid item>Earned points: </Grid>
+                <Grid item>{details.rating >> 1 ? props.basePoint : 0}</Grid>
+              </Grid>
+            </Typography>
+          </ThemeProvider>
+          {details.rating === 3 ? (
+            <ThemeProvider theme={additionalTheme}>
+              <Typography
+                style={{ marginBottom: "10px" }}
+                color="secondary"
+                component="p"
+                variant="body2"
+              >
+                <Grid container direction="row" alignItems="center">
+                  <Grid item>Contribution points earned:</Grid>
+                  <Grid item>{details.contributionPoint}</Grid>
+                </Grid>
+              </Typography>
+            </ThemeProvider>
+          ) : null}
+        </>
+      ) : null;
+    }
+
     return (
       <Card className={classes.root} onClick={() => props.viewDetails(details)}>
         <CardMedia
@@ -38,7 +122,7 @@ const Participant = (props) => {
                 <strong>{details.fullName}</strong>
               </Typography>
               <Typography
-                style={{ marginBottom: "10px" }}  
+                style={{ marginBottom: "10px" }}
                 component="p"
                 variant="subtitle1"
                 color="textSecondary"
@@ -50,31 +134,27 @@ const Participant = (props) => {
                 component="p"
                 variant="body2"
               >
-                <strong>Gender: </strong> {details.gender ? <>Male</> : <>Female</>}
+                <strong>Gender: </strong>{" "}
+                {details.gender ? <>Male</> : <>Female</>}
               </Typography>
               <Typography
                 style={{ marginBottom: "10px" }}
                 component="p"
                 variant="body2"
               >
-                <strong>Join date: </strong>{moment(details.joinDate).format('MMMM DD, YYYY')}
+                <strong>Join date: </strong>
+                {moment(details.joinDate).format("MMMM DD, YYYY")}
               </Typography>
               <Typography
                 style={{ marginBottom: "10px" }}
                 component="p"
                 variant="body2"
               >
-                <strong>Phone: </strong>{details.phone}
+                <strong>Phone: </strong>
+                {details.phone}
               </Typography>
-              <Divider style={{ marginBottom: "10px" }} />
-              <Typography
-                style={{ marginBottom: "10px" }}
-                color="primary"
-                component="p"
-                variant="body2"
-              >
-                <strong>Remaining points: </strong>{details.balancePoint}
-              </Typography>
+
+              {showPointsInformation}
             </CardContent>
           </div>
         </CardActionArea>

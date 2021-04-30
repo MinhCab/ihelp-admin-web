@@ -34,9 +34,7 @@ const Participants = (props) => {
           setLoading(false);
         })
         .catch((err) => {
-          setError(
-            "Participants error: Cannot get information from server, please try again"
-          );
+          setError(err.response.data.message);
           setOpenErrorSnackbar(true);
           setLoading(false);
         });
@@ -56,7 +54,7 @@ const Participants = (props) => {
 
   if (participants.length !== 0) {
     showParticipants = participants.map((par) => {
-      return <Participant key={par.email} infor={par} viewDetails={props.participantDetails}/>;
+      return <Participant basePoint={props.basePoint} type={props.type} key={par.email} infor={par} viewDetails={props.participantDetails}/>;
     });
   }
 

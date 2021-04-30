@@ -425,6 +425,8 @@ const EventDetail = (props) => {
         isOpen={openParticipantDetails}
         close={handleCloseParticipantDetails}
         details={participantDetails}
+        basePoint={details.point}
+        type='event'
       />
     );
   }
@@ -640,6 +642,7 @@ const EventDetail = (props) => {
           type="event"
           id={props.match.params.id}
           participantDetails={handleParticipantDetails}
+          basePoint={details.point}
         />
         <Popover
           id={id}
