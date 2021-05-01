@@ -11,7 +11,7 @@ const CreateUser = (props) => {
     const [gender, setGender] = useState(true)
     const [birthDate, setBirthDate] = useState()
     const [phone, setPhone] = useState('')
-    const [sendEmail, setSendEmail] = useState(true)
+    // const [sendEmail, setSendEmail] = useState(true)
 
     const fullnameHandler = (event) => {
         setFullname(event.target.value)
@@ -33,9 +33,9 @@ const CreateUser = (props) => {
         setPhone(value)
     }
 
-    const sendEmailHandler = () => {
-        setSendEmail(!sendEmail)
-    }
+    // const sendEmailHandler = () => {
+    //     setSendEmail(!sendEmail)
+    // }
 
     const createUserHandler = (event) => {
         event.preventDefault()
@@ -48,7 +48,7 @@ const CreateUser = (props) => {
           phone: phone,
         };
 
-        props.submit(newUser, !sendEmail)
+        props.submit(newUser)
     }
 
     return (
@@ -116,12 +116,12 @@ const CreateUser = (props) => {
                 <MenuItem value="false">Female</MenuItem>
               </TextField>
               <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-              <FormControlLabel
+              {/* <FormControlLabel
                 value="start"
                 control={<Checkbox value={sendEmail} onChange={sendEmailHandler} color="primary" />}
                 label="Send email to user "
                 labelPlacement="start"
-              />
+              /> */}
             </Box>
           </DialogContent>
           <DialogActions>

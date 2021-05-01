@@ -120,10 +120,10 @@ const Users = () => {
       })
     }
 
-    const confirmCreateUserHandler = (newUser, isSendEmail) => {
-      if(isSendEmail === false) {
+    const confirmCreateUserHandler = (newUser) => {
+      // if(isSendEmail === false) {
         createNewUserAPI(newUser)
-      }
+      // }
     }
 
     const searchAPI = () => {

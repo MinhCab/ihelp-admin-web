@@ -29,19 +29,25 @@ const additionalButtonTheme2 = createMuiTheme({
 
 const columns = [
   {
-    field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 180,
-    renderCell: (params) => {
-      return <p>{moment(params.value).format("MMM Do YYYY")}</p>
-    }
+      field: 'createDate', headerName: 'Create date', type: 'dateTime', width: 180,
+      renderCell: (params) => {
+          return <p>{moment(params.value).format("MMM Do YYYY")}</p>
+      }
   },
-  { field: 'title', headerName: 'Title', width: 250 },
-  { field: 'fullName', headerName: 'Host name', width: 150 },
-  { field: 'accountEmail', headerName: 'Host email', width: 150 },
+  { field: 'title', headerName: 'Title', width: 300 },
+  { field: 'accountEmail', headerName: 'Host email', width: 250 },
+  { field: 'fullName', headerName: 'Host name', width: 220 },
   {
-    field: 'startDate', headerName: 'Start date', width: 180,
-    renderCell: (params) => {
-      return <p>{moment(params.value).format("MMM Do YYYY")}</p>
-    }
+      field: 'startDate', headerName: 'Start date', width: 180,
+      renderCell: (params) => {
+          return <p>{moment(params.value).format("MMM Do YYYY")}</p>
+      }
+  },
+  {
+      field: 'endDate', headerName: 'End date', width: 180,
+      renderCell: (params) => {
+          return <p>{moment(params.value).format("MMM Do YYYY")}</p>
+      }
   },
   { field: 'spot', headerName: 'Slots', width: 100 },
   {
@@ -93,7 +99,7 @@ const columns = [
       }
     }
   }
-];
+]
 
 const DashboardServices = () => {
 
@@ -152,7 +158,7 @@ const DashboardServices = () => {
           subheader="These remaining services that waits to be confirm"
         />
         <CardContent>
-          <div style={{ height: 400, width: "100%" }}>
+          <div style={{width: "100%" }}>
             <DataGrid
               rows={services}
               columns={columns}
@@ -163,6 +169,7 @@ const DashboardServices = () => {
               onPageChange={pagingHandler}
               rowCount={totalItems}
               loading={loading}
+              autoHeight
             />
           </div>
         </CardContent>
