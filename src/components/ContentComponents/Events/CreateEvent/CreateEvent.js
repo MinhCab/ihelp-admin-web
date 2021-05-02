@@ -178,24 +178,30 @@ const CreateEvent = (props) => {
 
   const handleCreateEventButton = (event) => {
     event.preventDefault();
-    let realLocation = location;
+    if(!image) {
+      setMessage('Need to have a cover photo when create a new event')
+      setAlertType('info')
+      setOpenAlertSnackbar(true)
+    } else {
+      let realLocation = location;
 
-    if (onSite === false) {
-      realLocation = "Online";
+      if (onSite === false) {
+        realLocation = "Online";
+      }
+
+      setConfirmInfo({
+        title: title.toUpperCase(),
+        startDate: startDate.toString(),
+        endDate: endDate,
+        category: category,
+        onsite: onSite,
+        quota: quota,
+        point: point,
+        description: description,
+        location: realLocation,
+      });
+      setOpenConfirmation(true);
     }
-
-    setConfirmInfo({
-      title: title.toUpperCase(),
-      startDate: startDate.toString(),
-      endDate: endDate,
-      category: category,
-      onsite: onSite,
-      quota: quota,
-      point: point,
-      description: description,
-      location: realLocation,
-    });
-    setOpenConfirmation(true);
   };
 
   const handleDiscardEventButton = () => {

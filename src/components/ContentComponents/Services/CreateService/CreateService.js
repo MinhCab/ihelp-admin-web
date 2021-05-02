@@ -33,6 +33,7 @@ import PlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-places-autocomplete";
+import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 
 const useStyles = makeStyles((theme) => ({
   finalButton: {
@@ -157,17 +158,23 @@ const CreateService = (props) => {
 
   const handleCreateServiceButton = (event) => {
     event.preventDefault()
-    setConfirmInfo({
-      title: title.toUpperCase(),
-      startDate: startDate.toString(),
-      endDate: endDate,
-      category: category,
-      quota: quota,
-      point: point,
-      description: description,
-      location: location,
-    });
-    setOpenConfirmation(true);
+    if(!image) {
+      setMessage('Need to have a cover photo when create a new event')
+      setAlertType('info')
+      setOpenAlertSnackbar(true)
+    } else {
+      setConfirmInfo({
+        title: title.toUpperCase(),
+        startDate: startDate.toString(),
+        endDate: endDate,
+        category: category,
+        quota: quota,
+        point: point,
+        description: description,
+        location: location,
+      });
+      setOpenConfirmation(true);
+    }
   };
 
   const handleOpenPhotoUploadDialog = () => {
@@ -182,6 +189,11 @@ const CreateService = (props) => {
     setImage(file);
     setOpenPhotoUpload(false);
   };
+
+  
+  const closeAlertSnackbarHandler = () => {
+    setOpenAlertSnackbar(false)
+  }
 
   const uploadImageToFirebase = async () => {
     if (image === null) {
@@ -244,7 +256,7 @@ const CreateService = (props) => {
   const createdDate = new Date();
   let showConfirmation = null;
   let showImageName = null;
-  let showImageUploadDialog = null;
+  let showImageUploadDialog = null;``
   let showAlertSnackbar = null;
   let showLocationField = (
     <Grid item>
