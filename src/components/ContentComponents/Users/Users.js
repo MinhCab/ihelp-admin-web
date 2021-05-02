@@ -72,7 +72,6 @@ const Users = () => {
     }
 
     const handleCloseAlertSnackbar = () => {
-        setOpenDiscard(true)
         setOpenAlertSnackbar(false)
     }
 

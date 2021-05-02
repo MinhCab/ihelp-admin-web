@@ -72,22 +72,6 @@ const Login = () => {
     [classes.buttonSuccess]: success,
   })
 
-  function getCookie(cname) {
-    let name = cname + '=';
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) === 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return '';
-  }
-
   const pushDeviceToken = async(accessToken) => {
     const headers = {
       'Content-Type': 'application/json',
@@ -118,7 +102,6 @@ const Login = () => {
       .catch((err) => {
         console.log(err);
       });
-
     }).catch(err => {
         console.log('is there any error: ' + err)
     })

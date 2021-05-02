@@ -40,6 +40,7 @@ const CreateUser = (props) => {
     const createUserHandler = (event) => {
         event.preventDefault()
         const newUser = {
+          avatarUrl: null,
           dateOfBirth: moment(birthDate).format("yyyy-MM-DD"),
           email: email,
           fullName: fullname,
@@ -47,7 +48,6 @@ const CreateUser = (props) => {
           password: "123",
           phone: phone,
         };
-
         props.submit(newUser)
     }
 
