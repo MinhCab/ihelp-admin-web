@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import Logo from '../../FullLayout/Logo/LogoIcon'
-import axios from 'axios';
+import axios from '../../../api/axios';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar';
@@ -93,7 +93,7 @@ const Login = () => {
         console.log('before send to db: ' + token)
     
     await axios
-      .post("https://ihelp-capstone.online/ihelp/accounts/device_token", deviceTokenInfo, {
+      .post("/accounts/device_token", deviceTokenInfo, {
         headers: headers
       })
       .then((res) => {
@@ -118,7 +118,7 @@ const Login = () => {
       }
   
       axios
-        .post("https://ihelp-capstone.online/ihelp/login", loginInfo)
+        .post("/login", loginInfo)
         .then(async(res) => {
           if (res.data.role === "ADMIN" || res.data.role === "MANAGER") {
             await pushDeviceToken(res.data.accessToken);
@@ -156,6 +156,7 @@ const Login = () => {
   const saveTokenAndEmailToCookies = (token, userEmail) => {
     document.cookie = 'accessToken=' + token;
     document.cookie = 'userEmail=' + userEmail
+    document.cookie = 'expires=' + new Date().getTime() + 1 * 3600 * 1000
   }
 
   const handleInput = (event) => {

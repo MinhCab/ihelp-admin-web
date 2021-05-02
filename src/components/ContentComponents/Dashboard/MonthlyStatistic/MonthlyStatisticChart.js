@@ -37,6 +37,21 @@ const Label = withStyles(legendLabelStyles, { name: "LegendLabel" })(
   legendLabelBase
 );
 
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 const MonthlyStatisticChart = (props) => {
   const [data, setData] = React.useState([]);
   const [curYear, setCurYear] = React.useState()
@@ -45,7 +60,7 @@ const MonthlyStatisticChart = (props) => {
     let eveNewArr = [];
     Object.keys(eventObj).map((key) => {
       eveNewArr.push({
-        month: Number(key).toString(),
+        month: months[Number(key) - 1],
         events: eventObj[key],
       });
     });
@@ -108,7 +123,7 @@ const MonthlyStatisticChart = (props) => {
             rootComponent={Root}
             labelComponent={Label}
           />
-          <Title text={`Monthly hosted event and service in ${curYear}`} />
+          <Title text={`Monthly hosted events and services in ${curYear}`} />
           <Stack />
         </Chart>
       </CardContent>
