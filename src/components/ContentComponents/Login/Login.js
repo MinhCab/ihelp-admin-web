@@ -82,7 +82,11 @@ const Login = () => {
         return messaging.getToken()
     }).then(async token => {
         console.log('Firebase Token: ' + token)
-        document.cookie = 'deviceToken=' + token
+        let now = new Date()
+        let time = now.getTime()
+        time += 3600 * 2000
+        now.setTime(time);
+        document.cookie = 'deviceToken=' + token + ';expires=' + now.toUTCString()
         setFcmToken(token)
 
         const deviceTokenInfo = {
@@ -154,9 +158,12 @@ const Login = () => {
   }
 
   const saveTokenAndEmailToCookies = (token, userEmail) => {
-    document.cookie = 'accessToken=' + token;
-    document.cookie = 'userEmail=' + userEmail
-    document.cookie = 'expires=' + new Date().getTime() + 1 * 3600 * 1000
+    let now = new Date()
+    let time = now.getTime()
+    time += 3600 * 2000
+    now.setTime(time)
+    document.cookie = 'accessToken=' + token + ';expires=' + now.toUTCString();
+    document.cookie = "userEmail=" + userEmail + ";expires=" + now.toUTCString();
   }
 
   const handleInput = (event) => {

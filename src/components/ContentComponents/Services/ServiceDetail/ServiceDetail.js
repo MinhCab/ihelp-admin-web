@@ -182,20 +182,36 @@ const ServiceDetail = (props) => {
       });
   }; 
 
-  const changeStatusHandler = (statusId) => {
+  const enableHandler = () => {
     axios
-      .put("/api/services/" + props.match.params.id + "/" + statusId)
-      .then((res) => {
-        setMessage(res.data)
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        loadInfoAPI()
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      });
+    .put("/api/services/enable/" + props.match.params.id)
+    .then((res) => {
+      setMessage(res.data);
+      setAlertType("success");
+      setOpenAlertSnackbar(true);
+      loadInfoAPI();
+    })
+    .catch((error) => {
+      setMessage(error.response.data.error);
+      setAlertType("error");
+      setOpenAlertSnackbar(true);
+    });
+  }
+
+  const disableHandler = () => {
+    axios
+    .put("/api/services/disable/" + props.match.params.id)
+    .then((res) => {
+      setMessage(res.data);
+      setAlertType("success");
+      setOpenAlertSnackbar(true);
+      loadInfoAPI();
+    })
+    .catch((error) => {
+      setMessage(error.response.data.error);
+      setAlertType("error");
+      setOpenAlertSnackbar(true);
+    });
   }
 
   const handleClick = (event) => {
@@ -301,15 +317,17 @@ const ServiceDetail = (props) => {
     </Button>
   );
 
-  let finishBtn = (
-    <Button
-      startIcon={<CheckCircleIcon />}
-      color="primary"
-      variant="contained"
-      onClick={() => changeStatusHandler(4)}
-    >
-      Finish this service
-    </Button>
+  let enableBtn = (
+    <ThemeProvider theme={additionalButtonTheme}>
+      <Button
+        startIcon={<CheckCircleIcon />}
+        color="primary"
+        variant="contained"
+        onClick={enableHandler}
+      >
+        Enable this service
+      </Button>
+    </ThemeProvider>
   );
 
   let disableBtn = (
@@ -317,7 +335,7 @@ const ServiceDetail = (props) => {
       startIcon={<CancelIcon />}
       color="secondary"
       variant="contained"
-      onClick={() => changeStatusHandler(5)}
+      onClick={disableHandler}
     >
       Disable this service
     </Button>
@@ -331,6 +349,7 @@ const ServiceDetail = (props) => {
   let showFeedbackDetails = null;
   let showRejectDialog = null;
   let showStatus = null
+  let currentDate = moment()
   let showImages = (
     <CardMedia
       className={classes.media}
@@ -362,16 +381,16 @@ const ServiceDetail = (props) => {
         </div>
       );
     }
-  } else if (status.name === "Approved") {
+  } else if (status.name === "Approved" || status.name === 'Ongoing') {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
         <CardActions>{disableBtn}</CardActions>
       </Grid>
     );
-  } else if (status.name === "In progress") {
+  } else if (status.name === "Disabled" && moment(currentDate).isBefore(details.endDate)) {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
-        <CardActions>{finishBtn}</CardActions>
+        <CardActions>{enableBtn}</CardActions>
       </Grid>
     );
   }

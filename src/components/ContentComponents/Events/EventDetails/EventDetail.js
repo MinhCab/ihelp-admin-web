@@ -184,14 +184,14 @@ const EventDetail = (props) => {
       });
   };
 
-  const changeStatusHandler = async(statusId) => {
+  const enableHandler = () => {
     axios
-      .put("/api/events/" + props.match.params.id + "/" + statusId)
+      .put("/api/events/enable/" + props.match.params.id)
       .then((res) => {
         setMessage(res.data);
         setAlertType("success");
         setOpenAlertSnackbar(true);
-        loadInfoAPI()
+        loadInfoAPI();
       })
       .catch((error) => {
         setMessage(error.response.data.error);
@@ -199,6 +199,22 @@ const EventDetail = (props) => {
         setOpenAlertSnackbar(true);
       });
   }
+
+  const disableHandler = () => {
+    axios
+      .put("/api/events/disable/" + props.match.params.id)
+      .then((res) => {
+        setMessage(res.data);
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        loadInfoAPI();
+      })
+      .catch((error) => {
+        setMessage(error.response.data.error);
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+      });
+  };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -313,15 +329,17 @@ const EventDetail = (props) => {
     </Button>
   );
 
-  let finishBtn = (
-    <Button
-      startIcon={<CheckCircleIcon />}
-      color="primary"
-      variant="contained"
-      onClick={() => changeStatusHandler(4)}
-    >
-      Finish this event
-    </Button>
+  let enableBtn = (
+    <ThemeProvider theme={additionalButtonTheme}>
+      <Button
+        startIcon={<CheckCircleIcon />}
+        color="primary"
+        variant="contained"
+        onClick={enableHandler}
+      >
+        Enable this event
+      </Button>
+    </ThemeProvider>
   );
 
   let disableBtn = (
@@ -329,7 +347,7 @@ const EventDetail = (props) => {
       startIcon={<CancelIcon />}
       color="secondary"
       variant="contained"
-      onClick={() =>changeStatusHandler(5)}
+      onClick={disableHandler}
     >
       Disable this event
     </Button>
@@ -342,6 +360,7 @@ const EventDetail = (props) => {
   let showFeedbackDetails = null;
   let showAlertSnackbar = null;
   let showRejectDialog = null;
+  let currentDate = moment()
   let showImages = (
     <CardMedia
       className={classes.media}
@@ -381,16 +400,16 @@ const EventDetail = (props) => {
         </div>
       );
     }
-  } else if (status.name === "Approved") {
+  } else if (status.name === "Approved" || status.name === 'Ongoing') {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
         <CardActions>{disableBtn}</CardActions>
       </Grid>
     );
-  } else if (status.name === "In progress") {
+  } else if (status.name === "Disabled" && moment(currentDate).isBefore(details.endDate)) {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
-        <CardActions>{finishBtn}</CardActions>
+        <CardActions>{enableBtn}</CardActions>
       </Grid>
     );
   }
