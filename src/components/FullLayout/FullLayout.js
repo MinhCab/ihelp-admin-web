@@ -22,6 +22,7 @@ import { useSnackbar } from 'notistack'
 import AdminRoute from '../../routes/AdminRoute/AdminRoute';
 import axios from '../../api/axios';
 import AlertSnackbar from './UI/AlertSnackbar/AlertSnackbar';
+import BannedUsers from '../ContentComponents/Users/BannedUsers/BannedUsers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,7 +92,7 @@ const FullLayout = () => {
       email: user.email,
     };
     console.log('before delete: '+ JSON.stringify(deviceTokenInfo))
-    axios.delete('/signout', { data: deviceTokenInfo } )
+    axios.put('/signout', deviceTokenInfo)
     .then(res => {
       deleteAllCookies()
       setRole(null)
@@ -201,6 +202,7 @@ const FullLayout = () => {
 
               <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
               <AdminRoute exact path={`${url}/users`} component={Users} />
+              <AdminRoute exact path={`${url}/banned-users`} component={BannedUsers} />
 
               <AdminRoute exact path={`${url}/reports`} component={Reports} />
               

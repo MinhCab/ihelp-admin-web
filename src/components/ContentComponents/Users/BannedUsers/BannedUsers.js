@@ -5,10 +5,8 @@ import React from 'react'
 import { useHistory } from 'react-router'
 import ClearIcon from '@material-ui/icons/Clear';
 
-import axios from '../../../api/axios'
-import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
-import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
-import CreateUser from './CreateUser/CreateUser'
+import axios from '../../../../api/axios'
+import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const columns = [
     { field: 'createdDate', headerName: 'Create date', type: 'dateTime', width: 160,
@@ -48,15 +46,13 @@ const columns = [
     }
 ]
 
-const Users = () => {
+const BannedUsers = () => {
     const history = useHistory()
     const [users, setUsers] = React.useState([])
     const [loading, setLoading] = React.useState(false)
-    const [openDiscard, setOpenDiscard] = React.useState(false)
     const [message, setMessage] = React.useState('')
     const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
     const [alertType, setAlertType] = React.useState('')
-    const [openCreateUserDialog, setOpenCreateUserDialog] = React.useState(false)
     const [page, setPage] = React.useState(0)
     const [totalItems, setTotalItems] = React.useState(0)
     const [search, setSearch] = React.useState('')
@@ -69,6 +65,10 @@ const Users = () => {
 
     const showUserDetails = (event) => {
         history.push('/home/users/' + event.row.email)
+    }
+
+    const redirectToActiveUserPage = () => {
+        history.goBack()
     }
 
     const handleCloseAlertSnackbar = () => {
@@ -87,50 +87,8 @@ const Users = () => {
       setSearch('')
     }
 
-    const createUserHandler = () => {
-      setOpenCreateUserDialog(true);
-    }
-
-    const closeCreateUserHandler = () => {
-      setOpenDiscard(true)
-    }
-
-    const closeDiscardDialog = () => {
-      setOpenDiscard(false)
-    }
-
-    const proceedDiscardHandler = () => {
-      setOpenDiscard(false)
-      setOpenCreateUserDialog(false)
-    }
-
-    const createNewUserAPI = (newUser) => {
-      axios.post('/signup', newUser)
-      .then(res => {
-        setMessage(res.data)
-        loadUserList()
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        setOpenCreateUserDialog(false)
-      }).catch(err => {
-          setMessage(err.response.data.message)
-          setOpenAlertSnackbar(true)
-          setAlertType("error");
-      })
-    }
-
-    const confirmCreateUserHandler = (newUser) => {
-      // if(isSendEmail === false) {
-        createNewUserAPI(newUser)
-      // }
-    }
-
-    const redirectToBannedUserPage = () => {
-      history.push('/home/banned-users')
-    }
-
     const searchAPI = () => {
-      axios.get('/accounts/full_name/' + search + '?page=' + page + '&statusId=1')
+      axios.get('/accounts/full_name/' + search + '?page=' + page + '&statusId=2')
       .then((res) => {
         setTotalItems(res.data.totalItems);
         setIdToUserList(res.data.accounts);
@@ -149,7 +107,7 @@ const Users = () => {
 
     const loadUserList = () => {
       axios
-          .get("/accounts?page=" + page + "&statusId=1")
+          .get("/accounts?page=" + page + "&statusId=2")
           .then((res) => {
             setTotalItems(res.data.totalItems);
             setIdToUserList(res.data.accounts);
@@ -172,12 +130,7 @@ const Users = () => {
   }, [page, totalItems, search])
 
     let showAlertSnackbar = null
-    let showCreateUserDialog = null
-    let showDiscardDialog = null
     openAlertSnackbar ? showAlertSnackbar = (<AlertSnackbar isOpen={openAlertSnackbar} close={handleCloseAlertSnackbar} message={message} alertType={alertType} />) : null
-    openCreateUserDialog? showCreateUserDialog = (<CreateUser isOpen={openCreateUserDialog} close={closeCreateUserHandler} submit={confirmCreateUserHandler} />) : null
-    openDiscard ? showDiscardDialog = (<DiscardAlertDialog isOpen={openDiscard} closing={closeDiscardDialog} proceed={proceedDiscardHandler}/>) : null
-
     return (
       <>
         <Card>
@@ -188,37 +141,29 @@ const Users = () => {
                   <Button
                     color="primary"
                     variant="contained"
-                    onClick={createUserHandler}
+                    onClick={redirectToActiveUserPage}
                   >
-                    Create
-                  </Button>
-                  {" "}
-                  <Button
-                    color="secondary"
-                    variant="contained"
-                    onClick={redirectToBannedUserPage}
-                  >
-                    Banned Users
-                  </Button>
+                    Active Users
+                  </Button>{" "}
                 </Grid>
                 <Grid item>
-                <form onSubmit={confirmSearchHandler}>
-                  <FormControl variant="outlined">
-                    <InputLabel>Search</InputLabel>
-                    <OutlinedInput
-                      value={search}
-                      onChange={searchHandler}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton onClick={clearSearchHandler} edge="end">
-                            {search.length > 0 ? <ClearIcon /> : null}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      labelWidth={70}
-                    />
-                  </FormControl>
-                </form>
+                  <form onSubmit={confirmSearchHandler}>
+                    <FormControl variant="outlined">
+                      <InputLabel>Search</InputLabel>
+                      <OutlinedInput
+                        value={search}
+                        onChange={searchHandler}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton onClick={clearSearchHandler} edge="end">
+                              {search.length > 0 ? <ClearIcon /> : null}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                        labelWidth={70}
+                      />
+                    </FormControl>
+                  </form>
                 </Grid>
               </Grid>
             }
@@ -226,7 +171,7 @@ const Users = () => {
           <CardHeader
             titleTypographyProps={{ variant: "h4" }}
             title="Users"
-            subheader="All of the users on iHelp system"
+            subheader="All of the banned users on iHelp system"
           />
           <CardContent>
             <div style={{ height: 650, width: "100%" }}>
@@ -236,7 +181,7 @@ const Users = () => {
                 pageSize={10}
                 onRowClick={(rows) => showUserDetails(rows)}
                 pagination
-                paginationMode='server'
+                paginationMode="server"
                 onPageChange={pagingHandler}
                 rowCount={totalItems}
                 autoHeight
@@ -246,10 +191,8 @@ const Users = () => {
           </CardContent>
         </Card>
         {showAlertSnackbar}
-        {showCreateUserDialog}
-        {showDiscardDialog}
       </>
     );
 }
 
-export default Users
+export default BannedUsers

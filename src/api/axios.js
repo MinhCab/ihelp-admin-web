@@ -35,15 +35,15 @@ const instance = axios.create({
 
 instance.defaults.headers.post['Content-Type'] = 'application/json'
 
-const refreshAccessToken = async () => {
-  instance.post('/refreshtoken', {
-    headers: {
-      isRefreshToken: 'true'
-    }
-  }).then(res => {
-    return res.data.accessToken
-  })
-}
+// const refreshAccessToken = async () => {
+//   instance.post('/refreshtoken', {
+//     headers: {
+//       isRefreshToken: 'true'
+//     }
+//   }).then(res => {
+//     return res.data.accessToken
+//   })
+// }
 
 instance.interceptors.request.use(
   (req) => {
@@ -59,21 +59,21 @@ instance.interceptors.request.use(
   { synchronous: true}
 )
 
-instance.interceptors.response.use(
-  (req) => {
-    return req;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && error.response.data.cause.includes('io.jsonwebtoken.ExpiredJwtException')) {
-      originalRequest._retry = true;
-      const access_token = await refreshAccessToken();
-      document.cookie = 'accessToken=' + access_token
-      instance.defaults.headers.common["Authorization"] = "Bearer " + access_token;
-      return instance(originalRequest);
-    }
-    return Promise.reject(error);
-  }
-);
+// instance.interceptors.response.use(
+//   (req) => {
+//     return req;
+//   },
+//   async (error) => {
+//     const originalRequest = error.config;
+//     if (error.response.status === 401 && error.response.data.cause.includes('io.jsonwebtoken.ExpiredJwtException')) {
+//       originalRequest._retry = true;
+//       const access_token = await refreshAccessToken();
+//       document.cookie = 'accessToken=' + access_token
+//       instance.defaults.headers.common["Authorization"] = "Bearer " + access_token;
+//       return instance(originalRequest);
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 export default instance

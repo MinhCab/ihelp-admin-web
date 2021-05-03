@@ -63,7 +63,8 @@ const Profile = (props) => {
   const [birthDate, setBirthDate] = useState(null);
   const [phone, setPhone] = useState(0);
   const [gender, setGender] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState("");
+  const [status, setStatus] = useState(null);
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState();
@@ -73,9 +74,11 @@ const Profile = (props) => {
   const [openDiscardDialog, setOpenDiscardDialog] = useState(false);
   const [openPhotoUploadDialog, setOpenPhotoUploadDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false);
-  const [firebaseOTPTrigger, setFirebaseOTPTrigger] = useState()
-  const [openOTPDialog, setOpenOTPDialog] = useState(false)
+  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(
+    false
+  );
+  const [firebaseOTPTrigger, setFirebaseOTPTrigger] = useState();
+  const [openOTPDialog, setOpenOTPDialog] = useState(false);
 
   const editFullnameHandler = (event) => {
     setFullname(event.target.value);
@@ -106,13 +109,13 @@ const Profile = (props) => {
   };
 
   const finishUpload = (file) => {
-    setImage(file)
-    handleUploadImage()
-  }
+    setImage(file);
+    handleUploadImage();
+  };
 
   const handleUploadImage = async () => {
-    const imageLink = await uploadImageToFirebase()
-    if(imageLink) {
+    const imageLink = await uploadImageToFirebase();
+    if (imageLink) {
       axios
         .post("/accounts/" + details.email + "/avatar", imageLink)
         .then((res) => {
@@ -179,7 +182,7 @@ const Profile = (props) => {
   };
 
   const proceedEditFormHandler = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
     if (!loading) {
       setLoading(true);
       const profile = {
@@ -223,48 +226,45 @@ const Profile = (props) => {
     setImage(null);
   };
 
-  
   const changePasswordHandler = () => {
     setOpenChangePasswordDialog(true);
   };
-  
+
   const changePassword = (changePassInfo) => {
-    // setFirebaseOTPTrigger(firebase.auth().signInWithPhoneNumber(phone))
-    // setOpenOTPDialog(true)
-    axios.put('/accounts/update_password', changePassInfo)
-    .then(res => {
-      console.log(res)
-      setMessage(res.data)
-      setAlertType('success')
-      setOpenAlertSnackbar(true)
-      setOpenChangePasswordDialog(false)
-      loadUserInfo()
-    }).catch(error => {
-      setMessage(error.response.data.message)
-      setAlertType('error')
-      setOpenAlertSnackbar(true)
-    })
+    axios
+      .put("/accounts/update_password", changePassInfo)
+      .then((res) => {
+        console.log(res);
+        setMessage('Password changed successfully');
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        setOpenChangePasswordDialog(false);
+        loadUserInfo();
+      })
+      .catch((error) => {
+        setMessage('Change password failed, please try again');
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+      });
   };
 
-  const confirmChangePassword = (otp) => {
-    // firebaseOTPTrigger.then(e => {
-    //   e.confirm(otp).then(result => {
-    //     console.log(result.user)
-    //   }).catch(error => {
-    //     console.log(error)
-    //   })
-    // })
-  }
-  
   const closeChangePasswordHandler = () => {
     setOpenChangePasswordDialog(false);
   };
 
-  const updateRoleHandler = async(newRole) => {
+  const updateRoleHandler = async (newRole) => {
     try {
-      const response = await axios.put("/accounts/" + details.email + "/role/" + newRole);
+      const response = await axios.put(
+        "/accounts/" + details.email + "/role/" + newRole
+      );
       if (response.status === 200) {
-        setMessage("Change Role: Update account " + details.email + " to " + newRole + " completed");
+        setMessage(
+          "Change Role: Update account " +
+            details.email +
+            " to " +
+            newRole +
+            " completed"
+        );
         setAlertType("success");
         setOpenAlertSnackbar(true);
         setDetails(response.data);
@@ -276,19 +276,35 @@ const Profile = (props) => {
       setAlertType("error");
       setLoading(false);
     }
+  };
+
+  const updateUserStatusHandler = (statusId) => {
+    axios.put('/accounts/' + props.match.params.email + '/status/' + statusId)
+      .then(res => {
+        setMessage(res.data)
+        setAlertType('success')
+        setOpenAlertSnackbar(true)
+        loadUserInfo()
+      }).catch(err => {
+        setMessage(err.response.data.message)
+        setAlertType('error')
+        setOpenAlertSnackbar(true)
+      })
   }
 
   const closeOTPHandler = () => {
-    openOTPDialog(false)
-  }
+    openOTPDialog(false);
+  };
 
   const loadUserInfo = () => {
     axios
       .get("/accounts/" + props.match.params.email)
       .then((res) => {
+        console.log(res)
         setDetails(res.data);
         setLoading(false);
         setRole(res.data.role.id);
+        setStatus(res.data.accountStatus.id)
       })
       .catch((err) => {
         setMessage(err.message);
@@ -296,16 +312,14 @@ const Profile = (props) => {
         setAlertType("error");
         setLoading(false);
       });
-  }
+  };
 
   useEffect(() => {
     if (!loading) {
       setLoading(true);
-      loadUserInfo()
+      loadUserInfo();
     }
   }, [details, role]);
-
-  
 
   let showErrorSnackbar = null;
   let showDiscardDialog = null;
@@ -313,6 +327,7 @@ const Profile = (props) => {
   let showChangePasswordDialog = null;
   let showChangeRoleButton = null;
   let showOTPDialog = null;
+  let showBannedUserBtn = null;
   if (openAlertSnackbar) {
     showErrorSnackbar = (
       <AlertSnackbar
@@ -346,7 +361,35 @@ const Profile = (props) => {
   }
 
   if (user.email !== details.email) {
-    if (role !== 'admin') {
+    if (role !== "admin") {
+      if (status === '2') {
+        showBannedUserBtn = (
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            fullWidth
+            onClick={() => updateUserStatusHandler(1)}
+            style={{ marginTop: 10 }}
+          >
+            Unban user
+          </Button>
+        )
+      } else if (status === '1') {
+        showBannedUserBtn = (
+          <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            fullWidth
+            onClick={() => updateUserStatusHandler(2)}
+            style={{ marginTop: 10 }}
+          >
+            Ban this user
+          </Button>
+        );
+      }
+
       if (role === "user") {
         showChangeRoleButton = (
           <Button
@@ -381,6 +424,7 @@ const Profile = (props) => {
     showChangePasswordDialog = (
       <ChangePassword
         userEmail={details.email}
+        phone={details.phone}
         isOpen={openChangePasswordDialog}
         close={closeChangePasswordHandler}
         confirm={changePassword}
@@ -404,7 +448,7 @@ const Profile = (props) => {
             <Grid item xs>
               <Paper
                 className={classes.paper}
-                style={{ padding: 5, color: "white", background:'#9ed5fc'  }}
+                style={{ padding: 5, color: "white", background: "#9ed5fc" }}
               >
                 <Typography>
                   <strong>Balance Point</strong>
@@ -415,7 +459,7 @@ const Profile = (props) => {
             <Grid item xs>
               <Paper
                 className={classes.paper}
-                style={{ padding: 5, background: '#93e6f7'  }}
+                style={{ padding: 5, background: "#93e6f7" }}
               >
                 <Typography>
                   <strong>Contribution Point</strong>
@@ -426,7 +470,7 @@ const Profile = (props) => {
             <Grid item xs>
               <Paper
                 className={classes.paper}
-                style={{ padding: 5, height: 75, background: '#4293ec' }}
+                style={{ padding: 5, height: 75, background: "#4293ec" }}
               >
                 <Typography>
                   <strong>Role</strong>
@@ -478,6 +522,7 @@ const Profile = (props) => {
         >
           Change Password
         </Button>
+        {showBannedUserBtn}
       </CardContent>
     </Card>
   );
@@ -569,7 +614,7 @@ const Profile = (props) => {
     );
   }
 
-  if(openOTPDialog) {
+  if (openOTPDialog) {
     showOTPDialog = (
       <OTP
         isOpen={openOTPDialog}
@@ -577,7 +622,7 @@ const Profile = (props) => {
         phone={phone}
         confirm={confirmChangePassword}
       />
-    )
+    );
   }
 
   return (

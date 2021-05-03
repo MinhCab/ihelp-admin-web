@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@material-ui/core'
 import React from 'react'
 
 const OTP = (props) => {
@@ -19,7 +19,7 @@ const OTP = (props) => {
                 <TextField fullWidth type='number' variant='outlined' value={otp} onChange={editOTPHandler} />
             </DialogContent>
             <DialogActions>
-                <Button onClick={confirmChange}>Change Password</Button>
+                <Button onClick={confirmChange}>Verify user</Button>
             </DialogActions>
         </Dialog>
     )
