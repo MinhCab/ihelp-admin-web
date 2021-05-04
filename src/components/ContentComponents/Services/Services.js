@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, createMuiTheme, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, ThemeProvider } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, createMuiTheme, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, ThemeProvider, Typography } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React from 'react'
@@ -9,6 +9,7 @@ import axios from '../../../api/axios'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import CreateService from './CreateService/CreateService'
+import FilterLayout from '../../FullLayout/UI/FilterLayout/FilterLayout'
 
 const additionalButtonTheme = createMuiTheme({
   palette: {
@@ -116,6 +117,7 @@ const Services = () => {
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
   const [message, setMessage] = React.useState('')
   const [alertType, setAlertType] = React.useState('')
+  const [filter, setFilter] = React.useState('')
 
   const loadServices = () => {
     axios
@@ -134,12 +136,16 @@ const Services = () => {
     if (!loading) {
       setLoading(true)
       if (search.length <= 0) {
-        loadServices()
+        if(filter.length <= 0) {
+          loadServices()
+        } else {
+          searchAPI()
+        }
       } else {
         searchAPI()
       }
     }
-  }, [page, totalItems, search]);
+  }, [page, totalItems, search, filter]);
 
   const showServiceDetails = (event) => {
     history.push("/home/services/" + event.row.id);
@@ -175,15 +181,31 @@ const Services = () => {
   }
 
   const searchAPI = () => {
-    axios.get('/api/services/title/' + search + "?page=" + page)
-    .then((res) => {
-      setTotalItems(res.data.totalItems);
-      setServices(res.data.services);
-      setLoading(false)
-    }).catch(err => {
-      setServices([])
-      setLoading(false)
-    });
+    const url = "/api/services/filter?page=" + page;
+    let newUrl;
+    if (search) {
+      let hasTitleUrl = url + "&search=title:" + search;
+      filter
+        ? (newUrl = hasTitleUrl + ",serviceCategories:" + filter)
+        : (newUrl = hasTitleUrl);
+    } else {
+      filter
+        ? (newUrl = url + "&search=serviceCategories:" + filter)
+        : (newUrl = url);
+    }
+
+    axios
+      .get(newUrl)
+      .then((res) => {
+        console.log(res.data);
+        setTotalItems(res.data.totalItems);
+        setServices(res.data.services);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setServices([]);
+        setLoading(false);
+      });
   }
 
   const confirmSearchHandler = (event) => {
@@ -194,6 +216,10 @@ const Services = () => {
 
   const clearSearchHandler = () => {
     setSearch('')
+  }
+
+  const filterAPI = (id) => {
+    setFilter(id)
   }
 
   const submitCreateServiceHandler = (service) => {
@@ -289,8 +315,19 @@ const Services = () => {
         />
         <CardHeader
           titleTypographyProps={{ variant: "h4" }}
-          title="Services"
-          subheader="Services on iHelp system"
+          title={
+            <Grid container spacing={3}>
+              <Grid item xs>
+                Services
+                <Typography variant="subtitle1" gutterBottom>
+                  Services are active on iHelp system
+                </Typography>
+              </Grid>
+              <Grid item>
+                <FilterLayout type="service" loadFilter={filterAPI}/>
+              </Grid>
+            </Grid>
+          }
         />
         <CardContent>
           <div style={{ height: 650, width: "100%" }}>

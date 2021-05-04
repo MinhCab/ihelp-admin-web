@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, createMuiTheme, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, ThemeProvider } from '@material-ui/core'
+import { Button, Card, CardContent, CardHeader, createMuiTheme, FormControl, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, ThemeProvider, Typography } from '@material-ui/core'
 import { DataGrid } from '@material-ui/data-grid'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -9,6 +9,7 @@ import axios from '../../../api/axios'
 import { DiscardAlertDialog } from '../../FullLayout/UI/AlertDialog/AlertDialog'
 import AlertSnackbar from '../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 import CreateEvent from './CreateEvent/CreateEvent'
+import FilterLayout from '../../FullLayout/UI/FilterLayout/FilterLayout'
 
 const additionalButtonTheme = createMuiTheme({
   palette: {
@@ -137,6 +138,7 @@ const Events = () => {
   const [openAlertSnackbar, setOpenAlertSnackbar] = useState(false)
   const [openCreateEventDialog, setOpenCreateEventDialog] = useState(false)
   const [openDiscard, setOpenDiscard] = useState(false)
+  const [filter, setFilter] = useState('')
 
   const openCreateEventDialogHandler = () => {
     setOpenCreateEventDialog(true)
@@ -190,19 +192,6 @@ const Events = () => {
     setOpenAlertSnackbar(false)
   }
 
-  const searchAPI = () => {
-    axios.get('/api/events/title/' + search + "?page=" + page)
-    .then((res) => {
-      console.log(res.data);
-      setTotalItems(res.data.totalItems);
-      setEvents(res.data.events);
-      setLoading(false)
-    }).catch(err => {
-      setEvents([])
-      setLoading(false)
-    });
-  }
-
   const confirmSearchHandler = (event) => {
     event.preventDefault()
     setPage(0)
@@ -229,16 +218,46 @@ const Events = () => {
       });
   }
 
+  const searchAPI = () => {
+    const url = '/api/events/filter?page=' + page 
+    let newUrl
+    if(search) {
+      let hasTitleUrl =  url + '&search=title:' + search 
+      filter ? newUrl = hasTitleUrl + ',eventCategories:' + filter : newUrl = hasTitleUrl
+    } else {
+      filter ? newUrl = url + '&search=eventCategories:' + filter : newUrl = url
+    }
+    
+    axios.get(newUrl)
+    .then((res) => {
+      console.log(res.data);
+      setTotalItems(res.data.totalItems);
+      setEvents(res.data.events);
+      setLoading(false)
+    }).catch(err => {
+      setEvents([])
+      setLoading(false)
+    });
+  }
+
+  const filterAPI = (id) => {
+    setFilter(id)
+  }
+
   useEffect(() => {
     if (!loading) {
       setLoading(true)
       if (search.length <= 0) {
-        loadEvents()
+        if(filter.length <= 0) {
+          loadEvents()
+        } else {
+          searchAPI()
+        }
       } else {
         searchAPI()
       }
     }
-  }, [page, totalItems, search]);
+  }, [page, totalItems, search, filter]);
 
   let alertSnackbar = null
   let showCreateEventDialog = null
@@ -313,8 +332,19 @@ const Events = () => {
         />
         <CardHeader
           titleTypographyProps={{ variant: "h4" }}
-          title="Events"
-          subheader="Events from the iHelp volunteers"
+          title={
+            <Grid container spacing={3}>
+              <Grid item xs>
+                Events
+                <Typography variant="subtitle1" gutterBottom>
+                  Events from the iHelp volunteers
+                </Typography>
+              </Grid>
+              <Grid item>
+                <FilterLayout type="event" loadFilter={filterAPI}/>
+              </Grid>
+            </Grid>
+          }
         />
         <CardContent>
           <div style={{ height: 650, width: "100%" }}>
