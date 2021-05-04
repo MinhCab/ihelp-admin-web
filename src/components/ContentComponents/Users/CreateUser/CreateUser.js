@@ -1,17 +1,28 @@
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, MenuItem, TextField } from '@material-ui/core'
+import { Box, Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, makeStyles, MenuItem, TextField } from '@material-ui/core'
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import PhoneInput from 'material-ui-phone-number'
 import DateFnsUtils from "@date-io/date-fns";
 import React, { useState } from 'react'
 import moment from 'moment';
 
+const useStyles = makeStyles((theme) => ({
+  buttonProgress: {
+    color: '#039be5',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
+}))
+
 const CreateUser = (props) => {
+    const classes = useStyles()
     const [email, setEmail] = useState('')
     const [fullname, setFullname] = useState('')
     const [gender, setGender] = useState(true)
     const [birthDate, setBirthDate] = useState()
     const [phone, setPhone] = useState('')
-    // const [sendEmail, setSendEmail] = useState(true)
 
     const fullnameHandler = (event) => {
         setFullname(event.target.value)
@@ -33,10 +44,6 @@ const CreateUser = (props) => {
         setPhone(value)
     }
 
-    // const sendEmailHandler = () => {
-    //     setSendEmail(!sendEmail)
-    // }
-
     const createUserHandler = (event) => {
         event.preventDefault()
         const newUser = {
@@ -53,6 +60,9 @@ const CreateUser = (props) => {
 
     return (
       <Dialog fullWidth maxWidth="xs" open={props.isOpen} onClose={props.close}>
+        {props.isLoading && (
+          <CircularProgress size={60} className={classes.buttonProgress} />
+        )}
         <DialogTitle>
           <strong style={{ fontSize: 20 }}>Create new user</strong>
         </DialogTitle>
@@ -63,7 +73,7 @@ const CreateUser = (props) => {
                 required
                 value={fullname}
                 variant="outlined"
-                  onChange={fullnameHandler}
+                onChange={fullnameHandler}
                 label="Fullname"
                 fullWidth
               />
@@ -72,7 +82,7 @@ const CreateUser = (props) => {
                 required
                 value={email}
                 variant="outlined"
-                  onChange={emailHandler}
+                onChange={emailHandler}
                 label="Email Address"
                 type="email"
                 fullWidth
@@ -81,14 +91,16 @@ const CreateUser = (props) => {
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   required
-                  disableToolbar
-                  variant="dialog"
-                  format="dd/MM/yyyy"
                   margin="normal"
                   label="Birthdate"
+                  format="dd/MM/yyyy"
                   value={birthDate}
                   onChange={birthDateHandler}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
                   fullWidth
+                  inputVariant="outlined"
                 />
               </MuiPickersUtilsProvider>
 
@@ -98,7 +110,7 @@ const CreateUser = (props) => {
                 defaultCountry={"vn"}
                 regions="asia"
                 value={phone}
-                  onChange={phoneHandler}
+                onChange={phoneHandler}
                 variant="outlined"
                 fullWidth
               />
@@ -107,7 +119,7 @@ const CreateUser = (props) => {
                 required
                 select
                 value={gender}
-                  onChange={genderHandler}
+                onChange={genderHandler}
                 label="Gender"
                 variant="outlined"
                 fullWidth
@@ -116,12 +128,6 @@ const CreateUser = (props) => {
                 <MenuItem value="false">Female</MenuItem>
               </TextField>
               <Divider light style={{ marginTop: 20, marginBottom: 20 }} />
-              {/* <FormControlLabel
-                value="start"
-                control={<Checkbox value={sendEmail} onChange={sendEmailHandler} color="primary" />}
-                label="Send email to user "
-                labelPlacement="start"
-              /> */}
             </Box>
           </DialogContent>
           <DialogActions>

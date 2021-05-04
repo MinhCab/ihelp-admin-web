@@ -1,15 +1,25 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, TextField } from '@material-ui/core'
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider, makeStyles, TextField } from '@material-ui/core'
 import { firebase } from '../../../../../api/Firebase/firebase-config'
 import 'firebase/auth'
 import React from 'react'
-import OTP from './OTP/OTP'
+
+const useStyles = makeStyles({
+
+  buttonProgress: {
+    color: "#039be5",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
+});
 
 const ChangePassword = (props) => {
+    const classes = useStyles()
     const [password, setPassword] = React.useState()
     const [newPassword, setNewPassword] = React.useState()
     const [confirmPassword, setConfirmPassword] = React.useState()
-    const [openOTP, setOpenOTP] = React.useState(false)
-
     const [errorMessage, setErrorMessage] = React.useState()
     
     const editPasswordHandler = (event) => {
@@ -24,9 +34,6 @@ const ChangePassword = (props) => {
       setConfirmPassword(event.target.value)
     }
 
-    const closeOTPHandler = () => {
-      setOpenOTP(false)
-    }
 
     //OTP & Recaptcha
     const confirmChangePass = (event) => {
@@ -78,18 +85,6 @@ const ChangePassword = (props) => {
       )
     }
 
-    let showOTP = null
-    if(openOTP) {
-      showOTP = (
-        <OTP 
-          isOpen={showOTP}
-          close={closeOTPHandler}
-          phone={props.phone}
-          confirm={onVerifyCodeSubmit}
-        />
-      )
-    }
-
     return (
       <>
         <Dialog
@@ -98,6 +93,9 @@ const ChangePassword = (props) => {
           fullWidth
           maxWidth="sm"
         >
+          {props.isLoading && (
+            <CircularProgress size={60} className={classes.buttonProgress} />
+          )}
           <DialogTitle>
             <strong style={{ fontSize: 20 }}>Change Password</strong>
           </DialogTitle>
@@ -150,7 +148,6 @@ const ChangePassword = (props) => {
             </DialogActions>
           </form>
         </Dialog>
-        {showOTP}
       </>
     );
 }

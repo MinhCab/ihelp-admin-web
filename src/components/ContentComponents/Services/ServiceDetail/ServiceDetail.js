@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardMedia,
   Chip,
+  CircularProgress,
   createMuiTheme,
   Grid,
   IconButton,
@@ -77,6 +78,15 @@ const useStyles = makeStyles((theme) => ({
     width: "97%",
     margin: 2,
   },
+
+  buttonProgress: {
+    color: '#039be5',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
 }));
 
 const additionalButtonTheme = createMuiTheme({
@@ -108,6 +118,7 @@ const ServiceDetail = (props) => {
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRejectDialog, setOpenRejectDialog] = React.useState(false)
+  const [loading, setLoading] = React.useState(false)
 
   const [details, setDetails] = React.useState({});
   const [categories, setCategories] = React.useState([]);
@@ -124,8 +135,10 @@ const ServiceDetail = (props) => {
         setCategories(res.data.categories);
         setStatus(res.data.status);
         setImages(res.data.images);
+        setLoading(false)
       })
       .catch((error) => {
+        setLoading(false)
         setMessage(error.response.data.error);
         setAlertType("error");
         setOpenAlertSnackbar(true);
@@ -133,23 +146,32 @@ const ServiceDetail = (props) => {
   }
 
   React.useEffect(() => {
-    loadInfoAPI()
+    if(!loading) {
+      setLoading(true)
+      loadInfoAPI()
+    }
   }, []);
 
   const approveServiceHandler = () => {
-    axios
-      .put("/api/services/" + user.email + '/approve/' + props.match.params.id)
-      .then((res) => {
-        setMessage(res.data)
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        loadInfoAPI()
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error)
-        setAlertType('error')
-        setOpenAlertSnackbar(true)
-      });
+    if(!loading) {
+      setLoading(true);
+      axios
+        .put(
+          "/api/services/" + user.email + "/approve/" + props.match.params.id
+        )
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false);
+        });
+    }
   };
 
   const rejectDialogHandler = () => {
@@ -161,57 +183,69 @@ const ServiceDetail = (props) => {
   }
 
   const rejectServiceHandler = (reason, serviceId) => {
-    const rejectObject = {
-      serviceId: serviceId,
-      managerEmail: user.email,
-      reason: reason,
-    };
-    axios
-      .put("/api/services/reject", rejectObject)
+    if(!loading) {
+      setLoading(true)
+      const rejectObject = {
+        serviceId: serviceId,
+        managerEmail: user.email,
+        reason: reason,
+      };
+      axios
+        .put("/api/services/reject", rejectObject)
+        .then((res) => {
+          setMessage(res.data)
+          setAlertType('success')
+          setOpenAlertSnackbar(true)
+          setOpenRejectDialog(false)
+          loadInfoAPI()
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false)
+        });
+    }
+  }; 
+
+  const enableHandler = () => {
+    if(!loading) {
+      setLoading(true)
+      axios
+      .put("/api/services/enable/" + props.match.params.id)
       .then((res) => {
-        setMessage(res.data)
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        setOpenRejectDialog(false)
-        loadInfoAPI()
+        setMessage(res.data);
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        loadInfoAPI();
       })
       .catch((error) => {
         setMessage(error.response.data.error);
         setAlertType("error");
         setOpenAlertSnackbar(true);
+        setLoading(false)
       });
-  }; 
-
-  const enableHandler = () => {
-    axios
-    .put("/api/services/enable/" + props.match.params.id)
-    .then((res) => {
-      setMessage(res.data);
-      setAlertType("success");
-      setOpenAlertSnackbar(true);
-      loadInfoAPI();
-    })
-    .catch((error) => {
-      setMessage(error.response.data.error);
-      setAlertType("error");
-      setOpenAlertSnackbar(true);
-    });
+    }
   }
 
   const disableHandler = () => {
-    axios
-    .put("/api/services/disable/" + props.match.params.id)
-    .then((res) => {
-      setMessage(res.data);
-      setAlertType("success");
-      setOpenAlertSnackbar(true);
-      loadInfoAPI();
-    })
-    .catch((error) => {
-      setMessage(error.response.data.error);
-      setAlertType("error");
-      setOpenAlertSnackbar(true);
-    });
+    if(!loading) {
+      setLoading(true)
+      axios
+      .put("/api/services/disable/" + props.match.params.id)
+      .then((res) => {
+        setMessage(res.data);
+        setAlertType("success");
+        setOpenAlertSnackbar(true);
+        loadInfoAPI();
+      })
+      .catch((error) => {
+        setMessage(error.response.data.error);
+        setAlertType("error");
+        setOpenAlertSnackbar(true);
+        setLoading(false)
+      });
+    }
   }
 
   const handleClick = (event) => {
@@ -228,36 +262,46 @@ const ServiceDetail = (props) => {
   };
 
   const deleteHandler = () => {
-    axios
-      .delete("/api/services/" + props.match.params.id)
-      .then((res) => {
-        history.goBack();
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      });
+    if(!loading) {
+      setLoading(true)
+      axios
+        .delete("/api/services/" + props.match.params.id)
+        .then((res) => {
+          setLoading(false)
+          history.goBack();
+        })
+        .catch((error) => {
+          setLoading(false)
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
   };
 
   const handleUpdateProcess = async(updateDetails) => {
-    try {
-      const response = await axios.put("/api/services", updateDetails);
-      if (response.status === 200) {
-        setOpenEditDialog(false);
+    if(!loading) {
+      setLoading(true)
+      try {
+        const response = await axios.put("/api/services", updateDetails);
+        if (response.status === 200) {
+          setOpenEditDialog(false);
+          setOpenAlertSnackbar(true);
+          setMessage("Edit service successful");
+          setAlertType("success");
+          setDetails(response.data);
+          setCategories(response.data.categories);
+          setStatus(response.data.status);
+          setImages(response.data.images);
+          setAnchorEl(null);
+          setLoading(false)
+        }
+      } catch {
+        setLoading(false)
+        setMessage("Edit service failed, please try again");
+        setAlertType("error");
         setOpenAlertSnackbar(true);
-        setMessage("Edit service successful");
-        setAlertType("success");
-        setDetails(response.data);
-        setCategories(response.data.categories);
-        setStatus(response.data.status);
-        setImages(response.data.images);
-        setAnchorEl(null);
       }
-    } catch {
-      setMessage("Edit service failed, please try again");
-      setAlertType("error");
-      setOpenAlertSnackbar(true);
     }
   };
 
@@ -482,6 +526,9 @@ const ServiceDetail = (props) => {
   return (
     <>
       <Card className={classes.root}>
+        {loading && (
+          <CircularProgress size={60} className={classes.buttonProgress} />
+        )}
         <Grid container spacing={4}>
           <Grid item>{showImages}</Grid>
           <Grid item xs={12} sm container>

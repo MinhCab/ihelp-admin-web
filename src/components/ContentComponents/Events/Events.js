@@ -154,22 +154,25 @@ const Events = () => {
   }
 
   const submitCreateEventHandler = (event) => {
-    axios
-      .post("/api/events", event)
-      .then((res) => {
-        setMessage(res.data)
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        setOpenCreateEventDialog(false)
-        setPage(0)
-        setTotalItems(0)
-        loadEvents()
-      })
-      .catch((err) => {
-        setMessage(err.response.data.message)
-        setAlertType('error')
-        setOpenAlertSnackbar(true)
-      });
+    if(!loading) {
+      setLoading(true);
+      axios
+        .post("/api/events", event)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          setOpenCreateEventDialog(false);
+          setPage(0);
+          setTotalItems(0);
+          loadEvents();
+        })
+        .catch((err) => {
+          setMessage(err.response.data.message);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
   }
 
   const handleCancelDiscard = () => {
@@ -278,6 +281,7 @@ const Events = () => {
         isOpen={openCreateEventDialog}
         close={closeCreateEventDialogHandler}
         submit={submitCreateEventHandler}
+        isLoading={loading}
       />
     )
   }

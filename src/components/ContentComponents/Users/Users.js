@@ -105,24 +105,29 @@ const Users = () => {
     }
 
     const createNewUserAPI = (newUser) => {
-      axios.post('/signup', newUser)
-      .then(res => {
-        setMessage(res.data)
-        loadUserList()
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        setOpenCreateUserDialog(false)
-      }).catch(err => {
-          setMessage(err.response.data.message)
-          setOpenAlertSnackbar(true)
-          setAlertType("error");
-      })
+      if (!loading) {
+        setLoading(true);
+        axios
+          .post("/signup", newUser)
+          .then((res) => {
+            setMessage(res.data);
+            loadUserList();
+            setAlertType("success");
+            setOpenAlertSnackbar(true);
+            setOpenCreateUserDialog(false);
+            setLoading(false);
+          })
+          .catch((err) => {
+            setLoading(false);
+            setMessage(err.response.data.message);
+            setOpenAlertSnackbar(true);
+            setAlertType("error");
+          });
+      }
     }
 
     const confirmCreateUserHandler = (newUser) => {
-      // if(isSendEmail === false) {
         createNewUserAPI(newUser)
-      // }
     }
 
     const redirectToBannedUserPage = () => {
@@ -157,6 +162,7 @@ const Users = () => {
           })
           .catch((err) => {
             console.log(err.message);
+            setLoading(false)
           });
     }
     
@@ -175,7 +181,7 @@ const Users = () => {
     let showCreateUserDialog = null
     let showDiscardDialog = null
     openAlertSnackbar ? showAlertSnackbar = (<AlertSnackbar isOpen={openAlertSnackbar} close={handleCloseAlertSnackbar} message={message} alertType={alertType} />) : null
-    openCreateUserDialog? showCreateUserDialog = (<CreateUser isOpen={openCreateUserDialog} close={closeCreateUserHandler} submit={confirmCreateUserHandler} />) : null
+    openCreateUserDialog? showCreateUserDialog = (<CreateUser isLoading={loading} isOpen={openCreateUserDialog} close={closeCreateUserHandler} submit={confirmCreateUserHandler} />) : null
     openDiscard ? showDiscardDialog = (<DiscardAlertDialog isOpen={openDiscard} closing={closeDiscardDialog} proceed={proceedDiscardHandler}/>) : null
 
     return (

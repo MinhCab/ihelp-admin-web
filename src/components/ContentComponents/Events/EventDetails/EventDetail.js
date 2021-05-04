@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardMedia,
   Chip,
+  CircularProgress,
   createMuiTheme,
   Grid,
   IconButton,
@@ -77,6 +78,15 @@ const useStyles = makeStyles((theme) => ({
     width: "97%",
     margin: 2,
   },
+  
+  buttonProgress: {
+    color: '#039be5',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+  },
 }));
 
 const additionalButtonTheme = createMuiTheme({
@@ -108,6 +118,7 @@ const EventDetail = (props) => {
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRejectDialog, setOpenRejectDialog] = React.useState(false);
+  const [loading, setLoading] = React.useState(false)
 
   const [details, setDetails] = React.useState({});
   const [categories, setCategories] = React.useState([]);
@@ -126,19 +137,26 @@ const EventDetail = (props) => {
         setStatus(res.data.status);
         setOnsite(res.data.isOnsite);
         setImages(res.data.images);
+        setLoading(false)
       })
       .catch((err) => {
         setMessage(err.response.data.error);
         setAlertType("error");
         setOpenAlertSnackbar(true);
+        setLoading(false)
       });
   }
 
   React.useEffect(() => {
-    loadInfoAPI()
+    if(!loading) {
+      setLoading(true)
+      loadInfoAPI()
+    }
   }, []);
 
   const approveEventHandler = () => {
+    if(!loading){
+      setLoading(true)
     axios
       .put("/api/events/" + user.email + "/approve/" + props.match.params.id)
       .then((res) => {
@@ -151,7 +169,9 @@ const EventDetail = (props) => {
         setMessage(error.response.data.message);
         setAlertType("error");
         setOpenAlertSnackbar(true);
+        setLoading(false)
       });
+    }
   };
 
   const rejectDialogHandler = () => {
@@ -163,28 +183,34 @@ const EventDetail = (props) => {
   };
 
   const rejectEventHandler = (reason, eventId) => {
-    const rejectObject = {
-      eventId: eventId,
-      managerEmail: user.email,
-      reason: reason,
-    };
-    axios
-      .put("/api/events/reject", rejectObject)
-      .then((res) => {
-        setMessage(res.data);
-        setAlertType("success");
-        setOpenAlertSnackbar(true);
-        setOpenRejectDialog(false)
-        loadInfoAPI()
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      });
+    if(!loading) {
+      setLoading(true);
+      const rejectObject = {
+        eventId: eventId,
+        managerEmail: user.email,
+        reason: reason,
+      };
+      axios
+        .put("/api/events/reject", rejectObject)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          setOpenRejectDialog(false);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false)
+        });
+    }
   };
 
   const enableHandler = () => {
+    if(!loading) {
+      setLoading(true);
     axios
       .put("/api/events/enable/" + props.match.params.id)
       .then((res) => {
@@ -197,23 +223,28 @@ const EventDetail = (props) => {
         setMessage(error.response.data.error);
         setAlertType("error");
         setOpenAlertSnackbar(true);
+        setLoading(false)
       });
+    }
   }
 
   const disableHandler = () => {
-    axios
-      .put("/api/events/disable/" + props.match.params.id)
-      .then((res) => {
-        setMessage(res.data);
-        setAlertType("success");
-        setOpenAlertSnackbar(true);
-        loadInfoAPI();
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      });
+    if(!loading) {
+      setLoading(true);
+      axios
+        .put("/api/events/disable/" + props.match.params.id)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
   };
 
   const handleClick = (event) => {
@@ -230,37 +261,47 @@ const EventDetail = (props) => {
   };
 
   const deleteHandler = () => {
-    axios
-      .delete("/api/events/" + props.match.params.id)
-      .then((res) => {
-        history.goBack();
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      });
+    if(!loading) {
+      setLoading(true);
+      axios
+        .delete("/api/events/" + props.match.params.id)
+        .then((res) => {
+          setLoading(false)
+          history.goBack();
+        })
+        .catch((error) => {
+          setLoading(false)
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
   };
 
   const handleUpdateProcess = async (updateDetails) => {
-    try {
-      const response = await axios.put("/api/events", updateDetails);
-      if (response.status === 200) {
-        setOpenEditDialog(false);
+    if(!loading) {
+      setLoading(true);
+      try {
+        const response = await axios.put("/api/events", updateDetails);
+        if (response.status === 200) {
+          setOpenEditDialog(false);
+          setOpenAlertSnackbar(true);
+          setMessage("Edit event successful");
+          setAlertType("success");
+          setDetails(response.data);
+          setCategories(response.data.categories);
+          setStatus(response.data.status);
+          setOnsite(response.data.isOnsite);
+          setImages(response.data.images);
+          setAnchorEl(null);
+          setLoading(false)
+        }
+      } catch {
+        setLoading(false)
+        setMessage("Edit event failed, please try again");
+        setAlertType("error");
         setOpenAlertSnackbar(true);
-        setMessage("Edit event successful");
-        setAlertType("success");
-        setDetails(response.data);
-        setCategories(response.data.categories);
-        setStatus(response.data.status);
-        setOnsite(response.data.isOnsite);
-        setImages(response.data.images);
-        setAnchorEl(null);
       }
-    } catch {
-      setMessage("Edit event failed, please try again");
-      setAlertType("error");
-      setOpenAlertSnackbar(true);
     }
   };
 
@@ -434,6 +475,7 @@ const EventDetail = (props) => {
         isOpen={openEditDialog}
         close={handleClose}
         update={handleUpdateProcess}
+        isLoading={loading}
       />
     );
   }
@@ -502,6 +544,7 @@ const EventDetail = (props) => {
   return (
     <>
       <Card className={classes.root}>
+      {loading && <CircularProgress size={60} className={classes.buttonProgress} />}
         <Grid container spacing={4}>
           <Grid item>{showImages}</Grid>
           <Grid item xs={12} sm container>

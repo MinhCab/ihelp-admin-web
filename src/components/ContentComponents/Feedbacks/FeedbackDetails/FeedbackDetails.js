@@ -28,23 +28,22 @@ const FeedbackDetails = (props) => {
     }
 
     return (
-        <Dialog open={props.isOpen} onClose={props.close}>
-            <DialogTitle>
-                    <p style={{fontSize: 20}}>
-                        <strong>Feedback from </strong><a href={`/home/users/${details.email}`}>{details.email}</a>
-                    </p>
-                    <strong>Created date: </strong> {details.createdDate}
-                    <br/>
-                    <strong>Status: </strong> {status.name}
-            </DialogTitle>
-            <DialogContent>
-                <Typography gutterBottom >
-                    {details.comment}
-                </Typography>
-            </DialogContent>
-            {showValidatingButtons}
-        </Dialog>
-    )
+      <Dialog open={props.isOpen} onClose={props.close}>
+        <DialogTitle>
+          <p style={{ fontSize: 20 }}>
+            <strong>Feedback from </strong>
+            <a href={`/home/users/${details.email}`}>{details.email}</a>
+          </p>
+          <strong>Created date: </strong> {details.createdDate}
+          <br />
+          <strong>Status: </strong> {status.name}
+        </DialogTitle>
+        <DialogContent>
+          <Typography gutterBottom>{details.comment}</Typography>
+        </DialogContent>
+        {showValidatingButtons}
+      </Dialog>
+    );
 }
 
 export default FeedbackDetails

@@ -18,6 +18,7 @@ import {
   Chip,
   Dialog,
   DialogContent,
+  CircularProgress,
 } from "@material-ui/core";
 import moment from "moment";
 import React, { useEffect } from "react";
@@ -53,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.5),
     fontSize: 25,
   },
+
   locationSuggest: {
     width: "100%",
     maxWidth: 360,
@@ -60,6 +62,15 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
     maxHeight: 300,
     position: "absolute",
+  },
+
+  buttonProgress: {
+    color: '#039be5',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
   },
 }));
 
@@ -309,7 +320,12 @@ const CreateEvent = (props) => {
               {...getInputProps({ placeholder: "Type location" })}
             />
             <List className={classes.locationSuggest}>
-              {loading ? <div>...loading</div> : null}
+              {loading && (
+                <CircularProgress
+                  size={60}
+                  className={classes.buttonProgress}
+                />
+              )}
 
               {suggestions.map((suggest) => {
                 return (
@@ -343,6 +359,7 @@ const CreateEvent = (props) => {
           cancel={handleCancelConfirmation}
           proceed={handleProceedConfirmation}
           isOpen={openConfirmation}
+          isLoading={props.isLoading}
         />
       );
     }
@@ -375,7 +392,7 @@ const CreateEvent = (props) => {
         alertType={alertType}
         message={message}
       />
-    )
+    );
   }
 
   return (

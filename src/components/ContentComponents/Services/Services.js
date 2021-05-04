@@ -218,22 +218,27 @@ const Services = () => {
   }
 
   const submitCreateServiceHandler = (service) => {
-    axios
-      .post("/api/services", service)
-      .then((res) => {
-        setMessage(res.data)
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        setOpenCreateServiceDialog(false)
-        setPage(0)
-        setTotalItems(0)
-        loadServices()
-      })
-      .catch((err) => {
-        setOpenAlertSnackbar(true)
-        setMessage('Create Service: Cannot create this service, please try again')
-        setAlertType('error')
-      });
+    if(!loading) {
+      setLoading(true);
+      axios
+        .post("/api/services", service)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          setOpenCreateServiceDialog(false);
+          setPage(0);
+          setTotalItems(0);
+          loadServices();
+        })
+        .catch((err) => {
+          setOpenAlertSnackbar(true);
+          setMessage(
+            "Create Service: Cannot create this service, please try again"
+          );
+          setAlertType("error");
+        });
+    }
   }
 
   let showDiscard = null
@@ -246,6 +251,7 @@ const Services = () => {
           isOpen={openCreateServiceDialog}
           close={closeCreateServiceDialogHandler}
           submit={submitCreateServiceHandler}
+          isLoading={loading}
         />
       );
   }

@@ -1,9 +1,21 @@
-import { Dialog, DialogContent, Typography, Grid, DialogActions, DialogTitle, Button, Divider, Chip } from '@material-ui/core'
+import { Dialog, DialogContent, Typography, Grid, DialogActions, DialogTitle, Button, Divider, Chip, makeStyles, CircularProgress } from '@material-ui/core'
 import moment from 'moment'
 import React from 'react'
 
+const useStyles = makeStyles((theme) => ({
+  buttonProgress: {
+    color: "#039be5",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
+}));
+
 const EventConfirmationDialog = (props) => {
     const details = props.details
+    const classes = useStyles()
 
     let showType = 'On site'
     let showLocation = null
@@ -26,6 +38,7 @@ const EventConfirmationDialog = (props) => {
             open={props.isOpen}
             onClose={props.cancel}
         >
+          {props.isLoading && <CircularProgress size={60} className={classes.buttonProgress} />}
             <DialogTitle>
                 <Typography variant='h4' color='textPrimary' component='span'>
                     <strong>Your event will be created with the following information: </strong>
@@ -117,9 +130,13 @@ const EventConfirmationDialog = (props) => {
 
 const ServiceConfirmationDialog = (props) => {
     const details = props.details
+    const classes = useStyles()
     
     return (
       <Dialog open={props.isOpen} onClose={props.cancel}>
+        {props.isLoading && (
+          <CircularProgress size={60} className={classes.buttonProgress} />
+        )}
         <DialogTitle>
           Your service will be created with the following information:{" "}
         </DialogTitle>

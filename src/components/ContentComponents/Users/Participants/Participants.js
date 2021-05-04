@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from '@material-ui/core'
+import { CircularProgress, Grid, makeStyles } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import Participant from './Participant/Participant'
 
@@ -6,12 +6,20 @@ import axios from '../../../../api/axios'
 import AlertSnackbar from '../../../FullLayout/UI/AlertSnackbar/AlertSnackbar'
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        padding: 20,
-        justifyContent: 'space-evenly',
-    },
-}))
+  root: {
+    display: "flex",
+    padding: 20,
+    justifyContent: "space-evenly",
+  },
+  buttonProgress: {
+    color: "#039be5",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
+}));
 
 const Participants = (props) => {
   const classes = useStyles();
@@ -60,8 +68,11 @@ const Participants = (props) => {
 
   return (
     <>
+      {loading && (
+        <CircularProgress size={60} className={classes.buttonProgress} />
+      )}
       <Grid container item xs className={classes.root}>
-          {showParticipants}
+        {showParticipants}
       </Grid>
       {showErrorSnackbar}
     </>

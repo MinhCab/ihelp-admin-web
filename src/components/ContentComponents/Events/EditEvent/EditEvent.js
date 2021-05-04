@@ -16,6 +16,7 @@ import {
   DialogActions,
   Select,
   Input,
+  CircularProgress,
 } from "@material-ui/core";
 import { enGB } from "date-fns/locale";
 import moment from "moment";
@@ -28,12 +29,10 @@ import PlacesAutocomplete, {
 import { TextArea } from "semantic-ui-react";
 
 import axios from '../../../../api/axios'
-import PhotoUploadDialog from '../../../FullLayout/UI/PhotoUploadDialog/PhotoUploadDialog'
 
 const useStyles = makeStyles((theme) => ({
-
   descriptionField: {
-    width: '100%',
+    width: "100%",
     height: "200px",
     padding: theme.spacing(0.5),
     fontSize: 25,
@@ -50,17 +49,22 @@ const useStyles = makeStyles((theme) => ({
   imagePreview: {
     width: 400,
     height: 300,
-}
+  },
+
+  buttonProgress: {
+    color: "#039be5",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    marginTop: -12,
+    marginLeft: -12,
+  },
 }));
 
 const EditEvent = (props) => {
   const classes = useStyles();
   const info = props.infor;
   const [categories, setCategories] = React.useState([]);
-  const [message, setMessage] = React.useState("");
-  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
-  const [alertType, setAlertType] = React.useState("");
-  // const [openPhotoDialog, setOpenPhotoDialog] = React.useState(false)
 
   const [title, setTitle] = React.useState(info.title);
   const [startDate, setStartDate] = React.useState(new Date(info.startDate));
@@ -70,8 +74,6 @@ const EditEvent = (props) => {
   const [point, setPoint] = React.useState(info.point);
   const [onSite, setOnSite] = React.useState(info.onsite);
   const [location, setLocation] = React.useState(info.location);
-  // const [images, setImages] = React.useState(info.images)
-  // const [image, setImage] = React.useState(null)
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
     lng: null,
@@ -115,18 +117,6 @@ const EditEvent = (props) => {
     setDescription(event.target.value);
   };
 
-  // const handleUploadPhoto = () => {
-  //   setOpenPhotoDialog(true)
-  // }
-
-  // const handleClosePhotoDialog = () => {
-  //   setOpenPhotoDialog(false);
-  // }
-
-  // const handleConfirmPhotoDialog = () => {
-  //   console.log('confirm clicked')
-  // }
-
   const updateProcess = (event) => {
     event.preventDefault()
     let cateIDs = [];
@@ -160,9 +150,7 @@ const EditEvent = (props) => {
         setCategories(res.data);
       })
       .catch((err) => {
-        setMessage(err.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
+        console.log(err)
       });
   }, []);
 
@@ -185,7 +173,9 @@ const EditEvent = (props) => {
             style={{ marginBottom: 20 }}
           />
           <List className={classes.locationSuggest}>
-            {loading ? <div>...loading</div> : null}
+            {loading && (
+              <CircularProgress size={60} className={classes.buttonProgress} />
+            )}
 
             {suggestions.map((suggest) => {
               return (
@@ -212,20 +202,12 @@ const EditEvent = (props) => {
     showLocationField = null;
   }
 
-  // if(openPhotoDialog) {
-  //   showUploadPhotoDialog = (
-  //     <PhotoUploadDialog
-  //       isOpen={openPhotoDialog}
-  //       cancel={handleClosePhotoDialog}
-  //       confirm={handleConfirmPhotoDialog}
-  //       image={image}
-  //     />
-  //   )
-  // }
-
   return (
     <>
       <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
+        {props.isLoading && (
+          <CircularProgress size={60} className={classes.buttonProgress} />
+        )}
         <DialogTitle>
           <strong style={{ fontSize: 20 }}>Edit Events</strong>
         </DialogTitle>

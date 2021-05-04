@@ -32,7 +32,6 @@ import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents"
 import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext"
 import { storage } from "../../../../api/Firebase/firebase-config";
-import OTP from "./ChangePassword/OTP/OTP";
 
 const useStyles = makeStyles({
   avatar: {
@@ -74,11 +73,7 @@ const Profile = (props) => {
   const [openDiscardDialog, setOpenDiscardDialog] = useState(false);
   const [openPhotoUploadDialog, setOpenPhotoUploadDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(
-    false
-  );
-  const [firebaseOTPTrigger, setFirebaseOTPTrigger] = useState();
-  const [openOTPDialog, setOpenOTPDialog] = useState(false);
+  const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false);
 
   const editFullnameHandler = (event) => {
     setFullname(event.target.value);
@@ -114,24 +109,27 @@ const Profile = (props) => {
   };
 
   const handleUploadImage = async () => {
-    const imageLink = await uploadImageToFirebase();
-    if (imageLink) {
-      axios
-        .post("/accounts/" + details.email + "/avatar", imageLink)
-        .then((res) => {
-          setMessage(res.data);
-          setAlertType("success");
-          setOpenAlertSnackbar(true);
-          setOpenPhotoUploadDialog(false);
-          loadUserInfo();
-          loadInfo();
-        })
-        .catch((err) => {
-          setMessage(err.response.data.message);
-          setAlertType("error");
-          setOpenAlertSnackbar(true);
-          setOpenPhotoUploadDialog(false);
-        });
+    if(!loading) {
+      setLoading(true)
+      const imageLink = await uploadImageToFirebase();
+      if (imageLink) {
+        axios
+          .post("/accounts/" + details.email + "/avatar", imageLink)
+          .then((res) => {
+            setMessage(res.data);
+            setAlertType("success");
+            setOpenAlertSnackbar(true);
+            setOpenPhotoUploadDialog(false);
+            loadUserInfo();
+          })
+          .catch((err) => {
+            setMessage(err.response.data.message);
+            setAlertType("error");
+            setOpenAlertSnackbar(true);
+            setOpenPhotoUploadDialog(false);
+            setLoading(false)
+          });
+      }
     }
   };
 
@@ -198,8 +196,7 @@ const Profile = (props) => {
           setMessage("Update profile Complete");
           setAlertType("success");
           setOpenAlertSnackbar(true);
-          setDetails(response.data);
-          setLoading(false);
+          loadUserInfo()
         }
       } catch (error) {
         setMessage("Update profile failed, please try again");
@@ -231,21 +228,25 @@ const Profile = (props) => {
   };
 
   const changePassword = (changePassInfo) => {
-    axios
-      .put("/accounts/update_password", changePassInfo)
-      .then((res) => {
-        console.log(res);
-        setMessage('Password changed successfully');
-        setAlertType("success");
-        setOpenAlertSnackbar(true);
-        setOpenChangePasswordDialog(false);
-        loadUserInfo();
-      })
-      .catch((error) => {
-        setMessage('Change password failed, please try again');
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-      });
+    if(!loading) {
+      setLoading(true)
+      axios
+        .put("/accounts/update_password", changePassInfo)
+        .then((res) => {
+          console.log(res);
+          setMessage("Password changed successfully");
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          setOpenChangePasswordDialog(false);
+          loadUserInfo();
+        })
+        .catch((error) => {
+          setMessage("Change password failed, please try again");
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false)
+        });
+    }
   };
 
   const closeChangePasswordHandler = () => {
@@ -253,48 +254,52 @@ const Profile = (props) => {
   };
 
   const updateRoleHandler = async (newRole) => {
-    try {
-      const response = await axios.put(
-        "/accounts/" + details.email + "/role/" + newRole
-      );
-      if (response.status === 200) {
-        setMessage(
-          "Change Role: Update account " +
-            details.email +
-            " to " +
-            newRole +
-            " completed"
+    if(!loading) {
+      setLoading(true);
+      try {
+        const response = await axios.put(
+          "/accounts/" + details.email + "/role/" + newRole
         );
-        setAlertType("success");
+        if (response.status === 200) {
+          setMessage(
+            "Change Role: Update account " +
+              details.email +
+              " to " +
+              newRole +
+              " completed"
+          );
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadUserInfo()
+        }
+      } catch (error) {
+        setMessage("Change Role: Update role failed, please try again");
         setOpenAlertSnackbar(true);
-        setDetails(response.data);
+        setAlertType("error");
         setLoading(false);
       }
-    } catch (error) {
-      setMessage("Change Role: Update role failed, please try again");
-      setOpenAlertSnackbar(true);
-      setAlertType("error");
-      setLoading(false);
     }
   };
 
   const updateUserStatusHandler = (statusId) => {
-    axios.put('/accounts/' + props.match.params.email + '/status/' + statusId)
-      .then(res => {
-        setMessage(res.data)
-        setAlertType('success')
-        setOpenAlertSnackbar(true)
-        loadUserInfo()
-      }).catch(err => {
-        setMessage(err.response.data.message)
-        setAlertType('error')
-        setOpenAlertSnackbar(true)
-      })
+    if(!loading) {
+      setLoading(true);
+      axios
+        .put("/accounts/" + props.match.params.email + "/status/" + statusId)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadUserInfo();
+        })
+        .catch((err) => {
+          setMessage(err.response.data.message);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false);
+        });
+    }
   }
-
-  const closeOTPHandler = () => {
-    openOTPDialog(false);
-  };
 
   const loadUserInfo = () => {
     axios
@@ -428,6 +433,7 @@ const Profile = (props) => {
         isOpen={openChangePasswordDialog}
         close={closeChangePasswordHandler}
         confirm={changePassword}
+        isLoading={loading}
       />
     );
   }
@@ -614,21 +620,13 @@ const Profile = (props) => {
     );
   }
 
-  if (openOTPDialog) {
-    showOTPDialog = (
-      <OTP
-        isOpen={openOTPDialog}
-        close={closeOTPHandler}
-        phone={phone}
-        confirm={confirmChangePassword}
-      />
-    );
-  }
-
   return (
     <>
       <Grid container spacing={3}>
         <Grid item lg={3} md={12} xs={12}>
+          {loading && (
+            <CircularProgress size={60} className={classes.buttonProgress} />
+          )}
           {showEditForm}
         </Grid>
         <Grid item lg={9} md={12} xs={12}>

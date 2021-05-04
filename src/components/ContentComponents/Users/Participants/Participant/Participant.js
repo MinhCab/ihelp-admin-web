@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     },
     rating: {
       verticalAlign: 'middle'
-    }
+    },
   }));
 
 const Participant = (props) => {

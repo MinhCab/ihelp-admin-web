@@ -14,6 +14,7 @@ import {
     DialogActions,
     Select,
     Input,
+    CircularProgress,
   } from "@material-ui/core";
   import { enGB } from "date-fns/locale";
   import moment from "moment";
@@ -27,14 +28,13 @@ import {
   
   import axios from '../../../../api/axios'  
   const useStyles = makeStyles((theme) => ({
-  
     descriptionField: {
-      width: '100%',
+      width: "100%",
       height: "200px",
       padding: theme.spacing(0.5),
       fontSize: 25,
     },
-  
+
     locationSuggest: {
       maxWidth: 450,
       backgroundColor: theme.palette.background.paper,
@@ -42,22 +42,27 @@ import {
       maxHeight: 300,
       position: "absolute",
     },
-  
+
     imagePreview: {
       width: 400,
       height: 300,
-  }
+    },
+
+    buttonProgress: {
+      color: "#039be5",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      marginTop: -12,
+      marginLeft: -12,
+    },
   }));
   
   const EditService = (props) => {
     const classes = useStyles();
     const info = props.infor;
     const [categories, setCategories] = React.useState([]);
-    const [message, setMessage] = React.useState("");
-    const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
-    const [alertType, setAlertType] = React.useState("");
-    // const [openPhotoDialog, setOpenPhotoDialog] = React.useState(false)
-  
+
     const [title, setTitle] = React.useState(info.title);
     const [startDate, setStartDate] = React.useState(new Date(info.startDate));
     const [endDate, setEndDate] = React.useState(new Date(info.endDate));
@@ -65,8 +70,6 @@ import {
     const [quota, setQuota] = React.useState(info.quota);
     const [point, setPoint] = React.useState(info.point);
     const [location, setLocation] = React.useState(info.location);
-    // const [images, setImages] = React.useState(info.images)
-    // const [image, setImage] = React.useState(null)
     const [coordinates, setCoordinates] = React.useState({
       lat: null,
       lng: null,
@@ -106,18 +109,6 @@ import {
       setDescription(event.target.value);
     };
   
-    // const handleUploadPhoto = () => {
-    //   setOpenPhotoDialog(true)
-    // }
-  
-    // const handleClosePhotoDialog = () => {
-    //   setOpenPhotoDialog(false);
-    // }
-  
-    // const handleConfirmPhotoDialog = () => {
-    //   console.log('confirm clicked')
-    // }
-  
     const updateProcess = (event) => {
       event.preventDefault()
       let cateIDs = [];
@@ -150,64 +141,64 @@ import {
           setCategories(res.data);
         })
         .catch((err) => {
-          setMessage(err.response.data.error);
-          setAlertType("error");
-          setOpenAlertSnackbar(true);
+          console.log(err)
         });
     }, []);
   
     let showUploadPhotoDialog = null
     let showLocationField = (
-        <PlacesAutocomplete
-          value={location}
-          onChange={setLocation}
-          onSelect={handleSelectGoogleLocation}
-        >
-          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-            <>
-              <TextField
-                variant="outlined"
-                {...getInputProps({ placeholder: "Type location" })}
-                fullWidth
-                label="Location"
-                required
-                style={{ marginBottom: 20 }}
-              />
-              <List className={classes.locationSuggest}>
-                {loading ? <div>...loading</div> : null}
-  
-                {suggestions.map((suggest) => {
-                  return (
-                    <ListItem
-                      button
-                      divider
-                      {...getSuggestionItemProps(suggest)}
-                      key={suggest.index}
-                    >
-                      <ListItemText>{suggest.description}</ListItemText>
-                    </ListItem>
-                  );
-                })}
-              </List>
-            </>
-          )}
-        </PlacesAutocomplete>
+      <PlacesAutocomplete
+        value={location}
+        onChange={setLocation}
+        onSelect={handleSelectGoogleLocation}
+      >
+        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+          <>
+            <TextField
+              variant="outlined"
+              {...getInputProps({ placeholder: "Type location" })}
+              fullWidth
+              label="Location"
+              required
+              style={{ marginBottom: 20 }}
+            />
+            <List className={classes.locationSuggest}>
+              {loading && (
+                <CircularProgress
+                  size={60}
+                  className={classes.buttonProgress}
+                />
+              )}
+
+              {suggestions.map((suggest) => {
+                return (
+                  <ListItem
+                    button
+                    divider
+                    {...getSuggestionItemProps(suggest)}
+                    key={suggest.index}
+                  >
+                    <ListItemText>{suggest.description}</ListItemText>
+                  </ListItem>
+                );
+              })}
+            </List>
+          </>
+        )}
+      </PlacesAutocomplete>
     );
-  
-    // if(openPhotoDialog) {
-    //   showUploadPhotoDialog = (
-    //     <PhotoUploadDialog
-    //       isOpen={openPhotoDialog}
-    //       cancel={handleClosePhotoDialog}
-    //       confirm={handleConfirmPhotoDialog}
-    //       image={image}
-    //     />
-    //   )
-    // }
   
     return (
       <>
-        <Dialog fullWidth maxWidth="md" open={props.isOpen} onClose={props.close}>
+        <Dialog
+          fullWidth
+          maxWidth="md"
+          open={props.isOpen}
+          onClose={props.close}
+        >
+          {props.isLoading && (
+            <CircularProgress size={60} className={classes.buttonProgress} />
+          )}
           <DialogTitle>
             <strong style={{ fontSize: 20 }}>Edit Events</strong>
           </DialogTitle>
