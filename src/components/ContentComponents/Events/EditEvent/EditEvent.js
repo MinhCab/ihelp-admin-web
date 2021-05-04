@@ -245,7 +245,7 @@ const EditEvent = (props) => {
               endDate={endDate}
               onStartDateChange={setStartDate}
               onEndDateChange={setEndDate}
-              minimumDate={new Date(info.createdDate).addDays(14)}
+              minimumDate={new Date(info.createdDate).addDays(15)}
               minimumLength={1}
               format="dd MMM yyyy"
               locale={enGB}
@@ -311,7 +311,7 @@ const EditEvent = (props) => {
               onChange={handleQuotaInput}
               label="Number of participants"
               type="number"
-              InputProps={{ inputProps: { min: 0, max: 100 } }}
+              InputProps={{ inputProps: { min: 1, max: 100 } }}
             />
             <br />
             <TextField
@@ -322,7 +322,7 @@ const EditEvent = (props) => {
               onChange={handlePointInput}
               label="Points per participant"
               type="number"
-              InputProps={{ inputProps: { min: 0 } }}
+              InputProps={{ inputProps: { min: 10 } }}
             />
             <br />
             <FormControlLabel

@@ -5,6 +5,7 @@ import {
   Typography,
   Paper,
   Button,
+  CircularProgress,
 } from "@material-ui/core";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -19,6 +20,15 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     margin: theme.spacing(1),
     cursor: "pointer",
+  },
+
+  buttonProgress: {
+    color: '#039be5',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
   },
 }));
 
@@ -49,6 +59,7 @@ const Notifications = (props) => {
           horizontal: "center",
         }}
       >
+        {props.isNotiLoading && <CircularProgress size={60} className={classes.buttonProgress} />}
         {notificationList.length > 0 ? (
           notificationList.map((noti) => {
             return (
@@ -70,6 +81,9 @@ const Notifications = (props) => {
                   <Grid item zeroMinWidth xs={12}>
                     <Typography gutterBottom variant="h6" noWrap>
                       <strong>{noti.title}</strong>
+                    </Typography>
+                    <Typography gutterBottom variant="body2">
+                      {noti.message}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       {moment(noti.date).format("MMMM Do, YYYY")}

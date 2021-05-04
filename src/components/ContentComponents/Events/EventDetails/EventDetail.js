@@ -148,7 +148,7 @@ const EventDetail = (props) => {
         loadInfoAPI()
       })
       .catch((error) => {
-        setMessage(error.response.data.error);
+        setMessage(error.response.data.message);
         setAlertType("error");
         setOpenAlertSnackbar(true);
       });

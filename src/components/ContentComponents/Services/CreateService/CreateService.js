@@ -413,7 +413,7 @@ const CreateService = (props) => {
                   endDate={endDate}
                   onStartDateChange={setStartDate}
                   onEndDateChange={setEndDate}
-                  minimumDate={new Date().addDays(3)}
+                  minimumDate={new Date().addDays(4)}
                   minimumLength={1}
                   format="dd MMM yyyy"
                   locale={enGB}
@@ -562,7 +562,7 @@ const CreateService = (props) => {
                       id="txtPoint"
                       variant="outlined"
                       type="number"
-                      InputProps={{ inputProps: { min: 0 } }}
+                      InputProps={{ inputProps: { min: 10 } }}
                       style={{ maxWidth: 100 }}
                       onChange={(event) => handlePointInput(event)}
                       value={point}

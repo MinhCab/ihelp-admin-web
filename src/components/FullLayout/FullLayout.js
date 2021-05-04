@@ -17,7 +17,7 @@ import Profile from '../ContentComponents/Users/Profile/Profile'
 import Reports from '../ContentComponents/Reports/Reports'
 import { useAuth } from '../../hoc/StoringAuth/AuthContext';
 import { messaging } from '../../api/Firebase/firebase-config'
-import { useSnackbar } from 'notistack'
+import { SnackbarProvider, useSnackbar } from 'notistack'
 
 import AdminRoute from '../../routes/AdminRoute/AdminRoute';
 import axios from '../../api/axios';
@@ -70,6 +70,7 @@ const FullLayout = () => {
   const [totalNotiPages, setTotalNotiPages] = useState(0)
   const [notiList, setNotiList] = useState([])
   const [notiPage, setNotiPage] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const [openAlertSnackbar, setOpenAlertSnackbar] = useState(false)
   const [message, setMessage] = useState('')
@@ -109,7 +110,7 @@ const FullLayout = () => {
 
   const receiveForegroundNotification = () => {
     messaging.onMessage((payload) => {
-      enqueueSnackbar(payload.notification.title, { variant: 'info' })
+      enqueueSnackbar(payload.notification.title, { variant: 'info'})
     });
   }
 
@@ -140,14 +141,23 @@ const FullLayout = () => {
     return '';
   }
 
+  const resetNotiList = () => {
+    setTotalNotiPages(0)
+    setNotiPage(0)
+    setNotiList([])
+    setLoading(false)
+  }
+
   const loadNotification = () => {
     axios.get('/notifications/' + getCookie('userEmail') + '?page=' + notiPage)
     .then(res => {
       console.log(res)
       setTotalNotiPages(res.data.totalPages)
       addToNotiList(res.data.notifications)
+      setLoading(false)
     }).catch(err => {
       console.log(err.message)
+      setLoading(false)
     })
   }
 
@@ -156,13 +166,16 @@ const FullLayout = () => {
   }
 
   useEffect(() => {
-    loadInfo()
-    loadNotification()
-  }, [notiPage, enqueueSnackbar])
+    if(!loading) {
+      setLoading(true)
+      loadInfo()
+      loadNotification()
+    }
+  }, [notiPage])
 
   useEffect(() => {
     receiveForegroundNotification()
-  }, [])
+  }, [enqueueSnackbar])
 
   let showSideBar = (
     <Sidebar
@@ -186,35 +199,72 @@ const FullLayout = () => {
   }
 
   return (
+      <div className={classes.root}>
+        <Header
+          notiList={notiList}
+          currPage={notiPage}
+          totalNotiPages={totalNotiPages}
+          notiPagingAction={showMoreHandler}
+          toggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+          toggleMobileSidebar={() => setMobileSidebarOpen(true)}
+          isNotiLoading={loading}
+        />
+        {showSideBar}
+        <div
+          className={
+            isSidebarOpen
+              ? classes.wrapper + " " + classes.hideFullSidebar
+              : classes.wrapper
+          }
+        >
+          <div className={classes.contentContainer}>
+            <div className={classes.content}>
+              <Switch>
+                <PrivateRoute
+                  exact
+                  path={`${url}/dashboard`}
+                  component={Dashboard}
+                />
 
-    <div className={classes.root}>
-      <Header notiList={notiList} currPage={notiPage} totalNotiPages={totalNotiPages} notiPagingAction={showMoreHandler} toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
-      {showSideBar}
-      <div className={isSidebarOpen ? classes.wrapper + ' ' + classes.hideFullSidebar : classes.wrapper}>
-        <div className={classes.contentContainer}>
-          <div className={classes.content}>
-            <Switch>
-              <PrivateRoute exact path={`${url}/dashboard`} component={Dashboard} />
+                <PrivateRoute exact path={`${url}/events`} component={Events} />
+                <PrivateRoute
+                  exact
+                  path={`${url}/events/details/:id`}
+                  component={EventDetail}
+                />
 
-              <PrivateRoute exact path={`${url}/events`} component={Events} />
-              <PrivateRoute exact path={`${url}/events/details/:id`} component={EventDetail} />
+                <PrivateRoute
+                  exact
+                  path={`${url}/services`}
+                  component={Services}
+                />
+                <PrivateRoute
+                  exact
+                  path={`${url}/services/:id`}
+                  component={ServiceDetail}
+                />
 
-              <PrivateRoute exact path={`${url}/services`} component={Services} />
-              <PrivateRoute exact path={`${url}/services/:id`} component={ServiceDetail} />
+                <PrivateRoute
+                  exact
+                  path={`${url}/users/:email`}
+                  component={Profile}
+                />
+                <AdminRoute exact path={`${url}/users`} component={Users} />
+                <AdminRoute
+                  exact
+                  path={`${url}/banned-users`}
+                  component={BannedUsers}
+                />
 
-              <PrivateRoute exact path={`${url}/users/:email`} component={Profile} />
-              <AdminRoute exact path={`${url}/users`} component={Users} />
-              <AdminRoute exact path={`${url}/banned-users`} component={BannedUsers} />
+                <AdminRoute exact path={`${url}/reports`} component={Reports} />
 
-              <AdminRoute exact path={`${url}/reports`} component={Reports} />
-              
-              <Redirect from='/' to={`${url}/dashboard`} />
-            </Switch>
+                <Redirect from="/" to={`${url}/dashboard`} />
+              </Switch>
+            </div>
           </div>
         </div>
+        {showAlertSnackbar}
       </div>
-      {showAlertSnackbar}
-    </div>
   );
 }
 
