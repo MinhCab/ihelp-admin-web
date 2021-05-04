@@ -17,6 +17,7 @@ const FilterLayout = (props) => {
 
     const getId = (value) => {
         if(value) props.loadFilter(value.id)
+        else props.loadFilter('')
     }
 
     useEffect(() => {

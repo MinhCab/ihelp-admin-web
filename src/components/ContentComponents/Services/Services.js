@@ -135,14 +135,10 @@ const Services = () => {
   React.useEffect(() => {
     if (!loading) {
       setLoading(true)
-      if (search.length <= 0) {
-        if(filter.length <= 0) {
-          loadServices()
-        } else {
-          searchAPI()
-        }
+      if (search.length <= 0 && filter.length <= 0) {
+        loadServices();
       } else {
-        searchAPI()
+        searchAPI();
       }
     }
   }, [page, totalItems, search, filter]);
@@ -197,7 +193,6 @@ const Services = () => {
     axios
       .get(newUrl)
       .then((res) => {
-        console.log(res.data);
         setTotalItems(res.data.totalItems);
         setServices(res.data.services);
         setLoading(false);
