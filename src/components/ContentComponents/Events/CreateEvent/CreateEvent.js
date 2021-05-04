@@ -89,6 +89,11 @@ const CreateEvent = (props) => {
   });
   const [description, setDescription] = React.useState("");
   
+  Date.prototype.addDays = function(days) {
+    let date = new Date(this.valueOf())
+    date.setDate(date.getDate() + days)
+    return date;
+  }
 
   const handleTitleInput = (event) => {
     setTitle(event.target.value);
@@ -372,6 +377,7 @@ const CreateEvent = (props) => {
       />
     )
   }
+
   return (
     <>
       <Dialog fullWidth maxWidth="lg" open={props.isOpen} onClose={props.close}>
@@ -442,7 +448,7 @@ const CreateEvent = (props) => {
                   endDate={endDate}
                   onStartDateChange={setStartDate}
                   onEndDateChange={setEndDate}
-                  minimumDate={new Date()}
+                  minimumDate={new Date().addDays(14)}
                   minimumLength={1}
                   format="dd MMM yyyy"
                   locale={enGB}

@@ -226,7 +226,7 @@ const Users = () => {
           <CardHeader
             titleTypographyProps={{ variant: "h4" }}
             title="Users"
-            subheader="All of the users on iHelp system"
+            subheader="All of the users are currently active on iHelp system"
           />
           <CardContent>
             <div style={{ height: 650, width: "100%" }}>

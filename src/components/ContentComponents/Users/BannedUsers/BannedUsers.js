@@ -170,7 +170,7 @@ const BannedUsers = () => {
           />
           <CardHeader
             titleTypographyProps={{ variant: "h4" }}
-            title="Users"
+            title="Banned Users"
             subheader="All of the banned users on iHelp system"
           />
           <CardContent>

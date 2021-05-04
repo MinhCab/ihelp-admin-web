@@ -4,6 +4,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import bgprofile from '../../../assets/images/avatar/profile_background.png';
 import { useAuth } from '../../../hoc/StoringAuth/AuthContext';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     piclarge: {
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = (props) => {
     const classes = useStyles()
+    const history = useHistory()
     const { user } = useAuth('')
 
     const [anchorEl, setAnchorEl] = useState(null)
@@ -38,9 +40,30 @@ const Profile = (props) => {
         setAnchorEl(event.currentTarget);
     };
 
+    const getCookie = (cname) => {
+      let name = cname + "=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(";");
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === " ") {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return "";
+    }
+
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const profileClicked = () => {
+        history.push("/home/users/" + getCookie("userEmail"));
+        setAnchorEl(null)
+    }
     
     let showAva
     if(user.imageUrl !== null) {
@@ -67,7 +90,7 @@ const Profile = (props) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={props.profileClicked}>My Profile</MenuItem>
+                <MenuItem onClick={profileClicked}>My Profile</MenuItem>
                 <MenuItem onClick={props.logoutClicked}>Logout</MenuItem>
             </Menu>
         </Box>
