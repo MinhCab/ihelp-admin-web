@@ -566,14 +566,16 @@ const Profile = (props) => {
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                   required
-                  disableToolbar
-                  variant="dialog"
-                  format="dd/MM/yyyy"
                   margin="normal"
                   label="Birthdate"
+                  format="dd/MM/yyyy"
                   value={birthDate}
                   onChange={editBirthDateHandler}
+                  KeyboardButtonProps={{
+                    "aria-label": "change date",
+                  }}
                   fullWidth
+                  inputVariant="outlined"
                 />
               </MuiPickersUtilsProvider>
 
@@ -607,6 +609,7 @@ const Profile = (props) => {
             <Button variant="contained" color="primary" type="submit">
               Update Profile
             </Button>
+            {" "}
             <Button
               variant="contained"
               color="secondary"
