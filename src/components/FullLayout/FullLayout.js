@@ -110,7 +110,6 @@ const FullLayout = () => {
   const receiveForegroundNotification = () => {
     messaging.onMessage((payload) => {
       enqueueSnackbar(payload.notification.title, { variant: 'info' })
-      loadNotification()
     });
   }
 
@@ -159,8 +158,11 @@ const FullLayout = () => {
   useEffect(() => {
     loadInfo()
     loadNotification()
+  }, [notiPage, enqueueSnackbar])
+
+  useEffect(() => {
     receiveForegroundNotification()
-  }, [notiPage])
+  }, [])
 
   let showSideBar = (
     <Sidebar

@@ -230,7 +230,6 @@ const Events = () => {
     
     axios.get(newUrl)
     .then((res) => {
-      console.log(res.data);
       setTotalItems(res.data.totalItems);
       setEvents(res.data.events);
       setLoading(false)

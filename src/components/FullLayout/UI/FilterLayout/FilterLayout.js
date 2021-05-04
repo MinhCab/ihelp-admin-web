@@ -26,7 +26,6 @@ const FilterLayout = (props) => {
 
     return (
       <Autocomplete
-        id="combo-box-demo"
         options={categories}
         getOptionLabel={(option) => option.name}
         onChange={(event, value) => getId(value)}
