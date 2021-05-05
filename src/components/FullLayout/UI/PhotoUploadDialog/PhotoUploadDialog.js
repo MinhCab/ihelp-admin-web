@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, makeStyles } from '@material-ui/core'
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Grid, makeStyles } from '@material-ui/core'
 import React from 'react'
 
 const useStyles = makeStyles(theme => ({
@@ -10,7 +10,16 @@ const useStyles = makeStyles(theme => ({
     imagePreview: {
         width: 800,
         height: 600,
-    }
+    },
+
+    buttonProgress: {
+        color: "#039be5",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        marginTop: -12,
+        marginLeft: -12,
+    },
 }))
 
 const PhotoUploadDialog = (props) => {
@@ -67,6 +76,9 @@ const PhotoUploadDialog = (props) => {
             fullWidth
             maxWidth='md'
         >
+        {props.isLoading && (
+            <CircularProgress size={60} className={classes.buttonProgress} />
+          )}
             <DialogTitle>
                 <Grid container xs item>
                     <Grid item xs>

@@ -66,6 +66,10 @@ const Profile = (props) => {
   const [gender, setGender] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [status, setStatus] = useState(null);
+  const [totalEventsHosted, setTotalEventsHosted] = useState(0)
+  const [totalEventsJoined, setTotalEventsJoined] = useState(0)
+  const [totalServicesHosted, setTotalServicesHosted] = useState(0)
+  const [totalServicesJoined, setTotalServicesJoined] = useState(0)
 
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState();
@@ -180,6 +184,22 @@ const Profile = (props) => {
     setActiveEditForm(false);
     setOpenDiscardDialog(false);
   };
+
+  const getTotalEventsHostedHandler = (amount) => {
+    setTotalEventsHosted(amount)
+  }
+
+  const getTotalServicesHostedHandler = (amount) => {
+    setTotalServicesHosted(amount)
+  }
+
+  const getTotalEventsJoinedHandler = (amount) => {
+    setTotalEventsJoined(amount)
+  }
+
+  const getTotalServicesJoinedHandler = (amount) => {
+    setTotalServicesJoined(amount)
+  }
 
   const proceedEditFormHandler = async (event) => {
     event.preventDefault();
@@ -369,6 +389,7 @@ const Profile = (props) => {
         cancel={handleClosePhotoUploadDialog}
         confirm={finishUpload}
         image={image}
+        isLoading={loading}
       />
     );
   }
@@ -512,6 +533,23 @@ const Profile = (props) => {
           <Typography style={{ marginTop: 20 }} gutterBottom>
             <strong>Gender: </strong> {details.gender ? "Male" : "Female"}
           </Typography>
+          <Divider light style={{ marginTop: 20 }} />
+          <Typography style={{ marginTop: 20 }} gutterBottom>
+            <strong>Events hosted: </strong> {totalEventsHosted}
+          </Typography>
+          <Divider light style={{ marginTop: 20 }} />
+          <Typography style={{ marginTop: 20 }} gutterBottom>
+            <strong>Events joined: </strong> {totalEventsJoined}
+          </Typography>
+          <Divider light style={{ marginTop: 20 }} />
+          <Typography style={{ marginTop: 20 }} gutterBottom>
+            <strong>Services hosted: </strong> {totalServicesHosted}
+          </Typography>
+          <Divider light style={{ marginTop: 20 }} />
+          <Typography style={{ marginTop: 20 }} gutterBottom>
+            <strong>Services joined: </strong> {totalServicesJoined}
+          </Typography>
+          
         </Box>
       </CardContent>
       <Divider light />
@@ -641,16 +679,16 @@ const Profile = (props) => {
           {showEditForm}
         </Grid>
         <Grid item lg={9} md={12} xs={12}>
-          <ProfileSelfServices email={props.match.params.email} />
+          <ProfileSelfServices getTotal={getTotalServicesHostedHandler} email={props.match.params.email} />
         </Grid>
         <Grid item md={12} xs={12}>
-          <JoinedServices email={props.match.params.email} />
+          <JoinedServices getTotal={getTotalServicesJoinedHandler} email={props.match.params.email} />
         </Grid>
         <Grid item md={12} xs={12}>
-          <ProfileSelfEvents email={props.match.params.email} />
+          <ProfileSelfEvents getTotal={getTotalEventsHostedHandler} email={props.match.params.email} />
         </Grid>
         <Grid item md={12} xs={12}>
-          <JoinedEvents email={props.match.params.email} />
+          <JoinedEvents getTotal={getTotalEventsJoinedHandler} email={props.match.params.email} />
         </Grid>
       </Grid>
       {showErrorSnackbar}

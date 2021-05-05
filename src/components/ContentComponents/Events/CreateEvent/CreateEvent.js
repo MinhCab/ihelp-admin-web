@@ -84,6 +84,7 @@ const CreateEvent = (props) => {
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
+  const [loading, setLoading] = React.useState(false)
 
   const [title, setTitle] = React.useState("");
   const [startDate, setStartDate] = React.useState();
@@ -141,54 +142,58 @@ const CreateEvent = (props) => {
   };
 
   const handleProceedConfirmation = async (event) => {
-    event.preventDefault();
-    const imageURL = await uploadImageToFirebase();
-
-    let images = [];
-    if (imageURL) {
-      images = [
-        {
-          type: "cover",
-          url: imageURL,
-        },
-      ];
+    if(!loading) {
+      setLoading(true)
+      event.preventDefault();
+      const imageURL = await uploadImageToFirebase();
+  
+      let images = [];
+      if (imageURL) {
+        images = [
+          {
+            type: "cover",
+            url: imageURL,
+          },
+        ];
+      }
+  
+      let realLocation = location;
+  
+      if (onSite === false) {
+        realLocation = "Online";
+      }
+  
+      let cateIDs = [];
+  
+      category.map((cate) => {
+        return cateIDs.push(cate.id);
+      });
+  
+      let status;
+      role.id === "admin" ? (status = 3) : (status = 2);
+  
+      const eventDetails = {
+        authorEmail: author,
+        categoryIds: cateIDs,
+        description: description,
+        endDate: moment(endDate).format("yyyy-MM-DD HH:mm:ss"),
+        id: "",
+        location: realLocation,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+        onsite: onSite,
+        point: point,
+        quota: quota,
+        startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
+        statusId: status,
+        title: title,
+        images: images,
+      };
+  
+      props.submit(eventDetails);
+      setOpenConfirmation(false);
+      setLoading(false)
     }
-
-    let realLocation = location;
-
-    if (onSite === false) {
-      realLocation = "Online";
-    }
-
-    let cateIDs = [];
-
-    category.map((cate) => {
-      return cateIDs.push(cate.id);
-    });
-
-    let status;
-    role.id === "admin" ? (status = 3) : (status = 2);
-
-    const eventDetails = {
-      authorEmail: author,
-      categoryIds: cateIDs,
-      description: description,
-      endDate: moment(endDate).format("yyyy-MM-DD HH:mm:ss"),
-      id: "",
-      location: realLocation,
-      latitude: coordinates.lat,
-      longitude: coordinates.lng,
-      onsite: onSite,
-      point: point,
-      quota: quota,
-      startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
-      statusId: status,
-      title: title,
-      images: images,
-    };
-
-    props.submit(eventDetails);
-    setOpenConfirmation(false);
   };
 
   const handleCreateEventButton = (event) => {
@@ -390,6 +395,7 @@ const CreateEvent = (props) => {
         cancel={handleClosePhotoUploadDialog}
         confirm={handleUploadImage}
         image={image}
+        isLoading={loading}
       />
     );
   }

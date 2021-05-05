@@ -110,6 +110,7 @@ const additionalButtonTheme2 = createMuiTheme({
 
 const EventDetail = (props) => {
   const classes = useStyles();
+  const [accEmail, setAccEmail] = React.useState()
   const history = useHistory();
   const { user } = useAuth();
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
@@ -127,12 +128,15 @@ const EventDetail = (props) => {
   const [images, setImages] = React.useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [participantDetails, setParticipantDetails] = React.useState({});
+  const [disableApprove, setDisableApprove] = React.useState(false)
 
   const loadInfoAPI = () => {
     axios
       .get("/api/events/" + props.match.params.id)
       .then((res) => {
+        isUserHasEnoughPoint(res.data.accountEmail)
         setDetails(res.data);
+        setAccEmail(res.data.accountEmail)
         setCategories(res.data.categories);
         setStatus(res.data.status);
         setOnsite(res.data.isOnsite);
@@ -145,6 +149,15 @@ const EventDetail = (props) => {
         setOpenAlertSnackbar(true);
         setLoading(false)
       });
+  }
+
+  const isUserHasEnoughPoint = (accEmail) => {
+    axios.get('/api/events/account/' + accEmail + '/' + props.match.params.id).then(res => {
+      setDisableApprove(!res.data) 
+    }).catch(err => {
+      console.log('ha' +err)
+    }
+    )
   }
 
   React.useEffect(() => {
@@ -354,6 +367,7 @@ const EventDetail = (props) => {
       color="primary"
       variant="contained"
       onClick={approveEventHandler}
+      disabled={disableApprove}
     >
       Approve
     </Button>

@@ -140,6 +140,7 @@ const JoinedServices = (props) => {
           setTotalItems(res.data.totalItems);
           setServices(res.data.services);
           setLoading(false);
+          props.getTotal(res.data.totalItems)
         })
         .catch((error) => {
           console.log(error);
