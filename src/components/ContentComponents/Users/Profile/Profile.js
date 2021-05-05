@@ -289,9 +289,15 @@ const Profile = (props) => {
       axios
         .put("/accounts/" + props.match.params.email + "/status/" + statusId)
         .then((res) => {
-          setMessage(res.data);
-          setAlertType("success");
-          setOpenAlertSnackbar(true);
+          if(statusId === 1) {
+            setMessage('User has been unbanned')
+            setAlertType("success");
+            setOpenAlertSnackbar(true);
+          } else {
+            setMessage('User has been banned')
+            setAlertType("error");
+            setOpenAlertSnackbar(true);
+          }
           loadUserInfo();
         })
         .catch((err) => {
