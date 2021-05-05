@@ -32,6 +32,8 @@ import ProfileSelfEvents from "../../Events/ProfileSelfEvents/ProfileSelfEvents"
 import ProfileSelfServices from "../../Services/ProfileSelfServices/ProfileSelfServices";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext"
 import { storage } from "../../../../api/Firebase/firebase-config";
+import JoinedEvents from "../../Events/JoinedEvents/JoinedEvents";
+import JoinedServices from "../../Services/JoinedServices/JoinedServices";
 
 const useStyles = makeStyles({
   avatar: {
@@ -636,7 +638,13 @@ const Profile = (props) => {
           <ProfileSelfServices email={props.match.params.email} />
         </Grid>
         <Grid item md={12} xs={12}>
+          <JoinedServices email={props.match.params.email} />
+        </Grid>
+        <Grid item md={12} xs={12}>
           <ProfileSelfEvents email={props.match.params.email} />
+        </Grid>
+        <Grid item md={12} xs={12}>
+          <JoinedEvents email={props.match.params.email} />
         </Grid>
       </Grid>
       {showErrorSnackbar}
