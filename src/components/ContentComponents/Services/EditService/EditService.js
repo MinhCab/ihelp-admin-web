@@ -277,7 +277,7 @@ import { Autocomplete } from "@material-ui/lab";
                 onChange={handleQuotaInput}
                 label="Number of participants"
                 type="number"
-                InputProps={{ inputProps: { min: 1, max: 100 } }}
+                InputProps={{ inputProps: { min: 1, max: 1000 } }}
               />
               <br />
               <TextField
