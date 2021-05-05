@@ -16,6 +16,7 @@ import {
     Input,
     CircularProgress,
   } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
   import { enGB } from "date-fns/locale";
   import moment from "moment";
   import React, { useEffect } from "react";
@@ -86,8 +87,8 @@ import {
       setTitle(event.target.value);
     };
   
-    const handleCategoryInput = (event) => {
-      setCategory(event.target.value)
+    const handleCategoryInput = (value) => {
+      setCategory(value)
     };
   
     const handleQuotaInput = (event) => {
@@ -248,33 +249,24 @@ import {
                   </>
                 )}
               </DateRangePicker>
-              <Select
-                style={{ marginBottom: 20 }}
-                required
-                id="txtCategory"
-                select="true"
-                value={category}
-                multiple
-                onChange={(event) => handleCategoryInput(event)}
-                input={<Input />}
-                renderValue={(selected) => {
-                  return (
-                    <div>
-                      {selected.map((value) => {
-                        return <Chip key={value.id} label={value.name} />;
-                      })}
-                    </div>
-                  );
-                }}
-              >
-                {categories.map((cate) => {
-                  return (
-                    <MenuItem key={cate.id} value={cate}>
-                      {cate.name}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
+              <Autocomplete
+              multiple
+              id="tags-outlined"
+              options={categories}
+              getOptionLabel={(option) => option.name}
+              getOptionSelected={(option, value) => option.name === value.name}
+              filterSelectedOptions
+              onChange={(event, value) => handleCategoryInput(value)}
+              value={category}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  value={category}
+                  variant="outlined"
+                  label="Categories"
+                />
+              )}
+            />
               <br />
               <TextField
                 style={{ marginBottom: 20 }}

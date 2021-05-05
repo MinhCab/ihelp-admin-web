@@ -35,6 +35,7 @@ import PlacesAutocomplete, {
   getLatLng,
 } from "react-places-autocomplete";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
+import { Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) => ({
   finalButton: {
@@ -51,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0.5),
     fontSize: 25,
   },
-  
+
   locationSuggest: {
     width: "100%",
     maxWidth: 360,
@@ -62,10 +63,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   buttonProgress: {
-    color: '#039be5',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    color: "#039be5",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     marginTop: -12,
     marginLeft: -12,
   },
@@ -78,9 +79,9 @@ const CreateService = (props) => {
   const [categories, setCategories] = React.useState([]);
   const [image, setImage] = React.useState(null);
   const [openPhotoUpload, setOpenPhotoUpload] = React.useState(false);
-  const [message, setMessage] = React.useState('')
-  const [alertType, setAlertType] = React.useState('')
-  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false)
+  const [message, setMessage] = React.useState("");
+  const [alertType, setAlertType] = React.useState("");
+  const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
 
   const [title, setTitle] = React.useState("");
   const [startDate, setStartDate] = React.useState();
@@ -95,18 +96,18 @@ const CreateService = (props) => {
   });
   const [description, setDescription] = React.useState("");
 
-  Date.prototype.addDays = function(days) {
-    let date = new Date(this.valueOf())
-    date.setDate(date.getDate() + days)
+  Date.prototype.addDays = function (days) {
+    let date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
     return date;
-  }
+  };
 
   const handleTitleInput = (event) => {
     setTitle(event.target.value);
   };
 
-  const handleCategoryInput = (event) => {
-    setCategory(event.target.value);
+  const handleCategoryInput = (value) => {
+    setCategory(value);
   };
 
   const handleQuotaInput = (event) => {
@@ -174,11 +175,11 @@ const CreateService = (props) => {
   };
 
   const handleCreateServiceButton = (event) => {
-    event.preventDefault()
-    if(!image) {
-      setMessage('Need to have a cover photo when create a new event')
-      setAlertType('info')
-      setOpenAlertSnackbar(true)
+    event.preventDefault();
+    if (!image) {
+      setMessage("Need to have a cover photo when create a new event");
+      setAlertType("info");
+      setOpenAlertSnackbar(true);
     } else {
       setConfirmInfo({
         title: title.toUpperCase(),
@@ -207,10 +208,9 @@ const CreateService = (props) => {
     setOpenPhotoUpload(false);
   };
 
-  
   const closeAlertSnackbarHandler = () => {
-    setOpenAlertSnackbar(false)
-  }
+    setOpenAlertSnackbar(false);
+  };
 
   const uploadImageToFirebase = async () => {
     if (image === null) {
@@ -271,7 +271,8 @@ const CreateService = (props) => {
   const createdDate = new Date();
   let showConfirmation = null;
   let showImageName = null;
-  let showImageUploadDialog = null;``
+  let showImageUploadDialog = null;
+  ``;
   let showAlertSnackbar = null;
   let showLocationField = (
     <Grid item>
@@ -281,34 +282,45 @@ const CreateService = (props) => {
         onSelect={handleSelectGoogleLocation}
       >
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-          <Typography variant="body1" color="textPrimary" component="span">
-            <strong>Location: </strong>{" "}
-            <TextField
-              variant="outlined"
-              {...getInputProps({ placeholder: "Type location" })}
-            />
-            <List className={classes.locationSuggest}>
-              {loading && (
-                <CircularProgress
-                  size={60}
-                  className={classes.buttonProgress}
-                />
-              )}
+          <Grid container direction="row" alignItems="center">
+            <Grid item>
+              <Typography
+                style={{ marginRight: 10 }}
+                variant="body1"
+                color="textPrimary"
+                component="span"
+              >
+                <strong>Location: </strong>
+              </Typography>
+            </Grid>
+            <Grid item>
+              <TextField
+                variant="outlined"
+                {...getInputProps({ placeholder: "Type location" })}
+              />
+              <List className={classes.locationSuggest}>
+                {loading && (
+                  <CircularProgress
+                    size={60}
+                    className={classes.buttonProgress}
+                  />
+                )}
 
-              {suggestions.map((suggest) => {
-                return (
-                  <ListItem
-                    button
-                    divider
-                    {...getSuggestionItemProps(suggest)}
-                    key={suggest.index}
-                  >
-                    <ListItemText>{suggest.description}</ListItemText>
-                  </ListItem>
-                );
-              })}
-            </List>
-          </Typography>
+                {suggestions.map((suggest) => {
+                  return (
+                    <ListItem
+                      button
+                      divider
+                      {...getSuggestionItemProps(suggest)}
+                      key={suggest.index}
+                    >
+                      <ListItemText>{suggest.description}</ListItemText>
+                    </ListItem>
+                  );
+                })}
+              </List>
+            </Grid>
+          </Grid>
         )}
       </PlacesAutocomplete>
     </Grid>
@@ -347,7 +359,7 @@ const CreateService = (props) => {
     );
   }
 
-  if(openAlertSnackbar) {
+  if (openAlertSnackbar) {
     showAlertSnackbar = (
       <AlertSnackbar
         isOpen={openAlertSnackbar}
@@ -355,7 +367,7 @@ const CreateService = (props) => {
         alertType={alertType}
         message={message}
       />
-    )
+    );
   }
 
   return (
@@ -495,41 +507,34 @@ const CreateService = (props) => {
                 </DateRangePicker>
                 <Grid item container xs spacing={3}>
                   <Grid item xs>
-                    <Typography
-                      variant="body1"
-                      color="textPrimary"
-                      component="span"
-                      style={{ marginRight: 10 }}
-                    >
-                      <strong>Category: </strong>
-                    </Typography>
-
-                    <Select
-                      required
-                      id="txtCategory"
-                      select="true"
-                      value={category}
-                      multiple
-                      onChange={handleCategoryInput}
-                      input={<Input id="select-multiple-chip" />}
-                      renderValue={(selected) => {
-                        return (
-                          <div>
-                            {selected.map((value) => {
-                              return <Chip key={value.id} label={value.name} />;
-                            })}
-                          </div>
-                        );
-                      }}
-                    >
-                      {categories.map((cate) => {
-                        return (
-                          <MenuItem key={cate.id} value={cate}>
-                            {cate.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
+                    <Grid container direction="row" alignItems="center">
+                      <Grid item>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          component="span"
+                          style={{ marginRight: 10 }}
+                        >
+                          <strong>Category: </strong>
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Autocomplete
+                          multiple
+                          id="tags-outlined"
+                          options={categories}
+                          getOptionLabel={(option) => option.name}
+                          filterSelectedOptions
+                          onChange={(event, value) =>
+                            handleCategoryInput(value)
+                          }
+                          value={category}
+                          renderInput={(params) => (
+                            <TextField {...params} variant="outlined" />
+                          )}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                   <Grid item>
                     <Typography
@@ -544,44 +549,56 @@ const CreateService = (props) => {
                 </Grid>
                 <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
                   <Grid item xs>
-                    <Typography
-                      variant="body1"
-                      color="textPrimary"
-                      component="span"
-                      style={{ marginRight: 10 }}
-                    >
-                      <strong>Number of participants: </strong>
-                    </Typography>
-                    <TextField
-                      required
-                      id="txtQuota"
-                      variant="outlined"
-                      type="number"
-                      InputProps={{ inputProps: { min: 1 } }}
-                      style={{ maxWidth: 100 }}
-                      onChange={(event) => handleQuotaInput(event)}
-                      value={quota}
-                    />
+                    <Grid container direction="row" alignItems="center">
+                      <Grid item>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          component="span"
+                          style={{ marginRight: 10 }}
+                        >
+                          <strong>Number of participants: </strong>
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <TextField
+                          required
+                          id="txtQuota"
+                          variant="outlined"
+                          type="number"
+                          InputProps={{ inputProps: { min: 1 } }}
+                          style={{ maxWidth: 100 }}
+                          onChange={(event) => handleQuotaInput(event)}
+                          value={quota}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                   <Grid item>
-                    <Typography
-                      variant="body1"
-                      color="textPrimary"
-                      component="span"
-                      style={{ marginRight: 10 }}
-                    >
-                      <strong>Points per participant: </strong>
-                    </Typography>
-                    <TextField
-                      required
-                      id="txtPoint"
-                      variant="outlined"
-                      type="number"
-                      InputProps={{ inputProps: { min: 10 } }}
-                      style={{ maxWidth: 100 }}
-                      onChange={(event) => handlePointInput(event)}
-                      value={point}
-                    />
+                    <Grid container direction="row" alignItems="center">
+                      <Grid item>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          component="span"
+                          style={{ marginRight: 10 }}
+                        >
+                          <strong>Points per participant: </strong>
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <TextField
+                          required
+                          id="txtPoint"
+                          variant="outlined"
+                          type="number"
+                          InputProps={{ inputProps: { min: 10 } }}
+                          style={{ maxWidth: 100 }}
+                          onChange={(event) => handlePointInput(event)}
+                          value={point}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
                 <Grid item container xs spacing={3} style={{ marginTop: 20 }}>

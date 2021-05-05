@@ -18,6 +18,7 @@ import {
   Input,
   CircularProgress,
 } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import { enGB } from "date-fns/locale";
 import moment from "moment";
 import React, { useEffect } from "react";
@@ -69,7 +70,7 @@ const EditEvent = (props) => {
   const [title, setTitle] = React.useState(info.title);
   const [startDate, setStartDate] = React.useState(new Date(info.startDate));
   const [endDate, setEndDate] = React.useState(new Date(info.endDate));
-  const [category, setCategory] = React.useState(info.categories);
+  const [category, setCategory] = React.useState([]);
   const [quota, setQuota] = React.useState(info.quota);
   const [point, setPoint] = React.useState(info.point);
   const [onSite, setOnSite] = React.useState(info.onsite);
@@ -90,8 +91,8 @@ const EditEvent = (props) => {
     setTitle(event.target.value);
   };
 
-  const handleCategoryInput = (event) => {
-    setCategory(event.target.value)
+  const handleCategoryInput = (value) => {
+    setCategory(value)
   };
 
   const handleQuotaInput = (event) => {
@@ -144,6 +145,7 @@ const EditEvent = (props) => {
 
   
   useEffect(() => {
+    setCategory(info.categories)
     axios
       .get("/api/event-categories")
       .then((res) => {
@@ -257,33 +259,24 @@ const EditEvent = (props) => {
                 </>
               )}
             </DateRangePicker>
-            <Select
-              style={{ marginBottom: 20 }}
-              required
-              id="txtCategory"
-              select="true"
-              value={category}
+            <Autocomplete
               multiple
-              onChange={(event) => handleCategoryInput(event)}
-              input={<Input />}
-              renderValue={(selected) => {
-                return (
-                  <div>
-                    {selected.map((value) => {
-                      return <Chip key={value.id} label={value.name} />;
-                    })}
-                  </div>
-                );
-              }}
-            >
-              {categories.map((cate) => {
-                return (
-                  <MenuItem key={cate.id} value={cate}>
-                    {cate.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
+              id="tags-outlined"
+              options={categories}
+              getOptionLabel={(option) => option.name}
+              getOptionSelected={(option, value) => option.name === value.name}
+              filterSelectedOptions
+              onChange={(event, value) => handleCategoryInput(value)}
+              value={category}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  value={category}
+                  variant="outlined"
+                  label="Categories"
+                />
+              )}
+            />
             <br />
             <TextField
               style={{ marginBottom: 20 }}
