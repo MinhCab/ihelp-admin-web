@@ -530,7 +530,15 @@ const CreateService = (props) => {
                           }
                           value={category}
                           renderInput={(params) => (
-                            <TextField {...params} variant="outlined" />
+                            <TextField
+                              {...params}
+                              variant="outlined"
+                              inputProps={{
+                                ...params.inputProps,
+                                required: category.length === 0,
+                              }}
+                              required
+                            />
                           )}
                         />
                       </Grid>
@@ -566,7 +574,7 @@ const CreateService = (props) => {
                           id="txtQuota"
                           variant="outlined"
                           type="number"
-                          InputProps={{ inputProps: { min: 1 } }}
+                          InputProps={{ inputProps: { min: 1, max: 1000 } }}
                           style={{ maxWidth: 100 }}
                           onChange={(event) => handleQuotaInput(event)}
                           value={quota}

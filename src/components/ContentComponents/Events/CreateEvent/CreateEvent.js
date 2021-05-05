@@ -542,32 +542,6 @@ const CreateEvent = (props) => {
                 </DateRangePicker>
                 <Grid item container xs spacing={3}>
                   <Grid item xs>
-                    {/* <Select
-                      required
-                      id="txtCategory"
-                      select="true"
-                      value={category}
-                      multiple
-                      onChange={handleCategoryInput}
-                      input={<Input id="select-multiple-chip" />}
-                      renderValue={(selected) => {
-                        return (
-                          <div>
-                            {selected.map((value) => {
-                              return <Chip key={value.id} label={value.name} />;
-                            })}
-                          </div>
-                        );
-                      }}
-                    >
-                      {categories.map((cate) => {
-                        return (
-                          <MenuItem key={cate.id} value={cate}>
-                            {cate.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select> */}
                     <Grid container direction="row" alignItems="center">
                       <Grid item>
                         <Typography
@@ -592,7 +566,15 @@ const CreateEvent = (props) => {
                           }
                           value={category}
                           renderInput={(params) => (
-                            <TextField {...params} variant="outlined" />
+                            <TextField
+                              {...params}
+                              variant="outlined"
+                              inputProps={{
+                                ...params.inputProps,
+                                required: category.length === 0,
+                              }}
+                              required
+                            />
                           )}
                         />
                       </Grid>

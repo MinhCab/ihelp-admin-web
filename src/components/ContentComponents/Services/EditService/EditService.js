@@ -260,6 +260,11 @@ import { Autocomplete } from "@material-ui/lab";
                   value={category}
                   variant="outlined"
                   label="Categories"
+                  inputProps={{
+                    ...params.inputProps,
+                    required: category.length === 0,
+                  }}
+                  required
                 />
               )}
             />
