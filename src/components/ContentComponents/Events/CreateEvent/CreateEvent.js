@@ -7,8 +7,6 @@ import {
   makeStyles,
   Typography,
   TextField,
-  MenuItem,
-  Select,
   Input,
   Switch,
   FormControlLabel,

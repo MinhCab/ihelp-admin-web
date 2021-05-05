@@ -1,19 +1,15 @@
 import {
     Dialog,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     makeStyles,
     TextField,
     List,
     Button,
-    MenuItem,
-    Chip,
     ListItem,
     ListItemText,
     DialogActions,
-    Select,
-    Input,
+
     CircularProgress,
   } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";

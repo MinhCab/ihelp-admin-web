@@ -73,7 +73,7 @@ const EditEvent = (props) => {
   const [category, setCategory] = React.useState([]);
   const [quota, setQuota] = React.useState(info.quota);
   const [point, setPoint] = React.useState(info.point);
-  const [onSite, setOnSite] = React.useState(info.onsite);
+  const [onSite, setOnSite] = React.useState(info.isOnsite);
   const [location, setLocation] = React.useState(info.location);
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
