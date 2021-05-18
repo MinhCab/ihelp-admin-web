@@ -32,7 +32,8 @@ import TabsLayout from "../../../FullLayout/UI/TabsLayout/TabsLayout";
 import ParticipantDetails from "../../Users/Participants/ParticipantDetails/ParticipantDetails";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
-import { RejectReasonDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
+import { DiscardAlertDialog, RejectReasonDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
+import DuplicateTemplate from "../DuplicateTemplate/DuplicateTemplate";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -118,7 +119,9 @@ const EventDetail = (props) => {
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRejectDialog, setOpenRejectDialog] = React.useState(false);
+  const [openDuplicateDialog, setOpenDuplicateDialog] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
+  // const [openDiscardDialog, setOpenDiscardDialog] = React.useState(false)
 
   const [details, setDetails] = React.useState({});
   const [categories, setCategories] = React.useState([]);
@@ -228,6 +231,10 @@ const EventDetail = (props) => {
     }
   }
 
+  const copyTemplateHandler = () => {
+    setOpenDuplicateDialog(true)
+  }
+
   const disableHandler = () => {
     if(!loading) {
       setLoading(true);
@@ -305,7 +312,6 @@ const EventDetail = (props) => {
     }
   };
 
-
   //change to participants.js
   const handleParticipantDetails = (details) => {
     setParticipantDetails(details);
@@ -321,6 +327,34 @@ const EventDetail = (props) => {
   const handleCloseAlertSnackbar = () => {
     setOpenAlertSnackbar(false);
   };
+
+  const submitCreateTemplate = (newEvent) => {
+    if(!loading) {
+      setLoading(true)
+      axios.post('/api/events', newEvent)
+      .then(res => {
+        setAlertType('success')
+        setMessage(res.data)
+        setOpenAlertSnackbar(true)
+        setLoading(false)
+        setOpenDuplicateDialog(false)
+      }).catch(err => {
+        setAlertType('error')
+        setMessage(err.response.data.message)
+        setOpenAlertSnackbar(true)
+        setLoading(false)
+      })
+    }
+  }
+
+  const handleCloseDuplicateDialog = () => {
+    setAnchorEl(null);
+    setOpenDuplicateDialog(false)
+  }
+
+  // const handleCloseDiscardDialog = () => {
+  //   setOpenDiscardDialog(false)
+  // }
 
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -541,6 +575,44 @@ const EventDetail = (props) => {
     ); 
   }
 
+  let copyTemplateBtn = null
+  if(status.id === 4) {
+    copyTemplateBtn = (
+      <Button
+        className={classes.settings}
+        color="primary"
+        variant="outlined"
+        onClick={copyTemplateHandler}
+      >
+        Create new season
+      </Button>
+    );
+  }
+
+  let duplicateDialog = null
+  if(openDuplicateDialog) {
+    duplicateDialog = (
+      <DuplicateTemplate 
+        details={details}
+        isOpen={openDuplicateDialog}
+        close={handleCloseDuplicateDialog}
+        submit={submitCreateTemplate}
+        isLoading={loading}
+      />
+    )
+  }
+
+  // let showDiscardDialog = null
+  // if(openDiscardDialog) => {
+  //   showDiscardDialog = (
+  //     <DiscardAlertDialog 
+  //       isOpen={openDiscardDialog}
+  //       closing={handleCloseDiscardDialog}
+        
+  //     />
+  //   )
+  // }
+
   return (
     <>
       <Card className={classes.root}>
@@ -729,6 +801,7 @@ const EventDetail = (props) => {
             >
               Edit
             </Button>
+            {copyTemplateBtn}
             {deleteBtn}
           </Paper>
         </Popover>
@@ -738,6 +811,7 @@ const EventDetail = (props) => {
       {showFeedbackDetails}
       {showAlertSnackbar}
       {showRejectDialog}
+      {duplicateDialog}
     </>
   );
 };

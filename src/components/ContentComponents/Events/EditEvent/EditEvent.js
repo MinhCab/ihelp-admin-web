@@ -1,7 +1,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   FormControlLabel,
   makeStyles,
@@ -9,13 +8,9 @@ import {
   TextField,
   List,
   Button,
-  MenuItem,
-  Chip,
   ListItem,
   ListItemText,
   DialogActions,
-  Select,
-  Input,
   CircularProgress,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
