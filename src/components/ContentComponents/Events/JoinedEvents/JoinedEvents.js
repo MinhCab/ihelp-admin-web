@@ -163,6 +163,7 @@ const JoinedEvents = (props) => {
           setTotalItems(res.data.totalItems);
           setEvents(res.data.events);
           setLoading(false);
+          props.getTotal(res.data.totalItems)
         })
         .catch((error) => {
           console.log(error);

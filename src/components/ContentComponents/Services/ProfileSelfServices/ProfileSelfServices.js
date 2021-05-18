@@ -114,6 +114,7 @@ const ProfileSelfServices = (props) => {
           setTotalItems(res.data.totalItems);
           setServices(res.data.services);
           setLoading(false)
+          props.getTotal(res.data.totalItems)
         })
         .catch((err) => {
           // setError('Cannot get information from server, please try again')
