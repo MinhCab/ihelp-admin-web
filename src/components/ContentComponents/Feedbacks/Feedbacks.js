@@ -28,57 +28,6 @@ const columns = [
     },
 ]
 
-// const feedbacks = [
-//   {
-//     id: "F_001",
-//     createdDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     comment:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     rating: 5,
-//     status: {
-//       id: 2,
-//       name: "Pending",
-//     },
-//   },
-//   {
-//     id: "F_002",
-//     createdDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     comment:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     rating: 3,
-//     status: {
-//       id: 2,
-//       name: "Pending",
-//     },
-//   },
-//   {
-//     id: "F_003",
-//     createdDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     comment:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     rating: 5,
-//     status: {
-//       id: 2,
-//       name: "Pending",
-//     },
-//   },
-//   {
-//     id: "F_004",
-//     createdDate: "10/10/2020",
-//     email: "minhcab19345@gmail.com",
-//     comment:
-//       "Đây là review về Tai nghe tws Baseus Encok W09 đỏ của mình. Mình mua nó với giá 375000. Hi vọng phần review sẽ hữu ích cho bạn nào muốn mua nhé, nếu bạn có câu hỏi gì thì hãy comment vô bài này nha.",
-//     rating: 5,
-//     status: {
-//       id: 2,
-//       name: "Pending",
-//     },
-//   },
-// ];
-
 const Feedbacks = (props) => {
     const classes = useStyles()
     const { user } = useAuth()
@@ -114,7 +63,7 @@ const Feedbacks = (props) => {
     const loadAllFeedback = () => {
         if (!loading) {
             setLoading(true);
-            axios.get("/api/feedbacks/" + props.type + "/" + props.id + "?page=" + page)
+            axios.get("/api/feedbacks/" + props.type + "/" + props.id + "/category/" + props.cateId + "?page=" + page)
                 .then(res => {
                     setFeedbacks(res.data.feedbacks)
                     setTotalItems(res.data.totalItems)

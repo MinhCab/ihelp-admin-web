@@ -13,7 +13,6 @@ import {
   ListItem,
   ListItemText,
   List,
-  Chip,
   Dialog,
   DialogContent,
   CircularProgress,
@@ -24,6 +23,7 @@ import { enGB } from "date-fns/locale";
 import { DateRangePicker, START_DATE, END_DATE } from "react-nice-dates";
 import "react-nice-dates/build/style.css";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import AddIcon from '@material-ui/icons/Add';
 import { TextArea } from "semantic-ui-react";
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -37,6 +37,7 @@ import axios from "../../../../api/axios";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { Autocomplete } from "@material-ui/lab";
+import Requirements from "./Requirements/Requirements";
 
 const useStyles = makeStyles((theme) => ({
   finalButton: {
@@ -73,6 +74,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const listReq = [
+  {id: 0, name: 'Mobile Phone'},
+  {id: 1, name: 'Bicycle'},
+  {id: 2, name: ''},
+  {id: 3, name: 'Mobile Phone'},
+  {id: 4, name: 'Mobile Phone'},
+  {id: 5, name: 'Mobile Phone'},
+  {id: 6, name: 'Mobile Phone'},
+  {id: 7, name: 'Mobile Phone'}
+]
+
 const CreateEvent = (props) => {
   const classes = useStyles();
   const { role } = useAuth();
@@ -84,6 +96,7 @@ const CreateEvent = (props) => {
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
+  const [openRequirements, setOpenRequirements] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
 
   const [title, setTitle] = React.useState("");
@@ -94,11 +107,12 @@ const CreateEvent = (props) => {
   const [point, setPoint] = React.useState(0);
   const [onSite, setOnSite] = React.useState(true);
   const [location, setLocation] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [requirements, setRequirements] = React.useState("");
   const [coordinates, setCoordinates] = React.useState({
     lat: null,
     lng: null,
   });
-  const [description, setDescription] = React.useState("");
 
   Date.prototype.addDays = function (days) {
     let date = new Date(this.valueOf());
@@ -177,17 +191,19 @@ const CreateEvent = (props) => {
         categoryIds: cateIDs,
         description: description,
         endDate: moment(endDate).format("yyyy-MM-DD HH:mm:ss"),
+        images: images,
         id: "",
-        location: realLocation,
         latitude: coordinates.lat,
+        location: realLocation,
         longitude: coordinates.lng,
         onsite: onSite,
         point: point,
         quota: quota,
+        referencedEventId: "",
         startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
         statusId: status,
         title: title,
-        images: images,
+        requirement: "string",
       };
   
       props.submit(eventDetails);
@@ -235,6 +251,18 @@ const CreateEvent = (props) => {
   const handleClosePhotoUploadDialog = () => {
     setOpenPhotoUpload(false);
   };
+
+  const handleOpenRequirementsDialog = () => {
+    setOpenRequirements(true)
+  }
+
+  const handleCloseRequirementsDialog = () => {
+    setOpenRequirements(false)
+  }
+
+  const handleSaveRequirements = (reqs) => {
+    console.log(reqs)
+  }
 
   const handleUploadImage = (file) => {
     setImage(file);
@@ -309,6 +337,7 @@ const CreateEvent = (props) => {
   let showImageName = null;
   let showImageUploadDialog = null;
   let showAlertSnackbar = null;
+  let showRequirementsDialog = null;
   let showLocationField = (
     <Grid item>
       <PlacesAutocomplete
@@ -409,6 +438,18 @@ const CreateEvent = (props) => {
         message={message}
       />
     );
+  }
+
+  if(openRequirements) {
+    showRequirementsDialog = (
+      <Requirements 
+        isOpen={openRequirements}
+        close={handleCloseRequirementsDialog}
+        save={handleSaveRequirements}
+        requirements={requirements}
+        isLoading={loading}
+      />
+    )
   }
 
   return (
@@ -559,7 +600,7 @@ const CreateEvent = (props) => {
                           <strong>Category: </strong>
                         </Typography>
                       </Grid>
-                      <Grid item xs={7}>
+                      <Grid item xs={6}>
                         <Autocomplete
                           multiple
                           id="tags-outlined"
@@ -595,6 +636,33 @@ const CreateEvent = (props) => {
                     >
                       {showImageName}
                     </Typography>
+                  </Grid>
+                </Grid>
+                <Grid item container xs spacing={3}>
+                  <Grid item xs>
+                    <Grid container direction="row" alignItems="center">
+                      <Grid item>
+                        <Typography
+                          variant="body1"
+                          color="textPrimary"
+                          component="span"
+                          style={{ marginRight: 10 }}
+                        >
+                          <strong>Requirements: </strong>
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Button
+                          startIcon={<AddIcon />}
+                          variant="outlined"
+                          component="label"
+                          color="primary"
+                          onClick={handleOpenRequirementsDialog}
+                        >
+                          Add
+                        </Button>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
                 <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
@@ -695,6 +763,7 @@ const CreateEvent = (props) => {
       {showConfirmation}
       {showImageUploadDialog}
       {showAlertSnackbar}
+      {showRequirementsDialog}
     </>
   );
 };

@@ -1,9 +1,8 @@
 import { AppBar, makeStyles, Tab, Tabs } from '@material-ui/core';
 import SwipeableViews from 'react-swipeable-views'
 import React from 'react'
-import Participants from '../../../ContentComponents/Users/Participants/Participants';
-import Feedbacks from '../../../ContentComponents/Feedbacks/Feedbacks';
-import ReportEventAndService from '../../../ContentComponents/Reports/ReportEventAndServices/ReportEventAndServices';
+import GeneralReports from '../GeneralReports/GeneralReports';
+import AllReports from '../AllReports/AllReports';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -13,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-const TabsLayout = (props) => {
+const ReportTabs = (props) => {
     const classes = useStyles();
     const [value, setValue] = React.useState(0);
 
@@ -35,31 +34,16 @@ const TabsLayout = (props) => {
             textColor="primary"
             variant="fullWidth"
           >
-            {props.type === 'event' ? (<Tab label="Participants" />) : (<Tab label="Service Users" />)}
-            <Tab label="Feedbacks" />
-            <Tab label="Reports" />
+            <Tab label="General Reports" />
+            <Tab label="All Reports" />
           </Tabs>
         </AppBar>
         <SwipeableViews index={value} onChangeIndex={handleChangeIndex}>
-          <Participants
-            type={props.type}
-            participantDetails={props.participantDetails}
-            id={props.id}
-            basePoint={props.basePoint}
-          />
-          <Feedbacks
-            type={props.type}
-            id={props.id}
-            cateId={props.cateId}
-          />
-          <ReportEventAndService
-            type={props.type}
-            id={props.id}
-            cateId={props.cateId}
-          />
+          <GeneralReports showReportDetails={props.showReportDetails}/>
+          <AllReports showReportDetails={props.showReportDetails} />
         </SwipeableViews>
       </div>
     );
 }
 
-export default TabsLayout
+export default ReportTabs

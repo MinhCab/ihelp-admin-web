@@ -678,6 +678,7 @@ const ServiceDetail = (props) => {
           type="service"
           id={props.match.params.id}
           participantDetails={handleParticipantDetails}
+          cateId={6}
         />
         <Popover
           id={id}

@@ -841,6 +841,7 @@ const EventDetail = (props) => {
           id={props.match.params.id}
           participantDetails={handleParticipantDetails}
           basePoint={details.point}
+          cateId={5}
         />
         <Popover
           id={id}
