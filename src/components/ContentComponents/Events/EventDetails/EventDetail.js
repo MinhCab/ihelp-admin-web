@@ -32,7 +32,10 @@ import TabsLayout from "../../../FullLayout/UI/TabsLayout/TabsLayout";
 import ParticipantDetails from "../../Users/Participants/ParticipantDetails/ParticipantDetails";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
-import { DiscardAlertDialog, RejectReasonDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
+import {
+  DiscardAlertDialog,
+  RejectReasonDialog,
+} from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import DuplicateTemplate from "../DuplicateTemplate/DuplicateTemplate";
 
 const useStyles = makeStyles((theme) => ({
@@ -79,12 +82,12 @@ const useStyles = makeStyles((theme) => ({
     width: "97%",
     margin: 2,
   },
-  
+
   buttonProgress: {
-    color: '#039be5',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    color: "#039be5",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     marginTop: -12,
     marginLeft: -12,
   },
@@ -111,17 +114,18 @@ const additionalButtonTheme2 = createMuiTheme({
 
 const EventDetail = (props) => {
   const classes = useStyles();
-  const [accEmail, setAccEmail] = React.useState()
+  const [accEmail, setAccEmail] = React.useState();
   const history = useHistory();
   const { user } = useAuth();
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
-  const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false);
+  const [openParticipantDetails, setOpenParticipantDetails] =
+    React.useState(false);
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRejectDialog, setOpenRejectDialog] = React.useState(false);
-  const [openDuplicateDialog, setOpenDuplicateDialog] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
+  const [openDuplicateDialog, setOpenDuplicateDialog] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   // const [openDiscardDialog, setOpenDiscardDialog] = React.useState(false)
 
   const [details, setDetails] = React.useState({});
@@ -131,62 +135,64 @@ const EventDetail = (props) => {
   const [images, setImages] = React.useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [participantDetails, setParticipantDetails] = React.useState({});
-  const [disableApprove, setDisableApprove] = React.useState(false)
+  const [disableApprove, setDisableApprove] = React.useState(false);
 
   const loadInfoAPI = () => {
     axios
       .get("/api/events/" + props.match.params.id)
       .then((res) => {
-        isUserHasEnoughPoint(res.data.accountEmail)
+        isUserHasEnoughPoint(res.data.accountEmail);
         setDetails(res.data);
-        setAccEmail(res.data.accountEmail)
+        setAccEmail(res.data.accountEmail);
         setCategories(res.data.categories);
         setStatus(res.data.status);
         setOnsite(res.data.isOnsite);
         setImages(res.data.images);
-        setLoading(false)
+        setLoading(false);
       })
       .catch((err) => {
         setMessage(err.response.data.error);
         setAlertType("error");
         setOpenAlertSnackbar(true);
-        setLoading(false)
+        setLoading(false);
       });
-  }
+  };
 
   const isUserHasEnoughPoint = (accEmail) => {
-    axios.get('/api/events/account/' + accEmail + '/' + props.match.params.id).then(res => {
-      setDisableApprove(!res.data) 
-    }).catch(err => {
-      console.log('ha' +err)
-    }
-    )
-  }
+    axios
+      .get("/api/events/account/" + accEmail + "/" + props.match.params.id)
+      .then((res) => {
+        setDisableApprove(!res.data);
+      })
+      .catch((err) => {
+        console.log("ha" + err);
+      });
+  };
 
   React.useEffect(() => {
-    if(!loading) {
-      setLoading(true)
-      loadInfoAPI()
+    if (!loading) {
+      setLoading(true);
+      loadInfoAPI();
     }
   }, []);
 
   const approveEventHandler = () => {
-    if(!loading){
-      setLoading(true)
-    axios
-      .put("/api/events/" + user.email + "/approve/" + props.match.params.id)
-      .then((res) => {
-        setMessage(res.data);
-        setAlertType("success");
-        setOpenAlertSnackbar(true);
-        loadInfoAPI()
-      })
-      .catch((error) => {
-        setMessage(error.response.data.message);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-        setLoading(false)
-      });
+    if (!loading) {
+      setLoading(true);
+      axios
+        .put("/api/events/" + user.email + "/approve/" + props.match.params.id)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.message);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false);
+        });
     }
   };
 
@@ -199,7 +205,7 @@ const EventDetail = (props) => {
   };
 
   const rejectEventHandler = (reason, eventId) => {
-    if(!loading) {
+    if (!loading) {
       setLoading(true);
       const rejectObject = {
         eventId: eventId,
@@ -219,37 +225,33 @@ const EventDetail = (props) => {
           setMessage(error.response.data.error);
           setAlertType("error");
           setOpenAlertSnackbar(true);
-          setLoading(false)
+          setLoading(false);
         });
     }
   };
 
   const enableHandler = () => {
-    if(!loading) {
+    if (!loading) {
       setLoading(true);
-    axios
-      .put("/api/events/enable/" + props.match.params.id)
-      .then((res) => {
-        setMessage(res.data);
-        setAlertType("success");
-        setOpenAlertSnackbar(true);
-        loadInfoAPI();
-      })
-      .catch((error) => {
-        setMessage(error.response.data.error);
-        setAlertType("error");
-        setOpenAlertSnackbar(true);
-        setLoading(false)
-      });
+      axios
+        .put("/api/events/enable/" + props.match.params.id)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+          setLoading(false);
+        });
     }
-  }
-
-  const copyTemplateHandler = () => {
-    setOpenDuplicateDialog(true)
-  }
+  };
 
   const disableHandler = () => {
-    if(!loading) {
+    if (!loading) {
       setLoading(true);
       axios
         .put("/api/events/disable/" + props.match.params.id)
@@ -281,16 +283,16 @@ const EventDetail = (props) => {
   };
 
   const deleteHandler = () => {
-    if(!loading) {
+    if (!loading) {
       setLoading(true);
       axios
         .delete("/api/events/" + props.match.params.id)
         .then((res) => {
-          setLoading(false)
+          setLoading(false);
           history.goBack();
         })
         .catch((error) => {
-          setLoading(false)
+          setLoading(false);
           setMessage(error.response.data.error);
           setAlertType("error");
           setOpenAlertSnackbar(true);
@@ -298,8 +300,32 @@ const EventDetail = (props) => {
     }
   };
 
+  //Autocomplete api
+  const autoCompleteHandler = () => {
+    if (!loading) {
+      setLoading(true);
+      axios
+        .put("/api/events/complete/" + props.match.params.id)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
+  };
+
+  const copyTemplateHandler = () => {
+    setOpenDuplicateDialog(true);
+  };
+
   const handleUpdateProcess = async (updateDetails) => {
-    if(!loading) {
+    if (!loading) {
       setLoading(true);
       try {
         const response = await axios.put("/api/events", updateDetails);
@@ -314,10 +340,10 @@ const EventDetail = (props) => {
           setOnsite(response.data.isOnsite);
           setImages(response.data.images);
           setAnchorEl(null);
-          setLoading(false)
+          setLoading(false);
         }
       } catch {
-        setLoading(false)
+        setLoading(false);
         setMessage("Edit event failed, please try again");
         setAlertType("error");
         setOpenAlertSnackbar(true);
@@ -335,35 +361,37 @@ const EventDetail = (props) => {
     setParticipantDetails(null);
     setOpenParticipantDetails(false);
   };
-//change to participants.js
+  //change to participants.js
 
   const handleCloseAlertSnackbar = () => {
     setOpenAlertSnackbar(false);
   };
 
   const submitCreateTemplate = (newEvent) => {
-    if(!loading) {
-      setLoading(true)
-      axios.post('/api/events', newEvent)
-      .then(res => {
-        setAlertType('success')
-        setMessage(res.data)
-        setOpenAlertSnackbar(true)
-        setLoading(false)
-        setOpenDuplicateDialog(false)
-      }).catch(err => {
-        setAlertType('error')
-        setMessage(err.response.data.message)
-        setOpenAlertSnackbar(true)
-        setLoading(false)
-      })
+    if (!loading) {
+      setLoading(true);
+      axios
+        .post("/api/events", newEvent)
+        .then((res) => {
+          setAlertType("success");
+          setMessage(res.data);
+          setOpenAlertSnackbar(true);
+          setLoading(false);
+          setOpenDuplicateDialog(false);
+        })
+        .catch((err) => {
+          setAlertType("error");
+          setMessage(err.response.data.message);
+          setOpenAlertSnackbar(true);
+          setLoading(false);
+        });
     }
-  }
+  };
 
   const handleCloseDuplicateDialog = () => {
     setAnchorEl(null);
-    setOpenDuplicateDialog(false)
-  }
+    setOpenDuplicateDialog(false);
+  };
 
   // const handleCloseDiscardDialog = () => {
   //   setOpenDiscardDialog(false)
@@ -396,17 +424,19 @@ const EventDetail = (props) => {
   );
 
   let approveBtn = (
-    <Button
-      startIcon={<ThumbUpIcon />}
-      color="primary"
-      variant="contained"
-      onClick={approveEventHandler}
-      disabled={disableApprove}
-    >
-      Approve
-    </Button>
+    <ThemeProvider theme={additionalButtonTheme}>
+      <Button
+        startIcon={<ThumbUpIcon />}
+        color="primary"
+        variant="contained"
+        onClick={approveEventHandler}
+        disabled={disableApprove}
+      >
+        Approve
+      </Button>
+    </ThemeProvider>
   );
-  
+
   let rejectBtn = (
     <Button
       startIcon={<ThumbDownIcon />}
@@ -441,7 +471,19 @@ const EventDetail = (props) => {
       Disable this event
     </Button>
   );
-  
+
+  //Autocomplete button
+  let autoCompleteBtn = (
+    <Button
+      startIcon={<CheckCircleIcon />}
+      color="primary"
+      variant="contained"
+      onClick={autoCompleteHandler}
+    >
+      Complete this event
+    </Button>
+  );
+
   let showActionBtns = null;
   let deleteBtn = null;
   let editDialog = null;
@@ -449,7 +491,7 @@ const EventDetail = (props) => {
   let showFeedbackDetails = null;
   let showAlertSnackbar = null;
   let showRejectDialog = null;
-  let currentDate = moment()
+  let currentDate = moment();
   let showImages = (
     <CardMedia
       className={classes.media}
@@ -489,13 +531,19 @@ const EventDetail = (props) => {
         </div>
       );
     }
-  } else if (status.name === "Approved" || status.name === 'Ongoing') {
+  } else if (status.name === "Approved" || status.name === "Ongoing") {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
-        <CardActions>{disableBtn}</CardActions>
+        <CardActions>
+          {disableBtn}
+          {autoCompleteBtn}
+        </CardActions>
       </Grid>
     );
-  } else if (status.name === "Disabled" && moment(currentDate).isBefore(details.endDate)) {
+  } else if (
+    status.name === "Disabled" &&
+    moment(currentDate).isBefore(details.endDate)
+  ) {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
         <CardActions>{enableBtn}</CardActions>
@@ -535,7 +583,7 @@ const EventDetail = (props) => {
         close={handleCloseParticipantDetails}
         details={participantDetails}
         basePoint={details.point}
-        type='event'
+        type="event"
       />
     );
   }
@@ -562,35 +610,35 @@ const EventDetail = (props) => {
     );
   }
 
-  let showStatus = null 
-  if(status.id === 3) {
+  let showStatus = null;
+  if (status.id === 3) {
     showStatus = (
       <ThemeProvider theme={additionalButtonTheme}>
         <Chip color="primary" label={status.name} />
       </ThemeProvider>
-    ); 
-  } else if(status.id === 2) {
+    );
+  } else if (status.id === 2) {
     showStatus = (
       <ThemeProvider theme={additionalButtonTheme}>
         <Chip color="secondary" label={status.name} />
       </ThemeProvider>
-    ); 
-  } else if(status.id === 4) {
-    showStatus = <Chip color="primary" label={status.name} />;  
-  } else if(status.id === 5) {
-    showStatus = <Chip color="inherit" label={status.name} />; 
-  } else if(status.id === 6) {
-    showStatus = <Chip color="secondary" label={status.name} />; 
+    );
+  } else if (status.id === 4) {
+    showStatus = <Chip color="primary" label={status.name} />;
+  } else if (status.id === 5) {
+    showStatus = <Chip color="inherit" label={status.name} />;
+  } else if (status.id === 6) {
+    showStatus = <Chip color="secondary" label={status.name} />;
   } else {
     showStatus = (
       <ThemeProvider theme={additionalButtonTheme2}>
         <Chip color="primary" label={status.name} />
       </ThemeProvider>
-    ); 
+    );
   }
 
-  let copyTemplateBtn = null
-  if(status.id === 4) {
+  let copyTemplateBtn = null;
+  if (status.id === 4) {
     copyTemplateBtn = (
       <Button
         className={classes.settings}
@@ -603,26 +651,26 @@ const EventDetail = (props) => {
     );
   }
 
-  let duplicateDialog = null
-  if(openDuplicateDialog) {
+  let duplicateDialog = null;
+  if (openDuplicateDialog) {
     duplicateDialog = (
-      <DuplicateTemplate 
+      <DuplicateTemplate
         details={details}
         isOpen={openDuplicateDialog}
         close={handleCloseDuplicateDialog}
         submit={submitCreateTemplate}
         isLoading={loading}
       />
-    )
+    );
   }
 
   // let showDiscardDialog = null
   // if(openDiscardDialog) => {
   //   showDiscardDialog = (
-  //     <DiscardAlertDialog 
+  //     <DiscardAlertDialog
   //       isOpen={openDiscardDialog}
   //       closing={handleCloseDiscardDialog}
-        
+
   //     />
   //   )
   // }
@@ -630,7 +678,9 @@ const EventDetail = (props) => {
   return (
     <>
       <Card className={classes.root}>
-      {loading && <CircularProgress size={60} className={classes.buttonProgress} />}
+        {loading && (
+          <CircularProgress size={60} className={classes.buttonProgress} />
+        )}
         <Grid container spacing={4}>
           <Grid item>{showImages}</Grid>
           <Grid item xs={12} sm container>
