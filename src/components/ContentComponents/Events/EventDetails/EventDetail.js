@@ -660,6 +660,7 @@ const EventDetail = (props) => {
         close={handleCloseDuplicateDialog}
         submit={submitCreateTemplate}
         isLoading={loading}
+        templateId={props.match.params.id}
       />
     );
   }

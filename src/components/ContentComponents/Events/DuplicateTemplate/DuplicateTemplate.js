@@ -151,6 +151,7 @@ import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
         startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
         statusId: 2,
         title: title,
+        referencedEventId: props.templateId,
       };
       props.submit(duplicateEventDetails)
       // } else {
