@@ -16,13 +16,13 @@ import {
   ThemeProvider,
   Typography,
 } from "@material-ui/core";
-import { MoreVert } from "@material-ui/icons";
+import { MoreVert, Visibility } from "@material-ui/icons";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import CancelIcon from "@material-ui/icons/Cancel";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router";
 
 import axios from "../../../../api/axios";
@@ -37,6 +37,7 @@ import {
   RejectReasonDialog,
 } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import DuplicateTemplate from "../DuplicateTemplate/DuplicateTemplate";
+import Requirements from "./Requirements/Requirements";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -118,14 +119,14 @@ const EventDetail = (props) => {
   const history = useHistory();
   const { user } = useAuth();
   const [openEditDialog, setOpenEditDialog] = React.useState(false);
-  const [openParticipantDetails, setOpenParticipantDetails] =
-    React.useState(false);
+  const [openParticipantDetails, setOpenParticipantDetails] = React.useState(false);
   const [message, setMessage] = React.useState("");
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRejectDialog, setOpenRejectDialog] = React.useState(false);
   const [openDuplicateDialog, setOpenDuplicateDialog] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [openRequirementsDialog, setOpenRequirementsDialog] = React.useState(false)
   // const [openDiscardDialog, setOpenDiscardDialog] = React.useState(false)
 
   const [details, setDetails] = React.useState({});
@@ -141,6 +142,7 @@ const EventDetail = (props) => {
     axios
       .get("/api/events/" + props.match.params.id)
       .then((res) => {
+        console.log(res)
         isUserHasEnoughPoint(res.data.accountEmail);
         setDetails(res.data);
         setAccEmail(res.data.accountEmail);
@@ -393,9 +395,13 @@ const EventDetail = (props) => {
     setOpenDuplicateDialog(false);
   };
 
-  // const handleCloseDiscardDialog = () => {
-  //   setOpenDiscardDialog(false)
-  // }
+  const openRequirementsHandler = () => {
+    setOpenRequirementsDialog(true)
+  }
+  
+  const closeRequirementsHandler = () => {
+    setOpenRequirementsDialog(false)
+  }
 
   const getCookie = (cname) => {
     let name = cname + "=";
@@ -665,6 +671,46 @@ const EventDetail = (props) => {
     );
   }
 
+  let showRequirements = null 
+  if(details.requirement) {
+    showRequirements = (
+      <Grid item container xs className={classes.Typography}>
+        <Typography
+          variant="body1"
+          color="textPrimary"
+          component="span"
+        >
+          <strong>Requirements: </strong>
+          <Button
+            color='primary'
+            variant='outlined'
+            startIcon={<Visibility />}
+            onClick={openRequirementsHandler}
+          >
+            Show
+          </Button>
+        </Typography>
+      </Grid>
+    )
+  } else {
+    <Grid item container xs className={classes.Typography}>
+      <Typography
+        variant="body1"
+        color="textPrimary"
+        component="span"
+      >
+        No requirements 
+      </Typography>
+    </Grid>
+  }
+
+  let requirementsDialog = null
+  if(openRequirementsDialog) {
+    requirementsDialog = (
+      <Requirements isOpen={openRequirementsDialog} close={closeRequirementsHandler} requirements={details.requirement} />
+    )
+  }
+
   // let showDiscardDialog = null
   // if(openDiscardDialog) => {
   //   showDiscardDialog = (
@@ -761,6 +807,8 @@ const EventDetail = (props) => {
                     })}
                   </Typography>
                 </Grid>
+
+                {showRequirements}
 
                 <Grid item container xs className={classes.Typography}>
                   <Typography
@@ -878,6 +926,7 @@ const EventDetail = (props) => {
       {showAlertSnackbar}
       {showRejectDialog}
       {duplicateDialog}
+      {requirementsDialog}
     </>
   );
 };

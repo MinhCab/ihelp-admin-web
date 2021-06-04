@@ -38,6 +38,7 @@ import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { Autocomplete } from "@material-ui/lab";
 import Requirements from "./Requirements/Requirements";
+import CreateIcon from '@material-ui/icons/Create';
 
 const useStyles = makeStyles((theme) => ({
   finalButton: {
@@ -74,17 +75,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const listReq = [
-  {id: 0, name: 'Mobile Phone'},
-  {id: 1, name: 'Bicycle'},
-  {id: 2, name: ''},
-  {id: 3, name: 'Mobile Phone'},
-  {id: 4, name: 'Mobile Phone'},
-  {id: 5, name: 'Mobile Phone'},
-  {id: 6, name: 'Mobile Phone'},
-  {id: 7, name: 'Mobile Phone'}
-]
-
 const CreateEvent = (props) => {
   const classes = useStyles();
   const { role } = useAuth();
@@ -97,6 +87,7 @@ const CreateEvent = (props) => {
   const [alertType, setAlertType] = React.useState("");
   const [openAlertSnackbar, setOpenAlertSnackbar] = React.useState(false);
   const [openRequirements, setOpenRequirements] = React.useState(false)
+  const [reqCount, setReqCount] = React.useState(0)
   const [loading, setLoading] = React.useState(false)
 
   const [title, setTitle] = React.useState("");
@@ -199,11 +190,10 @@ const CreateEvent = (props) => {
         onsite: onSite,
         point: point,
         quota: quota,
-        referencedEventId: "",
         startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
         statusId: status,
         title: title,
-        requirement: "string",
+        requirement: requirements,
       };
   
       props.submit(eventDetails);
@@ -261,7 +251,10 @@ const CreateEvent = (props) => {
   }
 
   const handleSaveRequirements = (reqs) => {
-    console.log(reqs)
+    setOpenRequirements(false)
+    setRequirements(reqs)
+    let list = reqs.split('/n')
+    setReqCount(list.length)
   }
 
   const handleUploadImage = (file) => {
@@ -452,6 +445,34 @@ const CreateEvent = (props) => {
     )
   }
 
+  let showReqDes = null
+  requirements.length >> 0 ? showReqDes = (
+    <p>
+    There are {reqCount} requirements
+      <Button
+      startIcon={<CreateIcon />}
+      variant="outlined"
+      component="label"
+      color="primary"
+      onClick={handleOpenRequirementsDialog}
+    >
+        Edit
+  </Button>
+  </p>) : showReqDes = (
+    <p>
+    There are no requirements yet
+      <Button
+      style={{marginLeft: 10}}
+      startIcon={<AddIcon />}
+      variant="outlined"
+      component="label"
+      color="primary"
+      onClick={handleOpenRequirementsDialog}
+    >
+        Add
+  </Button>
+  </p>)
+
   return (
     <>
       <Dialog fullWidth maxWidth="lg" open={props.isOpen} onClose={props.close}>
@@ -638,7 +659,7 @@ const CreateEvent = (props) => {
                     </Typography>
                   </Grid>
                 </Grid>
-                <Grid item container xs spacing={3}>
+                <Grid item container xs spacing={3} style={{ marginTop: 20 }}>
                   <Grid item xs>
                     <Grid container direction="row" alignItems="center">
                       <Grid item>
@@ -652,15 +673,7 @@ const CreateEvent = (props) => {
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
-                        <Button
-                          startIcon={<AddIcon />}
-                          variant="outlined"
-                          component="label"
-                          color="primary"
-                          onClick={handleOpenRequirementsDialog}
-                        >
-                          Add
-                        </Button>
+                        {showReqDes}
                       </Grid>
                     </Grid>
                   </Grid>

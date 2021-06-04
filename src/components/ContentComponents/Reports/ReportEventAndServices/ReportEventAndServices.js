@@ -44,20 +44,25 @@ const ReportEventAndService = (props) => {
     setFeedbackCategory(id)
   }
 
+  const loadReports = () => {
+    setReports([])
+    axios
+      .get("/api/feedbacks/" + props.type + "/" + props.id + "/category/" + feedbackCategory + "?page=" + page)
+      .then((res) => {
+        setTotalItems(res.data.totalItems);
+        setReports(res.data.feedbacks);
+        setLoading(false);
+        console.log(res);
+      })
+      .catch((err) => {
+        setLoading(false);
+      });
+  }
+
   useEffect(() => {
     if (!loading) {
       setLoading(true);
-      axios
-        .get("/api/feedbacks/" + props.type + "/" + props.id + "/category/" + feedbackCategory + "?page=" + page)
-        .then((res) => {
-          setTotalItems(res.data.totalItems);
-          setReports(res.data.feedbacks);
-          setLoading(false);
-          console.log(res);
-        })
-        .catch((err) => {
-          setLoading(false);
-        });
+      loadReports()
     }
   }, [page, totalItems, feedbackCategory]);
 

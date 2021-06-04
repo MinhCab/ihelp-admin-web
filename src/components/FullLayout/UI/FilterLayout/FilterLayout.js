@@ -61,8 +61,8 @@ const FilterLayout = (props) => {
       <Autocomplete
         options={categories}
         getOptionLabel={(option) => option.name}
-        onChange={(event, value) => getId(value)}
         defaultValue={{ id: 3, name: "Report event" }}
+        onChange={(event, value) => getId(value)}
         style={{ width: 300 }}
         renderInput={(params) => (
           <TextField {...params} label="Category" variant="outlined" />
@@ -73,7 +73,7 @@ const FilterLayout = (props) => {
     showComboBox = (
       <Autocomplete
         options={categories}
-        defaultValue={categories[0]}
+        defaultValue={{ id: 4, name: "Report service" }}
         getOptionLabel={(option) => option.name}
         onChange={(event, value) => getId(value)}
         style={{ width: 300 }}
