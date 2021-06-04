@@ -72,42 +72,42 @@ const Login = () => {
     [classes.buttonSuccess]: success,
   })
 
-  const pushDeviceToken = async(accessToken) => {
+  const pushDeviceToken = async (accessToken) => {
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`
     }
 
     await messaging.requestPermission().then(firebaseToken => {
-        return messaging.getToken()
+      return messaging.getToken()
     }).then(async token => {
-        console.log('Firebase Token: ' + token)
-        let now = new Date()
-        let time = now.getTime()
-        time += 3600 * 2000
-        now.setTime(time);
-        document.cookie = 'deviceToken=' + token + ';expires=' + now.toUTCString()
-        setFcmToken(token)
+      console.log('Firebase Token: ' + token)
+      let now = new Date()
+      let time = now.getTime()
+      time += 3600 * 2000
+      now.setTime(time);
+      document.cookie = 'deviceToken=' + token + ';expires=' + now.toUTCString()
+      setFcmToken(token)
 
-        const deviceTokenInfo = {
-          deviceToken: token,
-          email: email,
-        };
+      const deviceTokenInfo = {
+        deviceToken: token,
+        email: email,
+      };
 
-        console.log('before send to db: ' + token)
-    
-    await axios
-      .post("/accounts/device_token", deviceTokenInfo, {
-        headers: headers
-      })
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      console.log('before send to db: ' + token)
+
+      await axios
+        .post("/accounts/device_token", deviceTokenInfo, {
+          headers: headers
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }).catch(err => {
-        console.log('is there any error: ' + err)
+      console.log('is there any error: ' + err)
     })
   }
 
@@ -120,10 +120,10 @@ const Login = () => {
         email: email,
         password: password
       }
-  
+
       axios
         .post("/login", loginInfo)
-        .then(async(res) => {
+        .then(async (res) => {
           if (res.data.role === "ADMIN" || res.data.role === "MANAGER") {
             await pushDeviceToken(res.data.accessToken);
             saveTokenAndEmailToCookies(res.data.accessToken, email);
@@ -191,7 +191,7 @@ const Login = () => {
 
   if (openAlertSnackbar) {
     alertSnackbar = (
-      <AlertSnackbar 
+      <AlertSnackbar
         message={errorMessage}
         isOpen={openAlertSnackbar}
         close={handleCloseAlertSnackbar}

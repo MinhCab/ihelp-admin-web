@@ -127,6 +127,12 @@ const ServiceDetail = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [participantDetails, setParticipantDetails] = React.useState({});
 
+  Date.prototype.addDays = function (days) {
+    let date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  };
+
   const loadInfoAPI = () => {
     axios
       .get("/api/services/" + props.match.params.id)
@@ -319,6 +325,45 @@ const ServiceDetail = (props) => {
     setOpenParticipantDetails(false);
   };
 
+  //Auto start api
+  const autoStartHandler = () => {
+    if (!loading) {
+      setLoading(true);
+      axios
+        .put("/api/services/start/" + props.match.params.id)
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
+  };
+  
+  const backToPendingHandler = () => {
+    if (!loading) {
+      setLoading(true);
+      axios
+        .put("/api/services/" + props.match.params.id + "/2")
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
+  }
+
   const getCookie = (cname) => {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -384,6 +429,29 @@ const ServiceDetail = (props) => {
       Disable this service
     </Button>
   );
+
+   //Auto start button
+   let autoStartBtn = (
+    <Button
+      startIcon={<CheckCircleIcon />}
+      color="primary"
+      variant="contained"
+      onClick={autoStartHandler}
+    >
+      Start this service
+    </Button>
+  );
+
+  let backToPendingBtn = (
+    <Button
+      startIcon={<CheckCircleIcon />}
+      color="primary"
+      variant="contained"
+      onClick={backToPendingHandler}
+    >
+      Back to Pending
+    </Button>
+  )
   
   let showActionBtns = null;
   let deleteBtn = null;
@@ -394,6 +462,7 @@ const ServiceDetail = (props) => {
   let showRejectDialog = null;
   let showStatus = null
   let currentDate = moment()
+  let restrictedDate = new Date(details.createdDate).addDays(3)
   let showImages = (
     <CardMedia
       className={classes.media}
@@ -425,7 +494,22 @@ const ServiceDetail = (props) => {
         </div>
       );
     }
-  } else if (status.name === "Approved" || status.name === 'Ongoing') {
+  } else if (status.name === "Approved") {
+    showActionBtns = (
+      <Grid item container xs className={classes.Typography}>
+        <CardActions>{disableBtn}{autoStartBtn}</CardActions>
+      </Grid>
+    );
+  } else if (status.name === "Rejected" && moment(currentDate).isSameOrBefore(restrictedDate)) {
+    showActionBtns = (
+      <div>
+          <CardActions>
+            {approveBtn}
+            {backToPendingBtn}
+          </CardActions>
+        </div>
+    )
+  } else if( status.name === 'Ongoing' ) {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
         <CardActions>{disableBtn}</CardActions>
@@ -584,7 +668,7 @@ const ServiceDetail = (props) => {
                     color="textPrimary"
                     component="span"
                   >
-                    <strong>Category: </strong>
+                    <strong>Tags: </strong>
                     {categories.map((cate) => {
                       return (
                         <Chip

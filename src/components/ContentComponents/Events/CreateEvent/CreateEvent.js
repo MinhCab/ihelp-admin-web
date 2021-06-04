@@ -183,19 +183,20 @@ const CreateEvent = (props) => {
         description: description,
         endDate: moment(endDate).format("yyyy-MM-DD HH:mm:ss"),
         images: images,
-        id: "",
         latitude: coordinates.lat,
         location: realLocation,
         longitude: coordinates.lng,
         onsite: onSite,
         point: point,
         quota: quota,
+        referencedEventId: null,
         startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
         statusId: status,
+        suggestion: requirements,
         title: title,
-        requirement: requirements,
       };
-  
+
+      console.log(eventDetails)
       props.submit(eventDetails);
       setOpenConfirmation(false);
       setLoading(false)
@@ -265,6 +266,14 @@ const CreateEvent = (props) => {
   const closeAlertSnackbarHandler = () => {
     setOpenAlertSnackbar(false);
   };
+
+  const setLocationManually = () => {
+    setLocation('50 Đường Hoa Cau, Phường 7 Phú Nhuận, Phú Nhuận, Ho Chi Minh City, Vietnam')
+    setCoordinates({
+      lat: 10.7993526,
+      lng: 106.6893163,
+    })
+  }
 
   const uploadImageToFirebase = async () => {
     if (image === null) {
@@ -338,16 +347,15 @@ const CreateEvent = (props) => {
         onChange={setLocation}
         onSelect={handleSelectGoogleLocation}
       >
-        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => ( 
           <Grid container direction="row" alignItems="center">
             <Grid item>
               <Typography
-                style={{ marginRight: 10 }}
                 variant="body1"
                 color="textPrimary"
                 component="span"
               >
-                <strong>Location: </strong>
+                <strong onClick={setLocationManually}>Location: </strong>
               </Typography>
             </Grid>
             <Grid item>
@@ -439,7 +447,7 @@ const CreateEvent = (props) => {
         isOpen={openRequirements}
         close={handleCloseRequirementsDialog}
         save={handleSaveRequirements}
-        requirements={requirements}
+        requirement={requirements}
         isLoading={loading}
       />
     )
@@ -448,7 +456,7 @@ const CreateEvent = (props) => {
   let showReqDes = null
   requirements.length >> 0 ? showReqDes = (
     <p>
-    There are {reqCount} requirements
+    There are {reqCount} additional informations
       <Button
       startIcon={<CreateIcon />}
       variant="outlined"
@@ -460,7 +468,7 @@ const CreateEvent = (props) => {
   </Button>
   </p>) : showReqDes = (
     <p>
-    There are no requirements yet
+    There are no additional information yet
       <Button
       style={{marginLeft: 10}}
       startIcon={<AddIcon />}
@@ -490,6 +498,7 @@ const CreateEvent = (props) => {
                   >
                     <Grid item xs>
                       <Typography
+                        style={{marginRight: 10}}
                         variant="h1"
                         color="textPrimary"
                         component="h2"
@@ -618,7 +627,7 @@ const CreateEvent = (props) => {
                           component="span"
                           style={{ marginRight: 10 }}
                         >
-                          <strong>Category: </strong>
+                          <strong>Tags: </strong>
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>
@@ -669,7 +678,7 @@ const CreateEvent = (props) => {
                           component="span"
                           style={{ marginRight: 10 }}
                         >
-                          <strong>Requirements: </strong>
+                          <strong>Additional Informations: </strong>
                         </Typography>
                       </Grid>
                       <Grid item xs={6}>

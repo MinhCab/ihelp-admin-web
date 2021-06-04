@@ -24,7 +24,7 @@ const Requirements = (props) => {
 
     const convertStringToList = (str) => {
         if (str) {
-            let list = str.split('/n')
+            let list = str.split('/--/')
             setReqList(list)
         }
     }
@@ -40,15 +40,15 @@ const Requirements = (props) => {
             )}
             <DialogTitle>
                 <strong style={{ fontSize: 20 }}>
-                    Requirements
+                    Additional Informations
                 </strong>
             </DialogTitle>
             <DialogContent>
                 {reqList.map((req, index) => {
                     return (
-                        <Card>
+                        <Card key={index} style={{marginBottom: 10}}>
                             <CardContent>
-                                <strong>Requirement {index + 1}: </strong> {req}
+                                <strong> {index + 1}: </strong> {req}
                             </CardContent>
                         </Card>
                     )

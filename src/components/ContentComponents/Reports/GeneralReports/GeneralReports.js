@@ -13,7 +13,7 @@ const columns = [
     },
   },
   { field: "email", headerName: "Author email", width: 250 },
-  { field: "comment", headerName: "Comment content", width: 1000 },
+  { field: "comment", headerName: "Comment content", width: 975 },
 ];
 
 const GeneralReports = (props) => {

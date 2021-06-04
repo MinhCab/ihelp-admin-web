@@ -32,10 +32,7 @@ import TabsLayout from "../../../FullLayout/UI/TabsLayout/TabsLayout";
 import ParticipantDetails from "../../Users/Participants/ParticipantDetails/ParticipantDetails";
 import AlertSnackbar from "../../../FullLayout/UI/AlertSnackbar/AlertSnackbar";
 import { useAuth } from "../../../../hoc/StoringAuth/AuthContext";
-import {
-  DiscardAlertDialog,
-  RejectReasonDialog,
-} from "../../../FullLayout/UI/AlertDialog/AlertDialog";
+import { RejectReasonDialog } from "../../../FullLayout/UI/AlertDialog/AlertDialog";
 import DuplicateTemplate from "../DuplicateTemplate/DuplicateTemplate";
 import Requirements from "./Requirements/Requirements";
 
@@ -137,6 +134,12 @@ const EventDetail = (props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [participantDetails, setParticipantDetails] = React.useState({});
   const [disableApprove, setDisableApprove] = React.useState(false);
+
+  Date.prototype.addDays = function (days) {
+    let date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  };
 
   const loadInfoAPI = () => {
     axios
@@ -322,11 +325,31 @@ const EventDetail = (props) => {
     }
   };
 
+  const backToPendingHandler = () => {
+    if (!loading) {
+      setLoading(true);
+      axios
+        .put("/api/events/" + props.match.params.id + "/2")
+        .then((res) => {
+          setMessage(res.data);
+          setAlertType("success");
+          setOpenAlertSnackbar(true);
+          loadInfoAPI();
+        })
+        .catch((error) => {
+          setMessage(error.response.data.error);
+          setAlertType("error");
+          setOpenAlertSnackbar(true);
+        });
+    }
+  }
+
   const copyTemplateHandler = () => {
     setOpenDuplicateDialog(true);
   };
 
   const handleUpdateProcess = async (updateDetails) => {
+    console.log('Before update: ' + updateDetails)
     if (!loading) {
       setLoading(true);
       try {
@@ -490,6 +513,17 @@ const EventDetail = (props) => {
     </Button>
   );
 
+  let backToPendingBtn = (
+    <Button
+      startIcon={<CheckCircleIcon />}
+      color="primary"
+      variant="contained"
+      onClick={backToPendingHandler}
+    >
+      Back to Pending
+    </Button>
+  )
+
   let showActionBtns = null;
   let deleteBtn = null;
   let editDialog = null;
@@ -498,6 +532,7 @@ const EventDetail = (props) => {
   let showAlertSnackbar = null;
   let showRejectDialog = null;
   let currentDate = moment();
+  let restrictedDate = new Date(details.createdDate).addDays(3)
   let showImages = (
     <CardMedia
       className={classes.media}
@@ -537,12 +572,29 @@ const EventDetail = (props) => {
         </div>
       );
     }
-  } else if (status.name === "Approved" || status.name === "Ongoing") {
+  } else if (status.name === "Approved") {
     showActionBtns = (
       <Grid item container xs className={classes.Typography}>
         <CardActions>
           {disableBtn}
           {autoCompleteBtn}
+        </CardActions>
+      </Grid>
+    );
+  } else if (status.name === "Rejected" && moment(currentDate).isSameOrBefore(restrictedDate)) {
+    showActionBtns = (
+      <div>
+          <CardActions>
+            {approveBtn}
+            {backToPendingBtn}
+          </CardActions>
+        </div>
+    )
+  } else if( status.name === "Ongoing" ) {
+    showActionBtns = (
+      <Grid item container xs className={classes.Typography}>
+        <CardActions>
+          {disableBtn}
         </CardActions>
       </Grid>
     );
@@ -672,7 +724,7 @@ const EventDetail = (props) => {
   }
 
   let showRequirements = null 
-  if(details.requirement) {
+  if(details.suggestion) {
     showRequirements = (
       <Grid item container xs className={classes.Typography}>
         <Typography
@@ -680,7 +732,7 @@ const EventDetail = (props) => {
           color="textPrimary"
           component="span"
         >
-          <strong>Requirements: </strong>
+          <strong>Additional Informations: </strong>
           <Button
             color='primary'
             variant='outlined'
@@ -699,7 +751,7 @@ const EventDetail = (props) => {
         color="textPrimary"
         component="span"
       >
-        No requirements 
+        No addtional information
       </Typography>
     </Grid>
   }
@@ -707,7 +759,7 @@ const EventDetail = (props) => {
   let requirementsDialog = null
   if(openRequirementsDialog) {
     requirementsDialog = (
-      <Requirements isOpen={openRequirementsDialog} close={closeRequirementsHandler} requirements={details.requirement} />
+      <Requirements isOpen={openRequirementsDialog} close={closeRequirementsHandler} requirements={details.suggestion} />
     )
   }
 
@@ -793,7 +845,7 @@ const EventDetail = (props) => {
                     color="textPrimary"
                     component="span"
                   >
-                    <strong>Category: </strong>
+                    <strong>Tags: </strong>
                     {categories.map((cate) => {
                       return (
                         <Chip

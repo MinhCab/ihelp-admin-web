@@ -259,7 +259,7 @@ import { Autocomplete } from "@material-ui/lab";
                   {...params}
                   value={category}
                   variant="outlined"
-                  label="Categories"
+                  label="Tags"
                   inputProps={{
                     ...params.inputProps,
                     required: category.length === 0,

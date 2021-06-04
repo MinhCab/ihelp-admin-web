@@ -212,6 +212,14 @@ const CreateService = (props) => {
     setOpenAlertSnackbar(false);
   };
 
+  const setLocationManually = () => {
+    setLocation('189C Cống Quỳnh, Phường Nguyễn Cư Trinh, Quận 1, Thành phố Hồ Chí Minh, Vietnam')
+    setCoordinates({
+      lat: 10.7673317,
+      lng: 106.6863886,
+    })
+  }
+
   const uploadImageToFirebase = async () => {
     if (image === null) {
       return null;
@@ -290,7 +298,7 @@ const CreateService = (props) => {
                 color="textPrimary"
                 component="span"
               >
-                <strong>Location: </strong>
+                <strong onClick={setLocationManually}>Location: </strong>
               </Typography>
             </Grid>
             <Grid item>
@@ -515,7 +523,7 @@ const CreateService = (props) => {
                           component="span"
                           style={{ marginRight: 10 }}
                         >
-                          <strong>Category: </strong>
+                          <strong>Tags: </strong>
                         </Typography>
                       </Grid>
                       <Grid item>

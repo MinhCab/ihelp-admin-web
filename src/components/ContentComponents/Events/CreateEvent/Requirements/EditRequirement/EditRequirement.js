@@ -71,7 +71,7 @@ const EditRequirement = (props) => {
     <Grid container item xs>
       <Grid item xs>
         <CardContent>
-          <strong>Requirement {props.count}: </strong> {reqDetails}
+          <strong>Additional {props.count}: </strong> {reqDetails}
         </CardContent>
       </Grid>
       <Grid item>

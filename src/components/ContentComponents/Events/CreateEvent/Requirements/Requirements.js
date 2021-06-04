@@ -29,7 +29,7 @@ const Requirements = (props) => {
 
   const convertStringToList = (str) => {
     if (str) {
-      let list = str.split('/n')
+      let list = str.split('/--/')
       setReqCount(list.length)
       setReqList(list)
     }
@@ -45,7 +45,7 @@ const Requirements = (props) => {
 
   const saveReqsHandler = () => {
     let copyList = reqList
-    let reqStr = copyList.join('/n')
+    let reqStr = copyList.join('/--/')
     props.save(reqStr)
   }
 
@@ -72,7 +72,7 @@ const Requirements = (props) => {
   }
 
   useEffect(() => {
-    convertStringToList(props.requirements)
+    convertStringToList(props.requirement)
   }, [])
 
   let showEdit = null
@@ -96,7 +96,7 @@ const Requirements = (props) => {
         <Grid container item xs spacing={2} style={{ paddingBottom: 10 }}>
           <Grid item xs>
             <strong style={{ fontSize: 20 }}>
-              Add requirements to participants
+              Add more additional informations for participants
               </strong>
           </Grid>
           <Grid item>

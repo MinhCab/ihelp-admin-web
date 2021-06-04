@@ -13,6 +13,8 @@ import {
   DialogActions,
   CircularProgress,
 } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
+import Create from "@material-ui/icons/Create";
 import { Autocomplete } from "@material-ui/lab";
 import { enGB } from "date-fns/locale";
 import moment from "moment";
@@ -25,6 +27,7 @@ import PlacesAutocomplete, {
 import { TextArea } from "semantic-ui-react";
 
 import axios from '../../../../api/axios'
+import Requirements from "../CreateEvent/Requirements/Requirements";
 
 const useStyles = makeStyles((theme) => ({
   descriptionField: {
@@ -61,6 +64,7 @@ const EditEvent = (props) => {
   const classes = useStyles();
   const info = props.infor;
   const [categories, setCategories] = React.useState([]);
+  const [openRequirementDialog, setOpenRequirementDialog] = React.useState(false)
 
   const [title, setTitle] = React.useState(info.title);
   const [startDate, setStartDate] = React.useState(new Date(info.startDate));
@@ -75,6 +79,7 @@ const EditEvent = (props) => {
     lng: null,
   });
   const [description, setDescription] = React.useState(info.description);
+  const [requirements, setRequirements] = React.useState(info.suggestion)
 
   Date.prototype.addDays = function(days) {
     let date = new Date(this.valueOf())
@@ -113,6 +118,19 @@ const EditEvent = (props) => {
     setDescription(event.target.value);
   };
 
+  const handleOpenRequirementsDialog = () => {
+    setOpenRequirementDialog(true)
+  }
+
+  const handleCloseRequirementsDialog = () => {
+    setOpenRequirementDialog(false)
+  }
+
+  const handleSaveRequirements = (reqs) => {
+    setOpenRequirementDialog(false)
+    setRequirements(reqs)
+  }
+
   const updateProcess = (event) => {
     event.preventDefault()
     let cateIDs = [];
@@ -134,6 +152,10 @@ const EditEvent = (props) => {
       startDate: moment(startDate).format("yyyy-MM-DD HH:mm:ss"),
       title: title,
     };
+
+    if(requirements) {
+      updateDetails.suggestion = requirements
+    }
     console.log(updateDetails)
     props.update(updateDetails)
     };
@@ -197,6 +219,46 @@ const EditEvent = (props) => {
   } else {
     showType = "Online";
     showLocationField = null;
+  }
+
+  let showReqDes = null
+  requirements ? showReqDes = (
+    <p>
+    Additional informations {" "}
+      <Button
+      startIcon={<Create />}
+      variant="outlined"
+      component="label"
+      color="primary"
+      onClick={handleOpenRequirementsDialog}
+    >
+        Edit
+  </Button>
+  </p>) : showReqDes = (
+    <p>
+    There are no additional information yet {" "}
+      <Button
+      style={{marginLeft: 10}}
+      startIcon={<Add />}
+      variant="outlined"
+      component="label"
+      color="primary"
+      onClick={handleOpenRequirementsDialog}
+    >
+        Add
+  </Button>
+  </p>)
+
+  let showRequirementsDialog = null
+  if(openRequirementDialog) {
+    showRequirementsDialog = (
+      <Requirements 
+        isOpen={openRequirementDialog}
+        close={handleCloseRequirementsDialog}
+        save={handleSaveRequirements}
+        requirement={requirements}
+      />
+    )
   }
 
   return (
@@ -268,7 +330,7 @@ const EditEvent = (props) => {
                   {...params}
                   value={category}
                   variant="outlined"
-                  label="Categories"
+                  label="Tags"
                   inputProps={{
                     ...params.inputProps,
                     required: category.length === 0,
@@ -277,6 +339,8 @@ const EditEvent = (props) => {
                 />
               )}
             />
+            <br />
+            {showReqDes}
             <br />
             <TextField
               style={{ marginBottom: 20 }}
@@ -330,6 +394,7 @@ const EditEvent = (props) => {
         </form>
       </Dialog>
       {showUploadPhotoDialog}
+      {showRequirementsDialog}
     </>
   );
 };;
