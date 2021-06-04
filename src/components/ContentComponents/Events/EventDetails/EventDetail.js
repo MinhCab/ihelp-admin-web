@@ -446,6 +446,10 @@ const EventDetail = (props) => {
   const id = open ? "simple-popover" : undefined;
   const username = getCookie("userEmail");
 
+  const redirectToReference = (ref) => {
+    history.replace('/home/events/details/' + ref)
+  }
+
   let showOnsite = (
     <Button color="primary" variant="contained">
       Online
@@ -763,6 +767,23 @@ const EventDetail = (props) => {
     )
   }
 
+  let showRefence = null
+  if(details.referencedEventId) {
+    showRefence = (
+      <Grid item container xs className={classes.Typography}>
+        <Typography
+          variant="body1"
+          color="textPrimary"
+          component="span"
+        >
+          <strong>Reference from: </strong> <a href={`/home/events/details/${details.referencedEventId}`}>
+                    {details.referencedEventId}
+                  </a>
+        </Typography>
+      </Grid>
+    )
+  }
+
   // let showDiscardDialog = null
   // if(openDiscardDialog) => {
   //   showDiscardDialog = (
@@ -881,6 +902,7 @@ const EventDetail = (props) => {
                     <strong>Pending slots: </strong> {details.spot}
                   </Typography>
                 </Grid>
+                {showRefence}
                 <Grid item container xs className={classes.Typography}>
                   <Typography variant="body1" color="primary" component="span">
                     <strong>Points for this event: {details.point}</strong>
